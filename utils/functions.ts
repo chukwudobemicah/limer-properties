@@ -46,3 +46,45 @@ export function generateWhatsAppLink(
 
   return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 }
+
+export function generateTourWhatsAppLink(
+  propertyTitle: string,
+  propertyId: string,
+  detailsUrl?: string
+): string {
+  const phoneNumber =
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2348012345678";
+
+  let message = `Hello Limer Properties,\n\nI would like to schedule a tour for the property: *${propertyTitle}*\n\nProperty ID: ${propertyId}`;
+
+  if (detailsUrl) {
+    message += `\n\nView Details: ${detailsUrl}`;
+  }
+
+  message += `\n\nPlease let me know your available dates and times for a property viewing.\n\nThank you!`;
+
+  const encodedMessage = encodeURIComponent(message);
+
+  return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+}
+
+export function generateInquiryWhatsAppLink(
+  propertyTitle: string,
+  propertyId: string,
+  detailsUrl?: string
+): string {
+  const phoneNumber =
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2348012345678";
+
+  let message = `Hello Limer Properties,\n\nI have some questions about the property: *${propertyTitle}*\n\nProperty ID: ${propertyId}`;
+
+  if (detailsUrl) {
+    message += `\n\nView Details: ${detailsUrl}`;
+  }
+
+  message += `\n\nI would appreciate if you could provide more information about this property.\n\nThank you!`;
+
+  const encodedMessage = encodeURIComponent(message);
+
+  return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+}

@@ -19,7 +19,11 @@ import {
 import { client } from "@/lib/sanity.client";
 import { SanityProperty } from "@/types/sanity";
 import { urlFor } from "@/lib/sanity.image";
-import { formatPrice } from "@/utils/functions";
+import {
+  formatPrice,
+  generateTourWhatsAppLink,
+  generateInquiryWhatsAppLink,
+} from "@/utils/functions";
 import Button from "@/component/Button";
 import PropertyDetailsSkeleton from "@/component/PropertyDetailsSkeleton";
 import { motion, AnimatePresence } from "framer-motion";
@@ -140,6 +144,12 @@ export default function PropertyDetails() {
     if (type === "shortlet") return "per night";
     return "";
   };
+
+  // Generate full property details URL
+  const propertyDetailsUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/property/${property.slug.current}`
+      : `/property/${property.slug.current}`;
 
   const nextImage = () => {
     setCurrentImageIndex((previous) =>
@@ -493,10 +503,30 @@ export default function PropertyDetails() {
               )}
 
               <div className="space-y-4">
-                <Button variant="primary" className="w-full">
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  href={generateTourWhatsAppLink(
+                    property.title,
+                    property.slug.current,
+                    propertyDetailsUrl
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Schedule a Tour
                 </Button>
-                <Button variant="secondary" className="w-full">
+                <Button
+                  variant="secondary"
+                  className="w-full"
+                  href={generateInquiryWhatsAppLink(
+                    property.title,
+                    property.slug.current,
+                    propertyDetailsUrl
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Make an Inquiry
                 </Button>
               </div>
