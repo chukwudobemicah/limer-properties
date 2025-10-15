@@ -10,8 +10,8 @@ interface UseSanityPropertyFilterProps {
 export function useSanityPropertyFilter({
   properties,
 }: UseSanityPropertyFilterProps) {
-  const [selectedType, setSelectedType] = useState<string>("all");
-  const [selectedLocation, setSelectedLocation] = useState<string>("all");
+  const [selectedType, setSelectedType] = useState("all");
+  const [selectedLocation, setSelectedLocation] = useState("all");
   const [selectedBedrooms, setSelectedBedrooms] = useState<number | "all">(
     "all"
   );
@@ -29,11 +29,12 @@ export function useSanityPropertyFilter({
   const filteredProperties = useMemo(() => {
     return properties.filter((property) => {
       const matchesType =
-        selectedType === "all" || property.propertyType?.value === selectedType;
+        selectedType === "all" ||
+        property.propertyType?.slug.current === selectedType;
 
       const matchesLocation =
         selectedLocation === "all" ||
-        property.location?._id === selectedLocation;
+        property.location?.slug.current === selectedLocation;
 
       const matchesBedrooms =
         selectedBedrooms === "all" || property.bedrooms === selectedBedrooms;
@@ -43,7 +44,7 @@ export function useSanityPropertyFilter({
 
       const matchesStructure =
         selectedStructure === "all" ||
-        property.structure?.value === selectedStructure;
+        property.structure?.slug.current === selectedStructure;
 
       const matchesFurnished =
         selectedFurnished === "all" ||

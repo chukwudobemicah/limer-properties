@@ -78,8 +78,8 @@ export default function AdvancedPropertyFilter({
           onChange={(value) => onTypeChange(value as PropertyType | "all")}
           options={[
             { value: "all", label: "All Types" },
-            { value: "house-sale", label: "House for Sale" },
-            { value: "house-rent", label: "House for Rent" },
+            { value: "house-for-sale", label: "House for Sale" },
+            { value: "house-for-rent", label: "House for Rent" },
             { value: "land", label: "Land" },
             { value: "shortlet", label: "Shortlet" },
           ]}
@@ -110,7 +110,8 @@ export default function AdvancedPropertyFilter({
             { value: "flat", label: "Flat/Apartment" },
             { value: "terrace", label: "Terrace" },
             { value: "mansion", label: "Mansion" },
-            { value: "other", label: "Other" },
+            { value: "detached-house", label: "Detached House" },
+            { value: "semi-detached", label: "Semi-Detached" },
           ]}
         />
 
