@@ -49,6 +49,12 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
   const imageUrl = getImageUrl();
 
+  // Generate full property details URL
+  const propertyDetailsUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/property/${property.slug.current}`
+      : `/property/${property.slug.current}`;
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
       {/* Image */}
@@ -172,7 +178,12 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             View Details
           </Button>
           <a
-            href={generateWhatsAppLink(property.title, property.slug.current)}
+            href={generateWhatsAppLink(
+              property.title,
+              property.slug.current,
+              propertyDetailsUrl,
+              imageUrl || undefined
+            )}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex w-full items-center justify-center px-4 py-2 rounded-full font-medium transition-all duration-200 ease-in-out hover:-translate-y-1 bg-green-500 hover:bg-green-600 text-white text-sm"

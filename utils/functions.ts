@@ -23,11 +23,25 @@ export function truncateText(text: string, maxLength: number): string {
 
 export function generateWhatsAppLink(
   propertyTitle: string,
-  propertyId: string
+  propertyId: string,
+  detailsUrl?: string,
+  imageUrl?: string
 ): string {
   const phoneNumber =
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2348012345678";
-  const message = `Hello Limer Properties,\n\nI'm interested in the property: *${propertyTitle}*\n\nProperty ID: ${propertyId}\n\nCould you please provide more details?\n\nThank you!`;
+
+  let message = `Hello Limer Properties,\n\nI'm interested in the property: *${propertyTitle}*\n\nProperty ID: ${propertyId}`;
+
+  if (detailsUrl) {
+    message += `\n\nView Details: ${detailsUrl}`;
+  }
+
+  if (imageUrl) {
+    message += `\n\nProperty Image: ${imageUrl}`;
+  }
+
+  message += `\n\nCould you please provide more details?\n\nThank you!`;
+
   const encodedMessage = encodeURIComponent(message);
 
   return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
