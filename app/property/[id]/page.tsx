@@ -14,7 +14,6 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
-  Loader2,
   Building2,
 } from "lucide-react";
 import { client } from "@/lib/sanity.client";
@@ -22,6 +21,7 @@ import { SanityProperty } from "@/types/sanity";
 import { urlFor } from "@/lib/sanity.image";
 import { formatPrice } from "@/utils/functions";
 import Button from "@/component/Button";
+import PropertyDetailsSkeleton from "@/component/PropertyDetailsSkeleton";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function PropertyDetails() {
@@ -102,11 +102,7 @@ export default function PropertyDetails() {
   }, [propertySlug]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="animate-spin text-primary" size={48} />
-      </div>
-    );
+    return <PropertyDetailsSkeleton />;
   }
 
   if (!property) {

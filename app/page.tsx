@@ -8,7 +8,9 @@ import ContactSection from "@/component/ContactSection";
 import { useSanityProperties } from "@/hooks/useSanityProperties";
 import { useSanityFilters } from "@/hooks/useSanityFilters";
 import { useSanityPropertyFilter } from "@/hooks/useSanityPropertyFilter";
-import { CheckCircle, Loader2 } from "lucide-react";
+import PropertyCardSkeleton from "@/component/PropertyCardSkeleton";
+import FilterBarSkeleton from "@/component/FilterBarSkeleton";
+import { CheckCircle } from "lucide-react";
 
 export default function Home() {
   const { properties, loading: propertiesLoading } = useSanityProperties();
@@ -36,9 +38,7 @@ export default function Home() {
       {/* Filter Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         {loading ? (
-          <div className="flex justify-center items-center py-8">
-            <Loader2 className="animate-spin text-primary" size={48} />
-          </div>
+          <FilterBarSkeleton />
         ) : (
           <FilterBar
             selectedType={selectedType}
@@ -63,8 +63,10 @@ export default function Home() {
           </div>
 
           {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <Loader2 className="animate-spin text-primary" size={48} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(6)].map((_, index) => (
+                <PropertyCardSkeleton key={index} />
+              ))}
             </div>
           ) : featuredProperties.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -95,8 +97,10 @@ export default function Home() {
           </div>
 
           {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <Loader2 className="animate-spin text-primary" size={48} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(9)].map((_, index) => (
+                <PropertyCardSkeleton key={index} />
+              ))}
             </div>
           ) : filteredProperties.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
