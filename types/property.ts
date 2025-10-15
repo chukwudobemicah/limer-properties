@@ -1,5 +1,12 @@
 export type PropertyType = "house-sale" | "house-rent" | "land" | "shortlet";
 export type PropertyStatus = "available" | "sold" | "rented";
+export type PropertyStructure =
+  | "bungalow"
+  | "duplex"
+  | "flat"
+  | "terrace"
+  | "mansion"
+  | "other";
 
 export interface Property {
   id: string;
@@ -20,6 +27,8 @@ export interface Property {
   yearBuilt?: number;
   parking?: number;
   furnished?: boolean;
+  structure?: PropertyStructure;
+  floors?: number; // number of floors/stories
   createdAt: Date;
 }
 
@@ -30,4 +39,6 @@ export interface FilterOptions {
   maxPrice: number;
   bedrooms: number | "all";
   bathrooms: number | "all";
+  structure: PropertyStructure | "all";
+  furnished: "all" | "furnished" | "unfurnished";
 }

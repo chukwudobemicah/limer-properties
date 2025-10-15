@@ -32,7 +32,7 @@ export default function Header() {
               Home
             </Link>
             <Link
-              href="/#properties"
+              href="/properties"
               className="text-gray-700 hover:text-primary transition-colors duration-200"
             >
               Properties
@@ -70,7 +70,7 @@ export default function Header() {
                 Home
               </Link>
               <Link
-                href="/#properties"
+                href="/properties"
                 onClick={toggleMobileMenu}
                 className="text-gray-700 hover:text-primary transition-colors duration-200"
               >

@@ -70,7 +70,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/#properties"
+                  href="/properties"
                   className="hover:text-primary transition-colors text-sm"
                 >
                   Properties
