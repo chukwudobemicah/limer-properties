@@ -77,13 +77,25 @@ cd limer-properties
 pnpm install
 ```
 
-3. Run the development server:
+3. Set up environment variables:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Then edit `.env.local` and add your WhatsApp business number:
+
+```bash
+NEXT_PUBLIC_WHATSAPP_NUMBER=2348012345678
+```
+
+4. Run the development server:
 
 ```bash
 pnpm dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ### Build for Production
 
@@ -91,6 +103,25 @@ pnpm dev
 pnpm build
 pnpm start
 ```
+
+## Environment Variables
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```bash
+# WhatsApp Business Number (country code without +)
+NEXT_PUBLIC_WHATSAPP_NUMBER=2348012345678
+```
+
+### WhatsApp Integration
+
+The PropertyCard component includes a WhatsApp button that opens WhatsApp with a pre-filled message. The message includes:
+
+- Property title
+- Property ID
+- Professional greeting
+
+Users can click the WhatsApp button to instantly contact you about any property.
 
 ## Customization
 
@@ -195,4 +226,5 @@ For support, email info@limerproperties.com or call +234 801 234 5678.
 ---
 
 Built with ❤️ by Limer Properties Team
+
 # limer-properties

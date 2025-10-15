@@ -1,9 +1,9 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Bed, Bath, Maximize, Tag } from "lucide-react";
+import { MapPin, Bed, Bath, Maximize, Tag, MessageCircle } from "lucide-react";
 import { Property } from "@/types/property";
-import { formatPrice } from "@/utils/functions";
+import { formatPrice, generateWhatsAppLink } from "@/utils/functions";
 import Button from "@/component/Button";
 
 interface PropertyCardProps {
@@ -102,24 +102,39 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           </div>
         )}
 
-        {/* Price and CTA */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-          <div className="flex items-center">
-            <Tag size={18} className="mr-1 text-primary" />
-            <div className="flex flex-col">
-              <span className="text-2xl font-bold text-primary">
-                {formatPrice(property.price)}
+        {/* Price */}
+        <div className="flex items-center pt-4 border-t border-gray-200 mb-4">
+          <Tag size={18} className="mr-1 text-primary" />
+          <div className="flex flex-col">
+            <span className="text-2xl font-bold text-primary">
+              {formatPrice(property.price)}
+            </span>
+            {getPriceLabel(property.type) && (
+              <span className="text-xs text-gray-500">
+                {getPriceLabel(property.type)}
               </span>
-              {getPriceLabel(property.type) && (
-                <span className="text-xs text-gray-500">
-                  {getPriceLabel(property.type)}
-                </span>
-              )}
-            </div>
+            )}
           </div>
-          <Button variant="primary" href={`/property/${property.id}`}>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            variant="primary"
+            href={`/property/${property.id}`}
+            className="w-full text-sm"
+          >
             View Details
           </Button>
+          <a
+            href={generateWhatsAppLink(property.title, property.id)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex w-full items-center justify-center px-4 py-2 rounded-full font-medium transition-all duration-200 ease-in-out hover:-translate-y-1 bg-green-500 hover:bg-green-600 text-white text-sm"
+          >
+            <MessageCircle size={16} className="mr-1" />
+            WhatsApp
+          </a>
         </div>
       </div>
     </div>

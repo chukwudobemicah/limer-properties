@@ -20,3 +20,15 @@ export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength) + "...";
 }
+
+export function generateWhatsAppLink(
+  propertyTitle: string,
+  propertyId: string
+): string {
+  const phoneNumber =
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2348012345678";
+  const message = `Hello Limer Properties,\n\nI'm interested in the property: *${propertyTitle}*\n\nProperty ID: ${propertyId}\n\nCould you please provide more details?\n\nThank you!`;
+  const encodedMessage = encodeURIComponent(message);
+
+  return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+}
