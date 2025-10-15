@@ -2,22 +2,21 @@
 
 import React from "react";
 import { Search, X } from "lucide-react";
-import { PropertyType, PropertyStructure } from "@/types/property";
 import Select from "@/component/Select";
 
 interface AdvancedPropertyFilterProps {
-  selectedType: PropertyType | "all";
+  selectedType: string;
   selectedLocation: string;
   selectedBedrooms: number | "all";
   selectedBathrooms: number | "all";
-  selectedStructure: PropertyStructure | "all";
+  selectedStructure: string;
   selectedFurnished: "all" | "furnished" | "unfurnished";
   priceRange: [number, number];
-  onTypeChange: (type: PropertyType | "all") => void;
+  onTypeChange: (type: string) => void;
   onLocationChange: (location: string) => void;
   onBedroomsChange: (bedrooms: number | "all") => void;
   onBathroomsChange: (bathrooms: number | "all") => void;
-  onStructureChange: (structure: PropertyStructure | "all") => void;
+  onStructureChange: (structure: string) => void;
   onFurnishedChange: (furnished: "all" | "furnished" | "unfurnished") => void;
   onPriceRangeChange: (range: [number, number]) => void;
   onResetFilters: () => void;
@@ -75,7 +74,7 @@ export default function AdvancedPropertyFilter({
         <Select
           label="Property Type"
           value={selectedType}
-          onChange={(value) => onTypeChange(value as PropertyType | "all")}
+          onChange={(value) => onTypeChange(String(value))}
           options={[
             { value: "all", label: "All Types" },
             { value: "house-for-sale", label: "House for Sale" },
@@ -100,9 +99,7 @@ export default function AdvancedPropertyFilter({
         <Select
           label="Property Structure"
           value={selectedStructure}
-          onChange={(value) =>
-            onStructureChange(value as PropertyStructure | "all")
-          }
+          onChange={(value) => onStructureChange(String(value))}
           options={[
             { value: "all", label: "All Structures" },
             { value: "bungalow", label: "Bungalow" },
