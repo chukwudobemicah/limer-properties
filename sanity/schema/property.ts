@@ -33,9 +33,17 @@ export default defineType({
     }),
     defineField({
       name: "status",
-      title: "Status",
-      type: "reference",
-      to: [{ type: "propertyStatus" }],
+      title: "Property Status",
+      type: "string",
+      options: {
+        list: [
+          { title: "Available", value: "available" },
+          { title: "Sold", value: "sold" },
+          { title: "Rented", value: "rented" },
+        ],
+        layout: "dropdown",
+      },
+      initialValue: "available",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -166,12 +174,18 @@ export default defineType({
       title: "title",
       subtitle: "propertyType.title",
       media: "images.0",
-      status: "status.title",
+      status: "status",
     },
     prepare({ title, subtitle, media, status }) {
+      const statusLabel =
+        status === "available"
+          ? "Available"
+          : status === "sold"
+          ? "Sold"
+          : "Rented";
       return {
         title,
-        subtitle: `${subtitle} - ${status}`,
+        subtitle: `${subtitle} - ${statusLabel}`,
         media,
       };
     },

@@ -17,15 +17,15 @@ export default defineType({
     defineField({
       name: "city",
       title: "City",
-      type: "string",
-      description: "e.g., Lagos, Abuja",
+      type: "reference",
+      to: [{ type: "city" }],
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "state",
       title: "State",
-      type: "string",
-      description: "e.g., Lagos, FCT",
+      type: "reference",
+      to: [{ type: "state" }],
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -43,13 +43,13 @@ export default defineType({
   preview: {
     select: {
       title: "name",
-      subtitle: "city",
-      state: "state",
+      city: "city.name",
+      state: "state.name",
     },
-    prepare({ title, subtitle, state }) {
+    prepare({ title, city, state }) {
       return {
         title,
-        subtitle: `${subtitle}, ${state}`,
+        subtitle: `${city}, ${state}`,
       };
     },
   },

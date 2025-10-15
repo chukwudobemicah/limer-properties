@@ -12,28 +12,28 @@ const PROPERTIES_QUERY = `*[_type == "property"] | order(publishedAt desc) {
   propertyType->{
     _id,
     title,
-    value,
-    description
+    slug
   },
-  status->{
-    _id,
-    title,
-    value,
-    color
-  },
+  status,
   location->{
     _id,
     name,
-    city,
-    state,
+    city->{
+      _id,
+      name,
+      slug
+    },
+    state->{
+      _id,
+      name,
+      slug
+    },
     slug
   },
   structure->{
     _id,
     title,
-    value,
-    floors,
-    description
+    slug
   },
   description,
   price,

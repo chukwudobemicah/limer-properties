@@ -1,17 +1,17 @@
 import { defineField, defineType } from "sanity";
-import { Tag } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 export default defineType({
-  name: "propertyType",
-  title: "Property Type",
+  name: "state",
+  title: "State",
   type: "document",
-  icon: Tag,
+  icon: MapPin,
   fields: [
     defineField({
-      name: "title",
-      title: "Property Type Name",
+      name: "name",
+      title: "State Name",
       type: "string",
-      description: "e.g., House for Sale, House for Rent, Land, Shortlet",
+      description: "e.g., Lagos State, FCT, Rivers State",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -19,7 +19,7 @@ export default defineType({
       title: "Slug",
       type: "slug",
       options: {
-        source: "title",
+        source: "name",
         maxLength: 96,
       },
       validation: (Rule) => Rule.required(),

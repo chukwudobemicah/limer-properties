@@ -15,35 +15,14 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "value",
-      title: "Value",
-      type: "string",
-      description: "Unique identifier (e.g., bungalow, duplex, flat)",
-      validation: (Rule) => Rule.required().regex(/^[a-z-]+$/),
-    }),
-    defineField({
-      name: "floors",
-      title: "Typical Number of Floors",
-      type: "number",
-      description: "Default number of floors for this structure type",
-    }),
-    defineField({
-      name: "description",
-      title: "Description",
-      type: "text",
-      rows: 3,
+      name: "slug",
+      title: "Slug",
+      type: "slug",
+      options: {
+        source: "title",
+        maxLength: 96,
+      },
+      validation: (Rule) => Rule.required(),
     }),
   ],
-  preview: {
-    select: {
-      title: "title",
-      subtitle: "floors",
-    },
-    prepare({ title, subtitle }) {
-      return {
-        title,
-        subtitle: subtitle ? `${subtitle} floor(s)` : undefined,
-      };
-    },
-  },
 });

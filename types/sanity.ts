@@ -3,15 +3,32 @@ import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 export interface SanityPropertyType {
   _id: string;
   title: string;
-  value: string;
-  description?: string;
+  slug: {
+    current: string;
+  };
+}
+
+export interface SanityCity {
+  _id: string;
+  name: string;
+  slug: {
+    current: string;
+  };
+}
+
+export interface SanityState {
+  _id: string;
+  name: string;
+  slug: {
+    current: string;
+  };
 }
 
 export interface SanityLocation {
   _id: string;
   name: string;
-  city: string;
-  state: string;
+  city: SanityCity;
+  state: SanityState;
   slug: {
     current: string;
   };
@@ -20,17 +37,12 @@ export interface SanityLocation {
 export interface SanityPropertyStructure {
   _id: string;
   title: string;
-  value: string;
-  floors?: number;
-  description?: string;
+  slug: {
+    current: string;
+  };
 }
 
-export interface SanityPropertyStatus {
-  _id: string;
-  title: string;
-  value: string;
-  color: string;
-}
+export type PropertyStatus = "available" | "sold" | "rented";
 
 export interface SanityProperty {
   _id: string;
@@ -40,7 +52,7 @@ export interface SanityProperty {
     current: string;
   };
   propertyType: SanityPropertyType;
-  status: SanityPropertyStatus;
+  status: PropertyStatus;
   location: SanityLocation;
   structure?: SanityPropertyStructure;
   description: string;

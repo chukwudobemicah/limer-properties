@@ -30,45 +30,57 @@ Sanity Studio is embedded in your Next.js app at the `/studio` route:
 
 No need to run a separate command! Just visit `/studio` in your browser.
 
-### Step 4: Add Filter Values (Important Order!)
+### Step 4: Add Data (Important Order!)
 
-**You MUST add filter values BEFORE adding properties!**
+**You MUST add data in this specific order!**
 
-#### 4.1 Add Property Types
+#### 4.1 Add Cities (First!)
+
+Go to **City** and create:
+
+- `Lagos`
+- `Abuja`
+- `Port Harcourt`
+- `Ibadan`
+- Add more as needed...
+
+#### 4.2 Add States (Second!)
+
+Go to **State** and create:
+
+- `Lagos State`
+- `FCT`
+- `Rivers State`
+- `Oyo State`
+- Add more as needed...
+
+#### 4.3 Add Property Types
 
 Go to **Property Type** and create:
 
-- **Title**: `House for Sale` | **Value**: `house-sale`
-- **Title**: `House for Rent` | **Value**: `house-rent`
-- **Title**: `Land` | **Value**: `land`
-- **Title**: `Shortlet` | **Value**: `shortlet`
+- `House for Sale` (slug will auto-generate)
+- `House for Rent`
+- `Land`
+- `Shortlet`
 
-#### 4.2 Add Property Statuses
-
-Go to **Property Status** and create:
-
-- **Title**: `Available` | **Value**: `available` | **Color**: `#10b981`
-- **Title**: `Sold` | **Value**: `sold` | **Color**: `#ef4444`
-- **Title**: `Rented` | **Value**: `rented` | **Color**: `#f59e0b`
-
-#### 4.3 Add Property Structures
+#### 4.4 Add Property Structures
 
 Go to **Property Structure** and create:
 
-- **Title**: `Bungalow` | **Value**: `bungalow` | **Floors**: `1`
-- **Title**: `Duplex` | **Value**: `duplex` | **Floors**: `2`
-- **Title**: `Flat` | **Value**: `flat` | **Floors**: `1`
-- **Title**: `Terrace` | **Value**: `terrace` | **Floors**: `2`
-- **Title**: `Mansion` | **Value**: `mansion` | **Floors**: `3`
+- `Bungalow` (slug will auto-generate)
+- `Duplex`
+- `Flat`
+- `Terrace`
+- `Mansion`
 
-#### 4.4 Add Locations
+#### 4.5 Add Locations (After Cities & States!)
 
 Go to **Location** and create (example):
 
-- **Name**: `Lekki Phase 1` | **City**: `Lagos` | **State**: `Lagos`
-- **Name**: `Ikeja GRA` | **City**: `Lagos` | **State**: `Lagos`
-- **Name**: `Victoria Island` | **City**: `Lagos` | **State**: `Lagos`
-- **Name**: `Ikoyi` | **City**: `Lagos` | **State**: `Lagos`
+- **Name**: `Lekki Phase 1` | **City**: Select "Lagos" | **State**: Select "Lagos State"
+- **Name**: `Ikeja GRA` | **City**: Select "Lagos" | **State**: Select "Lagos State"
+- **Name**: `Victoria Island` | **City**: Select "Lagos" | **State**: Select "Lagos State"
+- **Name**: `Ikoyi` | **City**: Select "Lagos" | **State**: Select "Lagos State"
 - Add more as needed...
 
 ### Step 5: Add Properties
@@ -78,7 +90,7 @@ Now you can add properties! Go to **Property** and:
 1. **Title**: Enter property title
 2. **Slug**: Click generate
 3. **Property Type**: Select from dropdown (values you created)
-4. **Status**: Select from dropdown
+4. **Property Status**: Select (Available, Sold, or Rented)
 5. **Location**: Select from dropdown
 6. **Structure**: Select from dropdown (optional)
 7. **Description**: Enter full description
