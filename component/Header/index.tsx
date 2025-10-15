@@ -43,6 +43,12 @@ export default function Header() {
             >
               About
             </Link>
+            <Link
+              href="/studio"
+              className="text-gray-700 hover:text-primary transition-colors duration-200"
+            >
+              Studio
+            </Link>
             <Button variant="primary" href="/#contact">
               Contact Us
             </Button>
@@ -82,6 +88,13 @@ export default function Header() {
                 className="text-gray-700 hover:text-primary transition-colors duration-200"
               >
                 About
+              </Link>
+              <Link
+                href="/studio"
+                onClick={toggleMobileMenu}
+                className="text-gray-700 hover:text-primary transition-colors duration-200"
+              >
+                Studio
               </Link>
               <Button variant="primary" href="/#contact" className="w-full">
                 Contact Us

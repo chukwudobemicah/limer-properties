@@ -95,7 +95,9 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=2348012345678
 pnpm dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
+5. Open your browser:
+   - **Website**: [http://localhost:3000](http://localhost:3000)
+   - **Sanity Studio**: [http://localhost:3000/studio](http://localhost:3000/studio)
 
 ### Build for Production
 
@@ -111,7 +113,26 @@ Create a `.env.local` file in the root directory with the following variables:
 ```bash
 # WhatsApp Business Number (country code without +)
 NEXT_PUBLIC_WHATSAPP_NUMBER=2348012345678
+
+# Sanity CMS Configuration
+NEXT_PUBLIC_SANITY_PROJECT_ID=your-project-id
+NEXT_PUBLIC_SANITY_DATASET=production
 ```
+
+### Sanity CMS Integration
+
+Properties are managed through Sanity CMS with a filter-first architecture:
+
+**Filter Schemas** (created first):
+
+- Property Types (sale, rent, land, shortlet)
+- Locations (cities and areas)
+- Property Structures (bungalow, duplex, flat, etc.)
+- Property Status (available, sold, rented)
+
+**Property Schema** references these filters, ensuring data consistency.
+
+See [SANITY_SETUP.md](./SANITY_SETUP.md) for complete setup guide.
 
 ### WhatsApp Integration
 
