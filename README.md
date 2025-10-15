@@ -1,36 +1,198 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Limer Properties
+
+A modern, responsive real estate website built with Next.js 15, React 19, TypeScript, and Tailwind CSS.
+
+## Features
+
+- 🏠 **Property Listings**: Browse houses for sale, rent, land, and shortlets
+- 🔍 **Advanced Filtering**: Filter properties by type, location, bedrooms, and more
+- 🎨 **Modern UI/UX**: Beautiful, responsive design with smooth animations
+- 📱 **Mobile-First**: Optimized for all devices and screen sizes
+- ⚡ **Fast Performance**: Built with Next.js for optimal speed and SEO
+- 🎯 **Featured Properties**: Showcase premium listings
+- 📸 **Image Galleries**: Interactive property image sliders
+- 📄 **Detailed Property Pages**: Comprehensive property information
+- 💼 **About Page**: Company information and team showcase
+- 📞 **Contact Section**: Easy-to-use contact form
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS with custom CSS variables
+- **UI Components**: Custom-built, reusable components
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **Package Manager**: pnpm
+
+## Project Structure
+
+```
+limer-properties/
+├── app/                      # Next.js app directory
+│   ├── about/               # About page
+│   ├── property/[id]/       # Dynamic property details page
+│   ├── layout.tsx           # Root layout with header/footer
+│   ├── page.tsx             # Home page
+│   └── globals.css          # Global styles and CSS variables
+├── component/               # Reusable components
+│   ├── Button/
+│   ├── ContactSection/
+│   ├── FilterBar/
+│   ├── Footer/
+│   ├── Header/
+│   ├── Hero/
+│   ├── Loader/
+│   ├── PropertyCard/
+│   └── Toast/
+├── data/                    # Static data
+│   └── properties.ts        # Property listings data
+├── hooks/                   # Custom React hooks
+│   └── usePropertyFilter.ts
+├── types/                   # TypeScript type definitions
+│   └── property.ts
+└── utils/                   # Utility functions
+    └── functions.ts
+```
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- pnpm (or npm/yarn)
+
+### Installation
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd limer-properties
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Run the development server:
 
-## Learn More
+```bash
+pnpm dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Build for Production
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm build
+pnpm start
+```
 
-## Deploy on Vercel
+## Customization
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Colors
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The primary color scheme uses blue. You can customize colors in `app/globals.css`:
+
+```css
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1e40af;
+  --primary-light: #3b82f6;
+  /* ... more colors */
+}
+```
+
+### Property Data
+
+Update property listings in `data/properties.ts`:
+
+```typescript
+export const properties: Property[] = [
+  {
+    id: "1",
+    title: "Your Property Title",
+    description: "Property description...",
+    // ... more fields
+  },
+];
+```
+
+### Components
+
+All components are located in the `component/` directory and are fully customizable. Each component is built with TypeScript and uses Tailwind CSS for styling.
+
+## Key Components
+
+### Button Component
+
+Reusable button with primary/secondary variants and link support.
+
+### PropertyCard Component
+
+Displays property information with image, price, location, and features.
+
+### FilterBar Component
+
+Advanced filtering for property type and location.
+
+### Hero Component
+
+Auto-rotating image slider with navigation controls.
+
+### Header Component
+
+Responsive navigation with mobile menu.
+
+### Footer Component
+
+Company information, quick links, and contact details.
+
+## Custom Hooks
+
+### usePropertyFilter
+
+Handles property filtering logic:
+
+- Filter by property type
+- Filter by location
+- Returns filtered results
+
+## Type Safety
+
+The project uses TypeScript for full type safety:
+
+- Property types defined in `types/property.ts`
+- Custom utility functions in `utils/functions.ts`
+- Type-safe components and hooks
+
+## Performance Optimizations
+
+- Image optimization with Next.js Image component
+- Code splitting with dynamic imports
+- Lazy loading of images
+- Optimized bundle size
+
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+## License
+
+This project is private and proprietary.
+
+## Support
+
+For support, email info@limerproperties.com or call +234 801 234 5678.
+
+---
+
+Built with ❤️ by Limer Properties Team
+# limer-properties
