@@ -3,6 +3,7 @@
 import React from "react";
 import { Search } from "lucide-react";
 import { PropertyType } from "@/types/property";
+import Select from "@/component/Select";
 
 interface FilterBarProps {
   selectedType: PropertyType | "all";
@@ -23,50 +24,29 @@ export default function FilterBar({
     <div className="bg-white rounded-lg shadow-lg p-6 -mt-10 relative z-10">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Property Type Filter */}
-        <div>
-          <label
-            htmlFor="property-type"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Property Type
-          </label>
-          <select
-            id="property-type"
-            value={selectedType}
-            onChange={(event) =>
-              onTypeChange(event.target.value as PropertyType | "all")
-            }
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-          >
-            <option value="all">All Types</option>
-            <option value="house-sale">House for Sale</option>
-            <option value="house-rent">House for Rent</option>
-            <option value="land">Land</option>
-            <option value="shortlet">Shortlet</option>
-          </select>
-        </div>
+        <Select
+          label="Property Type"
+          value={selectedType}
+          onChange={(value) => onTypeChange(value as PropertyType | "all")}
+          options={[
+            { value: "all", label: "All Types" },
+            { value: "house-sale", label: "House for Sale" },
+            { value: "house-rent", label: "House for Rent" },
+            { value: "land", label: "Land" },
+            { value: "shortlet", label: "Shortlet" },
+          ]}
+        />
 
         {/* Location Filter */}
-        <div>
-          <label
-            htmlFor="location"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Location
-          </label>
-          <select
-            id="location"
-            value={selectedLocation}
-            onChange={(event) => onLocationChange(event.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-          >
-            {locations.map((location) => (
-              <option key={location} value={location}>
-                {location}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Select
+          label="Location"
+          value={selectedLocation}
+          onChange={(value) => onLocationChange(String(value))}
+          options={locations.map((location) => ({
+            value: location,
+            label: location,
+          }))}
+        />
 
         {/* Search Button */}
         <div className="flex items-end">
