@@ -33,10 +33,25 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section with Slider */}
-      <Hero />
+      <div className="relative">
+        <Hero />
+        <div className="absolute w-full bg-black/50 py-10 left-1/2 z-50 -translate-x-1/2 bottom-0">
+          {loading ? (
+            <FilterBarSkeleton />
+          ) : (
+            <FilterBar
+              selectedType={selectedType}
+              selectedLocation={selectedLocation}
+              onTypeChange={(value) => setSelectedType(value)}
+              onLocationChange={(value) => setSelectedLocation(value)}
+              locations={locations.map((loc) => loc.slug.current)}
+            />
+          )}
+        </div>
+      </div>
 
       {/* Filter Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+      {/* <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         {loading ? (
           <FilterBarSkeleton />
         ) : (
@@ -48,7 +63,7 @@ export default function Home() {
             locations={locations.map((loc) => loc.slug.current)}
           />
         )}
-      </section>
+      </section> */}
 
       {/* Featured Properties Section */}
       <section className="py-16 bg-gray-50">

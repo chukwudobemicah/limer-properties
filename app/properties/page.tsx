@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import PropertyCard from "@/component/PropertyCard";
 import AdvancedPropertyFilter from "@/component/AdvancedPropertyFilter";
 import { useSanityProperties } from "@/hooks/useSanityProperties";
@@ -9,6 +10,7 @@ import { useSanityPropertyFilter } from "@/hooks/useSanityPropertyFilter";
 import PropertyCardSkeleton from "@/component/PropertyCardSkeleton";
 
 export default function PropertiesPage() {
+  const searchParams = useSearchParams();
   const { properties, loading: propertiesLoading } = useSanityProperties();
   const { locations, loading: filtersLoading } = useSanityFilters();
 
@@ -32,6 +34,14 @@ export default function PropertiesPage() {
   } = useSanityPropertyFilter({ properties });
 
   const loading = propertiesLoading || filtersLoading;
+
+  // Handle URL query parameters
+  useEffect(() => {
+    const typeParam = searchParams.get("type");
+    if (typeParam && typeParam !== "all") {
+      setSelectedType(typeParam);
+    }
+  }, [searchParams, setSelectedType]);
 
   return (
     <div className="min-h-screen bg-gray-50">

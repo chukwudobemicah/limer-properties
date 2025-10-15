@@ -4,12 +4,21 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import FilterBar from "@/component/FilterBar";
 
 interface HeroSlide {
   id: number;
   image: string;
   title: string;
   subtitle: string;
+}
+
+interface HeroProps {
+  selectedType: string;
+  selectedLocation: string;
+  onTypeChange: (type: string) => void;
+  onLocationChange: (location: string) => void;
+  locations: string[];
 }
 
 const slides: HeroSlide[] = [
@@ -83,7 +92,7 @@ export default function Hero() {
 
           {/* Content */}
           <div className="relative z-20 h-full flex items-center justify-center text-center px-4">
-            <div className="max-w-4xl">
+            <div className="max-w-4xl w-full">
               <motion.h1
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -96,7 +105,7 @@ export default function Hero() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
-                className="text-xl md:text-2xl text-white"
+                className="text-xl md:text-2xl text-white mb-8"
               >
                 {slides[currentSlide].subtitle}
               </motion.p>
