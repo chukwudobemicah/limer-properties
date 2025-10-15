@@ -72,7 +72,7 @@ export default function Hero() {
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${slides[currentSlide].image})` }}
           >
-            <div className="absolute inset-0 bg-black bg-opacity-40" />
+            <div className="absolute inset-0 bg-black opacity-40" />
           </div>
 
           {/* Content */}
