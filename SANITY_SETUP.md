@@ -87,19 +87,30 @@ Go to **Location** and create (example):
 
 Now you can add properties! Go to **Property** and:
 
+### Required Fields:
+
 1. **Title**: Enter property title
 2. **Slug**: Click generate
 3. **Property Type**: Select from dropdown (values you created)
 4. **Property Status**: Select (Available, Sold, or Rented)
 5. **Location**: Select from dropdown
-6. **Structure**: Select from dropdown (optional)
-7. **Description**: Enter full description
-8. **Price**: Enter price in Naira
-9. **Images**: Upload property photos
-10. **Bedrooms/Bathrooms**: Enter numbers
-11. **Area**: Square meters
-12. **Features**: Add amenities (Swimming Pool, 24/7 Security, etc.)
-13. **Featured**: Toggle if should appear on homepage
+6. **Description**: Enter full description
+7. **Price**: Enter price in Naira
+8. **Images**: Upload property photos (at least 1)
+
+### Optional Fields (add as needed for property type):
+
+- **Structure**: Select from dropdown (Duplex, Bungalow, etc.)
+- **Bedrooms**: For residential properties
+- **Bathrooms**: For residential properties
+- **Area**: Square meters (not needed for all types)
+- **Floors**: Total number of floors/stories in the building
+- **Floor Position**: Which floor the flat/apartment is on (e.g., 3rd floor)
+- **Parking**: Number of parking spaces
+- **Year Built**: Construction year
+- **Furnished**: Toggle for rental properties
+- **Features**: Add amenities (Swimming Pool, 24/7 Security, etc.)
+- **Featured**: Toggle if should appear on homepage
 
 ## 📝 Schema Overview
 

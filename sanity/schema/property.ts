@@ -104,37 +104,50 @@ export default defineType({
       name: "bedrooms",
       title: "Number of Bedrooms",
       type: "number",
+      description: "Optional - only for residential properties",
       validation: (Rule) => Rule.min(0).integer(),
     }),
     defineField({
       name: "bathrooms",
       title: "Number of Bathrooms",
       type: "number",
+      description: "Optional - only for residential properties",
       validation: (Rule) => Rule.min(0).integer(),
     }),
     defineField({
       name: "area",
       title: "Area (Square Meters)",
       type: "number",
-      validation: (Rule) => Rule.required().positive(),
+      description: "Optional - not needed for all property types",
+      validation: (Rule) => Rule.positive(),
     }),
     defineField({
       name: "floors",
       title: "Number of Floors",
       type: "number",
-      description: "Total number of stories/floors",
+      description: "Optional - total number of stories/floors in the building",
       validation: (Rule) => Rule.min(1).integer(),
+    }),
+    defineField({
+      name: "floorPosition",
+      title: "Floor Position",
+      type: "number",
+      description:
+        "Optional - for flats/apartments, which floor is this unit on? (e.g., 3 for 3rd floor)",
+      validation: (Rule) => Rule.min(0).integer(),
     }),
     defineField({
       name: "parking",
       title: "Parking Spaces",
       type: "number",
+      description: "Optional - number of parking spaces available",
       validation: (Rule) => Rule.min(0).integer(),
     }),
     defineField({
       name: "yearBuilt",
       title: "Year Built",
       type: "number",
+      description: "Optional - year the property was constructed",
       validation: (Rule) =>
         Rule.min(1900).max(new Date().getFullYear()).integer(),
     }),
@@ -142,7 +155,7 @@ export default defineType({
       name: "furnished",
       title: "Furnished",
       type: "boolean",
-      description: "Is this property furnished?",
+      description: "Optional - only relevant for rental properties",
       initialValue: false,
     }),
     defineField({
@@ -153,7 +166,7 @@ export default defineType({
       options: {
         layout: "tags",
       },
-      validation: (Rule) => Rule.required().min(1),
+      description: "Optional - add relevant features for this property",
     }),
     defineField({
       name: "isFeatured",

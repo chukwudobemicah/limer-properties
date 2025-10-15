@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -14,18 +14,100 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  Loader2,
+  Building2,
 } from "lucide-react";
-import { properties } from "@/data/properties";
+import { client } from "@/lib/sanity.client";
+import { SanityProperty } from "@/types/sanity";
+import { urlFor } from "@/lib/sanity.image";
 import { formatPrice } from "@/utils/functions";
 import Button from "@/component/Button";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function PropertyDetails() {
   const params = useParams();
-  const propertyId = params.id as string;
-  const property = properties.find((property) => property.id === propertyId);
+  const propertySlug = params.id as string;
 
+  const [property, setProperty] = useState<SanityProperty | null>(null);
+  const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    async function fetchProperty() {
+      try {
+        setLoading(true);
+        const query = `*[_type == "property" && slug.current == $slug][0] {
+          _id,
+          _createdAt,
+          title,
+          slug,
+          propertyType->{
+            _id,
+            title,
+            slug
+          },
+          status,
+          location->{
+            _id,
+            name,
+            city->{
+              _id,
+              name,
+              slug
+            },
+            state->{
+              _id,
+              name,
+              slug
+            },
+            slug
+          },
+          structure->{
+            _id,
+            title,
+            slug
+          },
+          description,
+          price,
+          images[]{
+            asset,
+            alt,
+            caption
+          },
+          bedrooms,
+          bathrooms,
+          area,
+          floors,
+          floorPosition,
+          parking,
+          yearBuilt,
+          furnished,
+          features,
+          isFeatured,
+          publishedAt
+        }`;
+
+        const data = await client.fetch<SanityProperty>(query, {
+          slug: propertySlug,
+        });
+        setProperty(data);
+      } catch (error) {
+        console.error("Error fetching property:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProperty();
+  }, [propertySlug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
 
   if (!property) {
     return (
@@ -45,10 +127,12 @@ export default function PropertyDetails() {
     );
   }
 
+  const propertyTypeSlug = property.propertyType.slug.current;
+
   const getPropertyTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
-      "house-sale": "For Sale",
-      "house-rent": "For Rent",
+      "house-for-sale": "For Sale",
+      "house-for-rent": "For Rent",
       land: "Land",
       shortlet: "Shortlet",
     };
@@ -56,7 +140,7 @@ export default function PropertyDetails() {
   };
 
   const getPriceLabel = (type: string) => {
-    if (type === "house-rent") return "per year";
+    if (type === "house-for-rent") return "per year";
     if (type === "shortlet") return "per night";
     return "";
   };
@@ -72,6 +156,24 @@ export default function PropertyDetails() {
       previous === 0 ? property.images.length - 1 : previous - 1
     );
   };
+
+  const getCurrentImageUrl = () => {
+    try {
+      if (property.images?.[currentImageIndex]?.asset) {
+        const url = urlFor(property.images[currentImageIndex].asset)
+          .width(1200)
+          .height(800)
+          .url();
+        return url || null;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error generating image URL:", error);
+      return null;
+    }
+  };
+
+  const currentImageUrl = getCurrentImageUrl();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -90,7 +192,7 @@ export default function PropertyDetails() {
               </li>
               <li>
                 <Link
-                  href="/#properties"
+                  href="/properties"
                   className="text-gray-500 hover:text-primary"
                 >
                   Properties
@@ -109,24 +211,48 @@ export default function PropertyDetails() {
           <div className="lg:col-span-2 space-y-8">
             {/* Image Gallery */}
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="relative h-96 md:h-[500px]">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentImageIndex}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute inset-0"
-                  >
-                    <Image
-                      src={property.images[currentImageIndex]}
-                      alt={`${property.title} - Image ${currentImageIndex + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </motion.div>
-                </AnimatePresence>
+              <div className="relative h-96 md:h-[500px] bg-gray-200">
+                {currentImageUrl ? (
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentImageIndex}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="absolute inset-0"
+                    >
+                      <Image
+                        src={currentImageUrl}
+                        alt={
+                          property.images[currentImageIndex]?.alt ||
+                          `${property.title} - Image ${currentImageIndex + 1}`
+                        }
+                        fill
+                        className="object-cover"
+                      />
+                    </motion.div>
+                  </AnimatePresence>
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+                    <div className="text-center">
+                      <svg
+                        className="mx-auto h-24 w-24 text-gray-300"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <p className="mt-4 text-lg">No image available</p>
+                    </div>
+                  </div>
+                )}
 
                 {property.images.length > 1 && (
                   <>
@@ -149,7 +275,7 @@ export default function PropertyDetails() {
 
                 <div className="absolute top-4 left-4">
                   <span className="bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold">
-                    {getPropertyTypeLabel(property.type)}
+                    {getPropertyTypeLabel(propertyTypeSlug)}
                   </span>
                 </div>
 
@@ -165,24 +291,45 @@ export default function PropertyDetails() {
               {/* Thumbnail Gallery */}
               {property.images.length > 1 && (
                 <div className="p-4 flex gap-2 overflow-x-auto">
-                  {property.images.map((image, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden ${
-                        index === currentImageIndex
-                          ? "ring-2 ring-primary"
-                          : "opacity-60 hover:opacity-100"
-                      }`}
-                    >
-                      <Image
-                        src={image}
-                        alt={`Thumbnail ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                    </button>
-                  ))}
+                  {property.images.map((image, index) => {
+                    const getThumbnailUrl = () => {
+                      try {
+                        if (image?.asset) {
+                          const url = urlFor(image.asset)
+                            .width(160)
+                            .height(160)
+                            .url();
+                          return url || null;
+                        }
+                        return null;
+                      } catch (error) {
+                        return null;
+                      }
+                    };
+
+                    const thumbnailUrl = getThumbnailUrl();
+
+                    if (!thumbnailUrl) return null;
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden ${
+                          index === currentImageIndex
+                            ? "ring-2 ring-primary"
+                            : "opacity-60 hover:opacity-100"
+                        }`}
+                      >
+                        <Image
+                          src={thumbnailUrl}
+                          alt={image.alt || `Thumbnail ${index + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -196,7 +343,8 @@ export default function PropertyDetails() {
               <div className="flex items-center text-gray-600 mb-6">
                 <MapPin size={20} className="mr-2" />
                 <span className="text-lg">
-                  {property.location}, {property.city}, {property.state}
+                  {property.location.name}, {property.location.city.name},{" "}
+                  {property.location.state.name}
                 </span>
               </div>
 
@@ -219,13 +367,60 @@ export default function PropertyDetails() {
                     </div>
                   </div>
                 )}
-                <div className="flex items-center">
-                  <Maximize size={24} className="mr-2 text-primary" />
-                  <div>
-                    <p className="text-sm text-gray-600">Area</p>
-                    <p className="font-semibold">{property.area} sqm</p>
+                {property.area && (
+                  <div className="flex items-center">
+                    <Maximize size={24} className="mr-2 text-primary" />
+                    <div>
+                      <p className="text-sm text-gray-600">Area</p>
+                      <p className="font-semibold">{property.area} sqm</p>
+                    </div>
                   </div>
-                </div>
+                )}
+                {property.structure && (
+                  <div className="flex items-center">
+                    <Building2 size={24} className="mr-2 text-primary" />
+                    <div>
+                      <p className="text-sm text-gray-600">Structure</p>
+                      <p className="font-semibold">
+                        {property.structure.title}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {property.floors && (
+                  <div className="flex items-center">
+                    <Building2 size={24} className="mr-2 text-primary" />
+                    <div>
+                      <p className="text-sm text-gray-600">Floors</p>
+                      <p className="font-semibold">
+                        {property.floors}{" "}
+                        {property.floors === 1 ? "floor" : "floors"}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {property.floorPosition !== undefined &&
+                  property.floorPosition !== null && (
+                    <div className="flex items-center">
+                      <Building2 size={24} className="mr-2 text-primary" />
+                      <div>
+                        <p className="text-sm text-gray-600">Floor Position</p>
+                        <p className="font-semibold">
+                          {property.floorPosition === 0
+                            ? "Ground Floor"
+                            : `${property.floorPosition}${
+                                property.floorPosition === 1
+                                  ? "st"
+                                  : property.floorPosition === 2
+                                  ? "nd"
+                                  : property.floorPosition === 3
+                                  ? "rd"
+                                  : "th"
+                              } Floor`}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 {property.parking && (
                   <div className="flex items-center">
                     <Car size={24} className="mr-2 text-primary" />
@@ -257,22 +452,24 @@ export default function PropertyDetails() {
             </div>
 
             {/* Features */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Features & Amenities
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {property.features.map((feature, index) => (
-                  <div key={index} className="flex items-center">
-                    <Check
-                      size={20}
-                      className="text-success mr-2 flex-shrink-0"
-                    />
-                    <span className="text-gray-700">{feature}</span>
-                  </div>
-                ))}
+            {property.features && property.features.length > 0 && (
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  Features & Amenities
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {property.features.map((feature, index) => (
+                    <div key={index} className="flex items-center">
+                      <Check
+                        size={20}
+                        className="text-success mr-2 flex-shrink-0"
+                      />
+                      <span className="text-gray-700">{feature}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -283,9 +480,9 @@ export default function PropertyDetails() {
                 <p className="text-4xl font-bold text-primary">
                   {formatPrice(property.price)}
                 </p>
-                {getPriceLabel(property.type) && (
+                {getPriceLabel(propertyTypeSlug) && (
                   <p className="text-sm text-gray-600 mt-1">
-                    {getPriceLabel(property.type)}
+                    {getPriceLabel(propertyTypeSlug)}
                   </p>
                 )}
               </div>

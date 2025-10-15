@@ -20,6 +20,12 @@ const cities = [
   { name: "Ibadan" },
   { name: "Kano" },
   { name: "Enugu" },
+  { name: "Benin City" },
+  { name: "Calabar" },
+  { name: "Jos" },
+  { name: "Warri" },
+  { name: "Owerri" },
+  { name: "Abeokuta" },
 ];
 
 // Sample States
@@ -30,6 +36,12 @@ const states = [
   { name: "Oyo State" },
   { name: "Kano State" },
   { name: "Enugu State" },
+  { name: "Edo State" },
+  { name: "Cross River State" },
+  { name: "Plateau State" },
+  { name: "Delta State" },
+  { name: "Imo State" },
+  { name: "Ogun State" },
 ];
 
 // Sample Property Types
@@ -123,84 +135,92 @@ async function seedData() {
       })
     );
 
-    // Get Lagos city and Lagos State for locations
+    // Get cities and states for locations
     const lagosCity = createdCities.find((c) => c.name === "Lagos");
     const lagosState = createdStates.find((s) => s.name === "Lagos State");
     const abujaCity = createdCities.find((c) => c.name === "Abuja");
     const fct = createdStates.find((s) => s.name === "FCT");
+    const phCity = createdCities.find((c) => c.name === "Port Harcourt");
+    const riversState = createdStates.find((s) => s.name === "Rivers State");
+    const ibadanCity = createdCities.find((c) => c.name === "Ibadan");
+    const oyoState = createdStates.find((s) => s.name === "Oyo State");
+    const beninCity = createdCities.find((c) => c.name === "Benin City");
+    const edoState = createdStates.find((s) => s.name === "Edo State");
+    const calabarCity = createdCities.find((c) => c.name === "Calabar");
+    const crossRiverState = createdStates.find(
+      (s) => s.name === "Cross River State"
+    );
 
     // Create Sample Locations
     console.log("\n📌 Creating locations...");
     const locations = [
+      // Lagos Locations (15)
+      { name: "Lekki Phase 1", city: lagosCity!._id, state: lagosState!._id },
+      { name: "Lekki Phase 2", city: lagosCity!._id, state: lagosState!._id },
+      { name: "Ikeja GRA", city: lagosCity!._id, state: lagosState!._id },
+      { name: "Victoria Island", city: lagosCity!._id, state: lagosState!._id },
+      { name: "Ikoyi", city: lagosCity!._id, state: lagosState!._id },
+      { name: "Banana Island", city: lagosCity!._id, state: lagosState!._id },
+      { name: "Ajah", city: lagosCity!._id, state: lagosState!._id },
+      { name: "Yaba", city: lagosCity!._id, state: lagosState!._id },
+      { name: "Surulere", city: lagosCity!._id, state: lagosState!._id },
+      { name: "Maryland", city: lagosCity!._id, state: lagosState!._id },
+      { name: "Magodo", city: lagosCity!._id, state: lagosState!._id },
+      { name: "Lekki Gardens", city: lagosCity!._id, state: lagosState!._id },
+      { name: "Chevron", city: lagosCity!._id, state: lagosState!._id },
+      { name: "Sangotedo", city: lagosCity!._id, state: lagosState!._id },
+      { name: "Gbagada", city: lagosCity!._id, state: lagosState!._id },
+
+      // Abuja Locations (10)
+      { name: "Maitama", city: abujaCity!._id, state: fct!._id },
+      { name: "Asokoro", city: abujaCity!._id, state: fct!._id },
+      { name: "Wuse 2", city: abujaCity!._id, state: fct!._id },
+      { name: "Gwarinpa", city: abujaCity!._id, state: fct!._id },
+      { name: "Jabi", city: abujaCity!._id, state: fct!._id },
+      { name: "Katampe", city: abujaCity!._id, state: fct!._id },
+      { name: "Lifecamp", city: abujaCity!._id, state: fct!._id },
+      { name: "Lugbe", city: abujaCity!._id, state: fct!._id },
+      { name: "Kubwa", city: abujaCity!._id, state: fct!._id },
+      { name: "Garki", city: abujaCity!._id, state: fct!._id },
+
+      // Port Harcourt Locations (8)
+      { name: "GRA Phase 1", city: phCity!._id, state: riversState!._id },
+      { name: "GRA Phase 2", city: phCity!._id, state: riversState!._id },
+      { name: "Old GRA", city: phCity!._id, state: riversState!._id },
+      { name: "Trans Amadi", city: phCity!._id, state: riversState!._id },
+      { name: "Rumuokoro", city: phCity!._id, state: riversState!._id },
+      { name: "Ada George", city: phCity!._id, state: riversState!._id },
+      { name: "Eliozu", city: phCity!._id, state: riversState!._id },
+      { name: "D-Line", city: phCity!._id, state: riversState!._id },
+
+      // Ibadan Locations (5)
+      { name: "Bodija", city: ibadanCity!._id, state: oyoState!._id },
+      { name: "Ring Road", city: ibadanCity!._id, state: oyoState!._id },
+      { name: "Jericho", city: ibadanCity!._id, state: oyoState!._id },
+      { name: "Bashorun", city: ibadanCity!._id, state: oyoState!._id },
+      { name: "Oluyole Estate", city: ibadanCity!._id, state: oyoState!._id },
+
+      // Benin City Locations (4)
+      { name: "GRA", city: beninCity!._id, state: edoState!._id },
+      { name: "Ikpoba Hill", city: beninCity!._id, state: edoState!._id },
+      { name: "Ugbowo", city: beninCity!._id, state: edoState!._id },
+      { name: "Airport Road", city: beninCity!._id, state: edoState!._id },
+
+      // Calabar Locations (3)
       {
-        name: "Lekki Phase 1",
-        city: lagosCity!._id,
-        state: lagosState!._id,
+        name: "Marian Road",
+        city: calabarCity!._id,
+        state: crossRiverState!._id,
       },
       {
-        name: "Ikeja GRA",
-        city: lagosCity!._id,
-        state: lagosState!._id,
+        name: "Housing Estate",
+        city: calabarCity!._id,
+        state: crossRiverState!._id,
       },
       {
-        name: "Victoria Island",
-        city: lagosCity!._id,
-        state: lagosState!._id,
-      },
-      {
-        name: "Ikoyi",
-        city: lagosCity!._id,
-        state: lagosState!._id,
-      },
-      {
-        name: "Lekki Phase 2",
-        city: lagosCity!._id,
-        state: lagosState!._id,
-      },
-      {
-        name: "Ajah",
-        city: lagosCity!._id,
-        state: lagosState!._id,
-      },
-      {
-        name: "Banana Island",
-        city: lagosCity!._id,
-        state: lagosState!._id,
-      },
-      {
-        name: "Yaba",
-        city: lagosCity!._id,
-        state: lagosState!._id,
-      },
-      {
-        name: "Surulere",
-        city: lagosCity!._id,
-        state: lagosState!._id,
-      },
-      {
-        name: "Maitama",
-        city: abujaCity!._id,
-        state: fct!._id,
-      },
-      {
-        name: "Asokoro",
-        city: abujaCity!._id,
-        state: fct!._id,
-      },
-      {
-        name: "Wuse 2",
-        city: abujaCity!._id,
-        state: fct!._id,
-      },
-      {
-        name: "Gwarinpa",
-        city: abujaCity!._id,
-        state: fct!._id,
-      },
-      {
-        name: "Jabi",
-        city: abujaCity!._id,
-        state: fct!._id,
+        name: "Satellite Town",
+        city: calabarCity!._id,
+        state: crossRiverState!._id,
       },
     ];
 

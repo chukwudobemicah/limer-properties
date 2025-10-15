@@ -5,22 +5,28 @@ import Hero from "@/component/Hero";
 import FilterBar from "@/component/FilterBar";
 import PropertyCard from "@/component/PropertyCard";
 import ContactSection from "@/component/ContactSection";
-import { properties, locations } from "@/data/properties";
-import { usePropertyFilter } from "@/hooks/usePropertyFilter";
-import { CheckCircle } from "lucide-react";
+import { useSanityProperties } from "@/hooks/useSanityProperties";
+import { useSanityFilters } from "@/hooks/useSanityFilters";
+import { useSanityPropertyFilter } from "@/hooks/useSanityPropertyFilter";
+import { CheckCircle, Loader2 } from "lucide-react";
 
 export default function Home() {
+  const { properties, loading: propertiesLoading } = useSanityProperties();
+  const { locations, loading: filtersLoading } = useSanityFilters();
+
   const {
-    selectedType,
-    selectedLocation,
     filteredProperties,
-    handleTypeChange,
-    handleLocationChange,
-  } = usePropertyFilter({ properties });
+    selectedType,
+    setSelectedType,
+    selectedLocation,
+    setSelectedLocation,
+  } = useSanityPropertyFilter({ properties });
 
   const featuredProperties = properties.filter(
     (property) => property.isFeatured
   );
+
+  const loading = propertiesLoading || filtersLoading;
 
   return (
     <div className="min-h-screen">
@@ -29,13 +35,19 @@ export default function Home() {
 
       {/* Filter Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-        <FilterBar
-          selectedType={selectedType}
-          selectedLocation={selectedLocation}
-          onTypeChange={handleTypeChange}
-          onLocationChange={handleLocationChange}
-          locations={locations}
-        />
+        {loading ? (
+          <div className="flex justify-center items-center py-8">
+            <Loader2 className="animate-spin text-primary" size={48} />
+          </div>
+        ) : (
+          <FilterBar
+            selectedType={selectedType}
+            selectedLocation={selectedLocation}
+            onTypeChange={(value) => setSelectedType(value)}
+            onLocationChange={(value) => setSelectedLocation(value)}
+            locations={locations.map((loc) => loc.slug.current)}
+          />
+        )}
       </section>
 
       {/* Featured Properties Section */}
@@ -50,11 +62,23 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProperties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <Loader2 className="animate-spin text-primary" size={48} />
+            </div>
+          ) : featuredProperties.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featuredProperties.map((property) => (
+                <PropertyCard key={property._id} property={property} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600 text-lg">
+                No featured properties available at the moment.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -70,10 +94,14 @@ export default function Home() {
             </p>
           </div>
 
-          {filteredProperties.length > 0 ? (
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <Loader2 className="animate-spin text-primary" size={48} />
+            </div>
+          ) : filteredProperties.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProperties.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+                <PropertyCard key={property._id} property={property} />
               ))}
             </div>
           ) : (

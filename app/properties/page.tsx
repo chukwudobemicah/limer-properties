@@ -3,28 +3,35 @@
 import React from "react";
 import PropertyCard from "@/component/PropertyCard";
 import AdvancedPropertyFilter from "@/component/AdvancedPropertyFilter";
-import { properties, locations } from "@/data/properties";
-import { useAdvancedPropertyFilter } from "@/hooks/useAdvancedPropertyFilter";
+import { useSanityProperties } from "@/hooks/useSanityProperties";
+import { useSanityFilters } from "@/hooks/useSanityFilters";
+import { useSanityPropertyFilter } from "@/hooks/useSanityPropertyFilter";
+import { Loader2 } from "lucide-react";
 
 export default function PropertiesPage() {
+  const { properties, loading: propertiesLoading } = useSanityProperties();
+  const { locations, loading: filtersLoading } = useSanityFilters();
+
   const {
-    selectedType,
-    selectedLocation,
-    selectedBedrooms,
-    selectedBathrooms,
-    selectedStructure,
-    selectedFurnished,
-    priceRange,
     filteredProperties,
+    selectedType,
     setSelectedType,
+    selectedLocation,
     setSelectedLocation,
+    selectedBedrooms,
     setSelectedBedrooms,
+    selectedBathrooms,
     setSelectedBathrooms,
+    selectedStructure,
     setSelectedStructure,
+    selectedFurnished,
     setSelectedFurnished,
+    priceRange,
     setPriceRange,
     resetFilters,
-  } = useAdvancedPropertyFilter({ properties });
+  } = useSanityPropertyFilter({ properties });
+
+  const loading = propertiesLoading || filtersLoading;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -46,33 +53,45 @@ export default function PropertiesPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Filter Sidebar */}
             <aside className="lg:col-span-1">
-              <AdvancedPropertyFilter
-                selectedType={selectedType}
-                selectedLocation={selectedLocation}
-                selectedBedrooms={selectedBedrooms}
-                selectedBathrooms={selectedBathrooms}
-                selectedStructure={selectedStructure}
-                selectedFurnished={selectedFurnished}
-                priceRange={priceRange}
-                onTypeChange={setSelectedType}
-                onLocationChange={setSelectedLocation}
-                onBedroomsChange={setSelectedBedrooms}
-                onBathroomsChange={setSelectedBathrooms}
-                onStructureChange={setSelectedStructure}
-                onFurnishedChange={setSelectedFurnished}
-                onPriceRangeChange={setPriceRange}
-                onResetFilters={resetFilters}
-                locations={locations}
-                resultsCount={filteredProperties.length}
-              />
+              {loading ? (
+                <div className="bg-white rounded-lg shadow-md p-8">
+                  <div className="flex justify-center items-center">
+                    <Loader2 className="animate-spin text-primary" size={32} />
+                  </div>
+                </div>
+              ) : (
+                <AdvancedPropertyFilter
+                  selectedType={selectedType}
+                  selectedLocation={selectedLocation}
+                  selectedBedrooms={selectedBedrooms}
+                  selectedBathrooms={selectedBathrooms}
+                  selectedStructure={selectedStructure}
+                  selectedFurnished={selectedFurnished}
+                  priceRange={priceRange}
+                  onTypeChange={setSelectedType}
+                  onLocationChange={setSelectedLocation}
+                  onBedroomsChange={setSelectedBedrooms}
+                  onBathroomsChange={setSelectedBathrooms}
+                  onStructureChange={setSelectedStructure}
+                  onFurnishedChange={setSelectedFurnished}
+                  onPriceRangeChange={setPriceRange}
+                  onResetFilters={resetFilters}
+                  locations={locations.map((loc) => loc.slug.current)}
+                  resultsCount={filteredProperties.length}
+                />
+              )}
             </aside>
 
             {/* Properties Grid */}
             <main className="lg:col-span-3">
-              {filteredProperties.length > 0 ? (
+              {loading ? (
+                <div className="flex justify-center items-center py-12">
+                  <Loader2 className="animate-spin text-primary" size={48} />
+                </div>
+              ) : filteredProperties.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {filteredProperties.map((property) => (
-                    <PropertyCard key={property.id} property={property} />
+                    <PropertyCard key={property._id} property={property} />
                   ))}
                 </div>
               ) : (

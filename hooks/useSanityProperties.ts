@@ -46,6 +46,7 @@ const PROPERTIES_QUERY = `*[_type == "property"] | order(publishedAt desc) {
   bathrooms,
   area,
   floors,
+  floorPosition,
   parking,
   yearBuilt,
   furnished,

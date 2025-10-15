@@ -90,9 +90,9 @@ export default function Select({
             className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
           >
             <div className="max-h-60 overflow-y-auto">
-              {options.map((option) => (
+              {options.map((option, index) => (
                 <motion.button
-                  key={option.value}
+                  key={index}
                   type="button"
                   onClick={() => handleSelect(option.value)}
                   className={`w-full px-4 py-3 text-left hover:bg-primary-lighter transition-colors duration-150 ${

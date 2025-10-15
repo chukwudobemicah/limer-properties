@@ -64,12 +64,13 @@ export interface SanityProperty {
   }>;
   bedrooms?: number;
   bathrooms?: number;
-  area: number;
+  area?: number;
   floors?: number;
+  floorPosition?: number;
   parking?: number;
   yearBuilt?: number;
-  furnished: boolean;
-  features: string[];
+  furnished?: boolean;
+  features?: string[];
   isFeatured: boolean;
   publishedAt: string;
 }

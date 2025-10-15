@@ -2,13 +2,12 @@
 
 import React from "react";
 import { Search } from "lucide-react";
-import { PropertyType } from "@/types/property";
 import Select from "@/component/Select";
 
 interface FilterBarProps {
-  selectedType: PropertyType | "all";
+  selectedType: string;
   selectedLocation: string;
-  onTypeChange: (type: PropertyType | "all") => void;
+  onTypeChange: (type: string) => void;
   onLocationChange: (location: string) => void;
   locations: string[];
 }
@@ -27,11 +26,11 @@ export default function FilterBar({
         <Select
           label="Property Type"
           value={selectedType}
-          onChange={(value) => onTypeChange(value as PropertyType | "all")}
+          onChange={(value) => onTypeChange(String(value))}
           options={[
             { value: "all", label: "All Types" },
-            { value: "house-sale", label: "House for Sale" },
-            { value: "house-rent", label: "House for Rent" },
+            { value: "house-for-sale", label: "House for Sale" },
+            { value: "house-for-rent", label: "House for Rent" },
             { value: "land", label: "Land" },
             { value: "shortlet", label: "Shortlet" },
           ]}
