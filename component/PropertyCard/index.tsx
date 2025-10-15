@@ -1,19 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MapPin, Bed, Bath, Maximize, Tag, MessageCircle } from "lucide-react";
 import { SanityProperty } from "@/types/sanity";
 import { formatPrice, generateWhatsAppLink } from "@/utils/functions";
 import { urlFor } from "@/lib/sanity.image";
-import Button from "@/component/Button";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface PropertyCardProps {
   property: SanityProperty;
 }
 
 export default function PropertyCard({ property }: PropertyCardProps) {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const propertyTypeSlug = property.propertyType.slug.current;
-  const propertyTypeTitle = property.propertyType.title;
 
   const getPropertyTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
@@ -31,23 +31,44 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     return "";
   };
 
-  const getImageUrl = () => {
+  // Get all image URLs
+  const getAllImageUrls = () => {
     try {
-      if (property.images?.[0]?.asset) {
-        const url = urlFor(property.images[0].asset)
-          .width(600)
-          .height(400)
-          .url();
-        return url || null;
-      }
-      return null;
+      if (!property.images || property.images.length === 0) return [];
+
+      return property.images
+        .map((image) => {
+          try {
+            if (image?.asset) {
+              return urlFor(image.asset).width(600).height(400).url();
+            }
+            return null;
+          } catch {
+            return null;
+          }
+        })
+        .filter((url): url is string => url !== null);
     } catch (error) {
-      console.error("Error generating image URL:", error);
-      return null;
+      console.error("Error generating image URLs:", error);
+      return [];
     }
   };
 
-  const imageUrl = getImageUrl();
+  const imageUrls = getAllImageUrls();
+  const hasMultipleImages = imageUrls.length > 1;
+
+  // Auto-slide effect for multiple images
+  useEffect(() => {
+    if (!hasMultipleImages) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((previous) =>
+        previous === imageUrls.length - 1 ? 0 : previous + 1
+      );
+    }, 4000); // Change image every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [hasMultipleImages, imageUrls.length]);
 
   // Generate full property details URL
   const propertyDetailsUrl =
@@ -56,16 +77,56 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       : `/property/${property.slug.current}`;
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
-      {/* Image */}
-      <div className="relative h-64 overflow-hidden group bg-gray-200">
-        {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={property.images[0]?.alt || property.title}
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-300"
-          />
+    <Link
+      href={`/property/${property.slug.current}`}
+      className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group"
+    >
+      {/* Image Slider */}
+      <div className="relative h-64 overflow-hidden bg-gray-200">
+        {imageUrls.length > 0 ? (
+          <>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentImageIndex}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={imageUrls[currentImageIndex]}
+                  alt={
+                    property.images[currentImageIndex]?.alt || property.title
+                  }
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Image Indicators */}
+            {hasMultipleImages && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+                {imageUrls.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      setCurrentImageIndex(index);
+                    }}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === currentImageIndex
+                        ? "bg-white w-6"
+                        : "bg-white/60 hover:bg-white/80"
+                    }`}
+                    aria-label={`View image ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-gray-400">
             <div className="text-center">
@@ -86,13 +147,13 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             </div>
           </div>
         )}
-        <div className="absolute top-4 left-4">
+        <div className="absolute top-4 left-4 z-10">
           <span className="bg-primary text-white px-3 py-1 rounded-full text-sm font-semibold">
             {getPropertyTypeLabel(propertyTypeSlug)}
           </span>
         </div>
         {property.isFeatured && (
-          <div className="absolute top-4 right-4">
+          <div className="absolute top-4 right-4 z-10">
             <span className="bg-accent text-white px-3 py-1 rounded-full text-sm font-semibold">
               Featured
             </span>
@@ -170,22 +231,35 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
         {/* Action Buttons */}
         <div className="grid grid-cols-2 gap-3">
-          <Button
-            variant="primary"
-            href={`/property/${property.slug.current}`}
-            className="w-full text-sm"
+          <button
+            onClick={(event) => {
+              event.stopPropagation();
+              // The Link parent will handle navigation
+            }}
+            className="inline-flex w-full items-center justify-center px-4 py-2 rounded-full font-medium transition-all duration-200 ease-in-out hover:-translate-y-1 bg-primary hover:bg-primary-dark text-white text-sm"
           >
             View Details
-          </Button>
+          </button>
           <a
             href={generateWhatsAppLink(
               property.title,
               property.slug.current,
               propertyDetailsUrl,
-              imageUrl || undefined
+              imageUrls[0] || undefined
             )}
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              window.open(
+                generateWhatsAppLink(
+                  property.title,
+                  property.slug.current,
+                  propertyDetailsUrl,
+                  imageUrls[0] || undefined
+                ),
+                "_blank"
+              );
+            }}
             className="inline-flex w-full items-center justify-center px-4 py-2 rounded-full font-medium transition-all duration-200 ease-in-out hover:-translate-y-1 bg-green-500 hover:bg-green-600 text-white text-sm"
           >
             <MessageCircle size={16} className="mr-1" />
@@ -193,6 +267,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           </a>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
