@@ -35,7 +35,7 @@ export default function PropertyDetails() {
 
   const [property, setProperty] = useState<SanityProperty | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
 
   const { companyInfo, loading: companyLoading } = useSanityCompanyInfo();
 
@@ -116,6 +116,30 @@ export default function PropertyDetails() {
     fetchProperty();
   }, [propertySlug]);
 
+  // Combine images and video into a single media array - must be before early returns
+  const mediaItems = React.useMemo(() => {
+    if (!property) return [];
+
+    const items: Array<{ type: "image" | "video"; data: any; index: number }> =
+      [];
+
+    // Add all images
+    property.images?.forEach((image, index) => {
+      items.push({ type: "image", data: image, index });
+    });
+
+    // Add video if it exists
+    if (property.video?.asset?.url) {
+      items.push({
+        type: "video",
+        data: property.video,
+        index: property.images?.length || 0,
+      });
+    }
+
+    return items;
+  }, [property]);
+
   if (loading || companyLoading) {
     return <PropertyDetailsSkeleton />;
   }
@@ -162,35 +186,41 @@ export default function PropertyDetails() {
       ? `${window.location.origin}/property/${property.slug.current}`
       : `/property/${property.slug.current}`;
 
-  const nextImage = () => {
-    setCurrentImageIndex((previous) =>
-      previous === property.images.length - 1 ? 0 : previous + 1
+  const nextMedia = () => {
+    setCurrentMediaIndex((previous) =>
+      previous === mediaItems.length - 1 ? 0 : previous + 1
     );
   };
 
-  const previousImage = () => {
-    setCurrentImageIndex((previous) =>
-      previous === 0 ? property.images.length - 1 : previous - 1
+  const previousMedia = () => {
+    setCurrentMediaIndex((previous) =>
+      previous === 0 ? mediaItems.length - 1 : previous - 1
     );
   };
 
-  const getCurrentImageUrl = () => {
-    try {
-      if (property.images?.[currentImageIndex]?.asset) {
-        const url = urlFor(property.images[currentImageIndex].asset)
-          .width(1200)
-          .height(800)
-          .url();
-        return url || null;
+  const currentMedia = mediaItems[currentMediaIndex];
+
+  const getCurrentMediaUrl = () => {
+    if (!currentMedia) return null;
+
+    if (currentMedia.type === "image") {
+      try {
+        if (currentMedia.data?.asset) {
+          const url = urlFor(currentMedia.data.asset)
+            .width(1200)
+            .height(800)
+            .url();
+          return url || null;
+        }
+      } catch (error) {
+        console.error("Error generating image URL:", error);
       }
-      return null;
-    } catch (error) {
-      console.error("Error generating image URL:", error);
-      return null;
     }
+
+    return null;
   };
 
-  const currentImageUrl = getCurrentImageUrl();
+  const currentMediaUrl = getCurrentMediaUrl();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -226,28 +256,51 @@ export default function PropertyDetails() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Image Gallery */}
+            {/* Media Gallery (Images & Video) */}
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="relative h-96 md:h-[500px] bg-gray-200">
-                {currentImageUrl ? (
+                {currentMedia ? (
                   <AnimatePresence mode="wait">
                     <motion.div
-                      key={currentImageIndex}
+                      key={currentMediaIndex}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.3 }}
                       className="absolute inset-0"
                     >
-                      <Image
-                        src={currentImageUrl}
-                        alt={
-                          property.images[currentImageIndex]?.alt ||
-                          `${property.title} - Image ${currentImageIndex + 1}`
-                        }
-                        fill
-                        className="object-cover"
-                      />
+                      {currentMedia.type === "image" && currentMediaUrl ? (
+                        <Image
+                          src={currentMediaUrl}
+                          alt={
+                            currentMedia.data?.alt ||
+                            `${property.title} - Image ${currentMediaIndex + 1}`
+                          }
+                          fill
+                          className="object-cover"
+                        />
+                      ) : currentMedia.type === "video" ? (
+                        <video
+                          controls
+                          className="w-full h-full object-contain bg-black"
+                          preload="metadata"
+                          key={currentMediaIndex}
+                        >
+                          <source
+                            src={currentMedia.data.asset.url}
+                            type="video/mp4"
+                          />
+                          <source
+                            src={currentMedia.data.asset.url}
+                            type="video/webm"
+                          />
+                          <source
+                            src={currentMedia.data.asset.url}
+                            type="video/ogg"
+                          />
+                          Your browser does not support the video tag.
+                        </video>
+                      ) : null}
                     </motion.div>
                   </AnimatePresence>
                 ) : (
@@ -266,24 +319,24 @@ export default function PropertyDetails() {
                           d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                         />
                       </svg>
-                      <p className="mt-4 text-lg">No image available</p>
+                      <p className="mt-4 text-lg">No media available</p>
                     </div>
                   </div>
                 )}
 
-                {property.images.length > 1 && (
+                {mediaItems.length > 1 && (
                   <>
                     <button
-                      onClick={previousImage}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-900 p-2 rounded-full transition-all"
-                      aria-label="Previous image"
+                      onClick={previousMedia}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-900 p-2 rounded-full transition-all z-10"
+                      aria-label="Previous media"
                     >
                       <ChevronLeft size={24} />
                     </button>
                     <button
-                      onClick={nextImage}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-900 p-2 rounded-full transition-all"
-                      aria-label="Next image"
+                      onClick={nextMedia}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-900 p-2 rounded-full transition-all z-10"
+                      aria-label="Next media"
                     >
                       <ChevronRight size={24} />
                     </button>
@@ -306,76 +359,80 @@ export default function PropertyDetails() {
               </div>
 
               {/* Thumbnail Gallery */}
-              {property.images.length > 1 && (
+              {mediaItems.length > 1 && (
                 <div className="p-4 flex gap-2 overflow-x-auto">
-                  {property.images.map((image, index) => {
-                    const getThumbnailUrl = () => {
-                      try {
-                        if (image?.asset) {
-                          const url = urlFor(image.asset)
-                            .width(160)
-                            .height(160)
-                            .url();
-                          return url || null;
+                  {mediaItems.map((media, index) => {
+                    if (media.type === "image") {
+                      const getThumbnailUrl = () => {
+                        try {
+                          if (media.data?.asset) {
+                            const url = urlFor(media.data.asset)
+                              .width(160)
+                              .height(160)
+                              .url();
+                            return url || null;
+                          }
+                          return null;
+                        } catch (error) {
+                          return null;
                         }
-                        return null;
-                      } catch (error) {
-                        return null;
-                      }
-                    };
+                      };
 
-                    const thumbnailUrl = getThumbnailUrl();
+                      const thumbnailUrl = getThumbnailUrl();
 
-                    if (!thumbnailUrl) return null;
+                      if (!thumbnailUrl) return null;
 
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentImageIndex(index)}
-                        className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden ${
-                          index === currentImageIndex
-                            ? "ring-2 ring-primary"
-                            : "opacity-60 hover:opacity-100"
-                        }`}
-                      >
-                        <Image
-                          src={thumbnailUrl}
-                          alt={image.alt || `Thumbnail ${index + 1}`}
-                          fill
-                          className="object-cover"
-                        />
-                      </button>
-                    );
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentMediaIndex(index)}
+                          className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden ${
+                            index === currentMediaIndex
+                              ? "ring-2 ring-primary"
+                              : "opacity-60 hover:opacity-100"
+                          }`}
+                        >
+                          <Image
+                            src={thumbnailUrl}
+                            alt={
+                              media.data.alt || `Thumbnail ${media.index + 1}`
+                            }
+                            fill
+                            className="object-cover"
+                          />
+                        </button>
+                      );
+                    } else {
+                      // Video thumbnail
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentMediaIndex(index)}
+                          className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-900 ${
+                            index === currentMediaIndex
+                              ? "ring-2 ring-primary"
+                              : "opacity-60 hover:opacity-100"
+                          }`}
+                        >
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <svg
+                              className="w-8 h-8 text-white"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                            </svg>
+                          </div>
+                          <span className="absolute bottom-1 left-1 right-1 text-xs text-white bg-black/60 px-1 py-0.5 rounded text-center truncate">
+                            Video
+                          </span>
+                        </button>
+                      );
+                    }
                   })}
                 </div>
               )}
             </div>
-
-            {/* Property Video */}
-            {property.video?.asset?.url && (
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="p-6">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                    {property.video.title || "Property Video Tour"}
-                  </h2>
-                  <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
-                    <video
-                      controls
-                      className="w-full h-full"
-                      preload="metadata"
-                    >
-                      <source src={property.video.asset.url} type="video/mp4" />
-                      <source
-                        src={property.video.asset.url}
-                        type="video/webm"
-                      />
-                      <source src={property.video.asset.url} type="video/ogg" />
-                      Your browser does not support the video tag.
-                    </video>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Property Details */}
             <div className="bg-white rounded-lg shadow-md p-6">
