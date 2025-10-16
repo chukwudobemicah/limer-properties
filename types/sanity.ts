@@ -80,14 +80,14 @@ export interface SanityProperty {
     alt?: string;
     caption?: string;
   }>;
-  video?: {
+  videos?: Array<{
     asset: {
       _ref: string;
       _type: string;
       url?: string;
     };
     title?: string;
-  };
+  }>;
   bedrooms?: number;
   bathrooms?: number;
   area?: number;

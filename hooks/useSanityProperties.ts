@@ -42,7 +42,7 @@ const PROPERTIES_QUERY = `*[_type == "property"] | order(publishedAt desc) {
     alt,
     caption
   },
-  video{
+  videos[]{
     asset->{
       _ref,
       _type,

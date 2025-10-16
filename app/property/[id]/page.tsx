@@ -81,7 +81,7 @@ export default function PropertyDetails() {
             alt,
             caption
           },
-          video{
+          videos[]{
             asset->{
               _ref,
               _type,
@@ -116,7 +116,7 @@ export default function PropertyDetails() {
     fetchProperty();
   }, [propertySlug]);
 
-  // Combine images and video into a single media array - must be before early returns
+  // Combine images and videos into a single media array - must be before early returns
   const mediaItems = React.useMemo(() => {
     if (!property) return [];
 
@@ -128,14 +128,16 @@ export default function PropertyDetails() {
       items.push({ type: "image", data: image, index });
     });
 
-    // Add video if it exists
-    if (property.video?.asset?.url) {
-      items.push({
-        type: "video",
-        data: property.video,
-        index: property.images?.length || 0,
-      });
-    }
+    // Add all videos if they exist
+    property.videos?.forEach((video, videoIndex) => {
+      if (video?.asset?.url) {
+        items.push({
+          type: "video",
+          data: video,
+          index: (property.images?.length || 0) + videoIndex,
+        });
+      }
+    });
 
     return items;
   }, [property]);
@@ -423,8 +425,11 @@ export default function PropertyDetails() {
                               <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                             </svg>
                           </div>
-                          <span className="absolute bottom-1 left-1 right-1 text-xs text-white bg-black/60 px-1 py-0.5 rounded text-center truncate">
-                            Video
+                          <span
+                            className="absolute bottom-1 left-1 right-1 text-xs text-white bg-black/60 px-1 py-0.5 rounded text-center truncate"
+                            title={media.data.title || "Video"}
+                          >
+                            {media.data.title || "Video"}
                           </span>
                         </button>
                       );
