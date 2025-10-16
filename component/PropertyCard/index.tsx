@@ -244,14 +244,7 @@ export default function PropertyCard({
           >
             View Details
           </button>
-          <a
-            href={generateWhatsAppLink(
-              phoneNumber,
-              property.title,
-              property.slug.current,
-              propertyDetailsUrl,
-              imageUrls[0] || undefined
-            )}
+          <button
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
@@ -270,7 +263,7 @@ export default function PropertyCard({
           >
             <MessageCircle size={16} className="mr-1" />
             WhatsApp
-          </a>
+          </button>
         </div>
       </div>
     </Link>
