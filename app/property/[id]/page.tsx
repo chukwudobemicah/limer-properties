@@ -81,6 +81,14 @@ export default function PropertyDetails() {
             alt,
             caption
           },
+          video{
+            asset->{
+              _ref,
+              _type,
+              url
+            },
+            title
+          },
           bedrooms,
           bathrooms,
           area,
@@ -343,6 +351,32 @@ export default function PropertyDetails() {
               )}
             </div>
 
+            {/* Property Video */}
+            {property.video?.asset?.url && (
+              <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                <div className="p-6">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                    {property.video.title || "Property Video Tour"}
+                  </h2>
+                  <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                    <video
+                      controls
+                      className="w-full h-full"
+                      preload="metadata"
+                    >
+                      <source src={property.video.asset.url} type="video/mp4" />
+                      <source
+                        src={property.video.asset.url}
+                        type="video/webm"
+                      />
+                      <source src={property.video.asset.url} type="video/ogg" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Property Details */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">
@@ -515,8 +549,6 @@ export default function PropertyDetails() {
                     property.slug.current,
                     propertyDetailsUrl
                   )}
-                  target="_blank"
-                  rel="noopener noreferrer"
                 >
                   Schedule a Tour
                 </Button>
@@ -529,8 +561,6 @@ export default function PropertyDetails() {
                     property.slug.current,
                     propertyDetailsUrl
                   )}
-                  target="_blank"
-                  rel="noopener noreferrer"
                 >
                   Make an Inquiry
                 </Button>

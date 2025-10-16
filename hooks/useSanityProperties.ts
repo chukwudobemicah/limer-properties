@@ -42,6 +42,14 @@ const PROPERTIES_QUERY = `*[_type == "property"] | order(publishedAt desc) {
     alt,
     caption
   },
+  video{
+    asset->{
+      _ref,
+      _type,
+      url
+    },
+    title
+  },
   bedrooms,
   bathrooms,
   area,

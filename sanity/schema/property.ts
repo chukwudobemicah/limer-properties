@@ -101,6 +101,23 @@ export default defineType({
       validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
+      name: "video",
+      title: "Property Video",
+      type: "file",
+      description: "Optional - Upload a property tour video (MP4, MOV, etc.)",
+      options: {
+        accept: "video/*",
+      },
+      fields: [
+        {
+          name: "title",
+          type: "string",
+          title: "Video Title",
+          description: "e.g., Property Tour, Aerial View",
+        },
+      ],
+    }),
+    defineField({
       name: "bedrooms",
       title: "Number of Bedrooms",
       type: "number",
