@@ -7,12 +7,14 @@ import AdvancedPropertyFilter from "@/component/AdvancedPropertyFilter";
 import { useSanityProperties } from "@/hooks/useSanityProperties";
 import { useSanityFilters } from "@/hooks/useSanityFilters";
 import { useSanityPropertyFilter } from "@/hooks/useSanityPropertyFilter";
+import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 import PropertyCardSkeleton from "@/component/PropertyCardSkeleton";
 
 export default function PropertiesPage() {
   const searchParams = useSearchParams();
   const { properties, loading: propertiesLoading } = useSanityProperties();
   const { locations, loading: filtersLoading } = useSanityFilters();
+  const { companyInfo, loading: companyLoading } = useSanityCompanyInfo();
 
   const {
     filteredProperties,
@@ -33,7 +35,7 @@ export default function PropertiesPage() {
     resetFilters,
   } = useSanityPropertyFilter({ properties });
 
-  const loading = propertiesLoading || filtersLoading;
+  const loading = propertiesLoading || filtersLoading || companyLoading;
 
   // Handle URL query parameters
   useEffect(() => {
@@ -129,7 +131,11 @@ export default function PropertiesPage() {
               ) : filteredProperties.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {filteredProperties.map((property) => (
-                    <PropertyCard key={property._id} property={property} />
+                    <PropertyCard
+                      key={property._id}
+                      property={property}
+                      phoneNumber={companyInfo?.phone || ""}
+                    />
                   ))}
                 </div>
               ) : (

@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import {
@@ -7,10 +9,13 @@ import {
   Facebook,
   Instagram,
   Twitter,
+  Linkedin,
 } from "lucide-react";
+import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const { companyInfo } = useSanityCompanyInfo();
 
   return (
     <footer className="bg-gray-900 text-gray-300">
@@ -19,40 +24,57 @@ export default function Footer() {
           {/* Company Info */}
           <div>
             <h3 className="text-white text-xl font-bold mb-4">
-              Limer Properties
+              {companyInfo?.companyName || "Limer Properties"}
             </h3>
             <p className="text-sm mb-4">
-              Your trusted partner in finding the perfect property. We offer a
-              wide range of houses, lands, and shortlets across Nigeria.
+              {companyInfo?.description ||
+                "Your trusted partner in finding the perfect property. We offer a wide range of houses, lands, and shortlets across Nigeria."}
             </p>
             <div className="flex space-x-4">
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-primary transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook size={20} />
-              </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-primary transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram size={20} />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-primary transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter size={20} />
-              </a>
+              {companyInfo?.socials?.facebook && (
+                <a
+                  href={companyInfo.socials.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                  aria-label="Facebook"
+                >
+                  <Facebook size={20} />
+                </a>
+              )}
+              {companyInfo?.socials?.instagram && (
+                <a
+                  href={companyInfo.socials.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                  aria-label="Instagram"
+                >
+                  <Instagram size={20} />
+                </a>
+              )}
+              {companyInfo?.socials?.twitter && (
+                <a
+                  href={companyInfo.socials.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                  aria-label="Twitter"
+                >
+                  <Twitter size={20} />
+                </a>
+              )}
+              {companyInfo?.socials?.linkedin && (
+                <a
+                  href={companyInfo.socials.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin size={20} />
+                </a>
+              )}
             </div>
           </div>
 
@@ -138,37 +160,43 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4">Contact Us</h4>
             <ul className="space-y-3">
-              <li className="flex items-start">
-                <MapPin size={18} className="mr-2 mt-1 flex-shrink-0" />
-                <span className="text-sm">
-                  123 Lekki Phase 1, Lagos, Nigeria
-                </span>
-              </li>
-              <li className="flex items-center">
-                <Phone size={18} className="mr-2 flex-shrink-0" />
-                <a
-                  href="tel:+2348012345678"
-                  className="text-sm hover:text-primary transition-colors"
-                >
-                  +234 801 234 5678
-                </a>
-              </li>
-              <li className="flex items-center">
-                <Mail size={18} className="mr-2 flex-shrink-0" />
-                <a
-                  href="mailto:info@limerproperties.com"
-                  className="text-sm hover:text-primary transition-colors"
-                >
-                  info@limerproperties.com
-                </a>
-              </li>
+              {companyInfo?.address && (
+                <li className="flex items-start">
+                  <MapPin size={18} className="mr-2 mt-1 flex-shrink-0" />
+                  <span className="text-sm">{companyInfo.address}</span>
+                </li>
+              )}
+              {companyInfo?.phone && (
+                <li className="flex items-center">
+                  <Phone size={18} className="mr-2 flex-shrink-0" />
+                  <a
+                    href={`tel:+${companyInfo.phone}`}
+                    className="text-sm hover:text-primary transition-colors"
+                  >
+                    {companyInfo.phone}
+                  </a>
+                </li>
+              )}
+              {companyInfo?.email && (
+                <li className="flex items-center">
+                  <Mail size={18} className="mr-2 flex-shrink-0" />
+                  <a
+                    href={`mailto:${companyInfo.email}`}
+                    className="text-sm hover:text-primary transition-colors"
+                  >
+                    {companyInfo.email}
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="text-sm">
-            &copy; {currentYear} Limer Properties. All rights reserved.
+            &copy; {currentYear}{" "}
+            {companyInfo?.companyName || "Limer Properties"}. All rights
+            reserved.
           </p>
         </div>
       </div>

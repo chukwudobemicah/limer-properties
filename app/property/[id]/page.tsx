@@ -24,6 +24,7 @@ import {
   generateTourWhatsAppLink,
   generateInquiryWhatsAppLink,
 } from "@/utils/functions";
+import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 import Button from "@/component/Button";
 import PropertyDetailsSkeleton from "@/component/PropertyDetailsSkeleton";
 import { motion, AnimatePresence } from "framer-motion";
@@ -35,6 +36,8 @@ export default function PropertyDetails() {
   const [property, setProperty] = useState<SanityProperty | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const { companyInfo, loading: companyLoading } = useSanityCompanyInfo();
 
   useEffect(() => {
     async function fetchProperty() {
@@ -105,7 +108,7 @@ export default function PropertyDetails() {
     fetchProperty();
   }, [propertySlug]);
 
-  if (loading) {
+  if (loading || companyLoading) {
     return <PropertyDetailsSkeleton />;
   }
 
@@ -507,6 +510,7 @@ export default function PropertyDetails() {
                   variant="primary"
                   className="w-full"
                   href={generateTourWhatsAppLink(
+                    companyInfo?.phone || "",
                     property.title,
                     property.slug.current,
                     propertyDetailsUrl
@@ -520,6 +524,7 @@ export default function PropertyDetails() {
                   variant="secondary"
                   className="w-full"
                   href={generateInquiryWhatsAppLink(
+                    companyInfo?.phone || "",
                     property.title,
                     property.slug.current,
                     propertyDetailsUrl
@@ -537,14 +542,18 @@ export default function PropertyDetails() {
                   Contact our team for more information about this property.
                 </p>
                 <div className="space-y-2 text-sm">
-                  <p className="text-gray-700">
-                    <span className="font-medium">Phone:</span> +234 801 234
-                    5678
-                  </p>
-                  <p className="text-gray-700">
-                    <span className="font-medium">Email:</span>{" "}
-                    info@limerproperties.com
-                  </p>
+                  {companyInfo?.phone && (
+                    <p className="text-gray-700">
+                      <span className="font-medium">Phone:</span>{" "}
+                      {companyInfo.phone}
+                    </p>
+                  )}
+                  {companyInfo?.email && (
+                    <p className="text-gray-700">
+                      <span className="font-medium">Email:</span>{" "}
+                      {companyInfo.email}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

@@ -8,6 +8,7 @@ import ContactSection from "@/component/ContactSection";
 import { useSanityProperties } from "@/hooks/useSanityProperties";
 import { useSanityFilters } from "@/hooks/useSanityFilters";
 import { useSanityPropertyFilter } from "@/hooks/useSanityPropertyFilter";
+import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 import PropertyCardSkeleton from "@/component/PropertyCardSkeleton";
 import FilterBarSkeleton from "@/component/FilterBarSkeleton";
 import { CheckCircle } from "lucide-react";
@@ -15,6 +16,7 @@ import { CheckCircle } from "lucide-react";
 export default function Home() {
   const { properties, loading: propertiesLoading } = useSanityProperties();
   const { locations, loading: filtersLoading } = useSanityFilters();
+  const { companyInfo, loading: companyLoading } = useSanityCompanyInfo();
 
   const {
     filteredProperties,
@@ -28,7 +30,7 @@ export default function Home() {
     (property) => property.isFeatured
   );
 
-  const loading = propertiesLoading || filtersLoading;
+  const loading = propertiesLoading || filtersLoading || companyLoading;
 
   return (
     <div className="min-h-screen">
@@ -86,7 +88,11 @@ export default function Home() {
           ) : featuredProperties.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredProperties.map((property) => (
-                <PropertyCard key={property._id} property={property} />
+                <PropertyCard
+                  key={property._id}
+                  property={property}
+                  phoneNumber={companyInfo?.phone || ""}
+                />
               ))}
             </div>
           ) : (
@@ -120,7 +126,11 @@ export default function Home() {
           ) : filteredProperties.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProperties.map((property) => (
-                <PropertyCard key={property._id} property={property} />
+                <PropertyCard
+                  key={property._id}
+                  property={property}
+                  phoneNumber={companyInfo?.phone || ""}
+                />
               ))}
             </div>
           ) : (

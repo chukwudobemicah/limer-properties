@@ -4,6 +4,7 @@ import propertyStructure from "./propertyStructure";
 import location from "./location";
 import city from "./city";
 import state from "./state";
+import companyInfo from "./companyInfo";
 
 export const schemaTypes = [
   // Base schemas (create these first)
@@ -17,4 +18,7 @@ export const schemaTypes = [
 
   // Main property schema
   property,
+
+  // Company information
+  companyInfo,
 ];

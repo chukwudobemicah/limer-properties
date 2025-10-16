@@ -9,9 +9,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface PropertyCardProps {
   property: SanityProperty;
+  phoneNumber: string;
 }
 
-export default function PropertyCard({ property }: PropertyCardProps) {
+export default function PropertyCard({
+  property,
+  phoneNumber,
+}: PropertyCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const propertyTypeSlug = property.propertyType.slug.current;
 
@@ -242,6 +246,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           </button>
           <a
             href={generateWhatsAppLink(
+              phoneNumber,
               property.title,
               property.slug.current,
               propertyDetailsUrl,
@@ -252,6 +257,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
               event.stopPropagation();
               window.open(
                 generateWhatsAppLink(
+                  phoneNumber,
                   property.title,
                   property.slug.current,
                   propertyDetailsUrl,

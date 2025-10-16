@@ -2,9 +2,11 @@
 
 import React, { useState } from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 import Button from "@/component/Button";
 
 export default function ContactSection() {
+  const { companyInfo } = useSanityCompanyInfo();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -49,37 +51,41 @@ export default function ContactSection() {
               Contact Information
             </h3>
             <div className="space-y-6">
-              <div className="flex items-start">
-                <div className="bg-primary-lighter p-3 rounded-lg">
-                  <MapPin className="text-primary" size={24} />
+              {companyInfo?.address && (
+                <div className="flex items-start">
+                  <div className="bg-primary-lighter p-3 rounded-lg">
+                    <MapPin className="text-primary" size={24} />
+                  </div>
+                  <div className="ml-4">
+                    <h4 className="font-semibold text-gray-900">Address</h4>
+                    <p className="text-gray-600 mt-1">{companyInfo.address}</p>
+                  </div>
                 </div>
-                <div className="ml-4">
-                  <h4 className="font-semibold text-gray-900">Address</h4>
-                  <p className="text-gray-600 mt-1">
-                    123 Lekki Phase 1, Lagos, Nigeria
-                  </p>
-                </div>
-              </div>
+              )}
 
-              <div className="flex items-start">
-                <div className="bg-primary-lighter p-3 rounded-lg">
-                  <Phone className="text-primary" size={24} />
+              {companyInfo?.phone && (
+                <div className="flex items-start">
+                  <div className="bg-primary-lighter p-3 rounded-lg">
+                    <Phone className="text-primary" size={24} />
+                  </div>
+                  <div className="ml-4">
+                    <h4 className="font-semibold text-gray-900">Phone</h4>
+                    <p className="text-gray-600 mt-1">{companyInfo.phone}</p>
+                  </div>
                 </div>
-                <div className="ml-4">
-                  <h4 className="font-semibold text-gray-900">Phone</h4>
-                  <p className="text-gray-600 mt-1">+234 801 234 5678</p>
-                </div>
-              </div>
+              )}
 
-              <div className="flex items-start">
-                <div className="bg-primary-lighter p-3 rounded-lg">
-                  <Mail className="text-primary" size={24} />
+              {companyInfo?.email && (
+                <div className="flex items-start">
+                  <div className="bg-primary-lighter p-3 rounded-lg">
+                    <Mail className="text-primary" size={24} />
+                  </div>
+                  <div className="ml-4">
+                    <h4 className="font-semibold text-gray-900">Email</h4>
+                    <p className="text-gray-600 mt-1">{companyInfo.email}</p>
+                  </div>
                 </div>
-                <div className="ml-4">
-                  <h4 className="font-semibold text-gray-900">Email</h4>
-                  <p className="text-gray-600 mt-1">info@limerproperties.com</p>
-                </div>
-              </div>
+              )}
             </div>
 
             <div className="mt-8">

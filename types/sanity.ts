@@ -44,6 +44,24 @@ export interface SanityPropertyStructure {
 
 export type PropertyStatus = "available" | "sold" | "rented";
 
+export interface SanityCompanyInfo {
+  _id: string;
+  _type: "companyInfo";
+  companyName: string;
+  phone: string;
+  email: string;
+  address: string;
+  description?: string;
+  socials?: {
+    facebook?: string;
+    instagram?: string;
+    twitter?: string;
+    linkedin?: string;
+    tiktok?: string;
+    whatsapp?: string;
+  };
+}
+
 export interface SanityProperty {
   _id: string;
   _createdAt: string;

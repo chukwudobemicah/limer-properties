@@ -22,14 +22,12 @@ export function truncateText(text: string, maxLength: number): string {
 }
 
 export function generateWhatsAppLink(
+  phoneNumber: string,
   propertyTitle: string,
   propertyId: string,
   detailsUrl?: string,
   imageUrl?: string
 ): string {
-  const phoneNumber =
-    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2348012345678";
-
   let message = `Hello Limer Properties,\n\nI'm interested in the property: *${propertyTitle}*\n\nProperty ID: ${propertyId}`;
 
   if (detailsUrl) {
@@ -48,13 +46,11 @@ export function generateWhatsAppLink(
 }
 
 export function generateTourWhatsAppLink(
+  phoneNumber: string,
   propertyTitle: string,
   propertyId: string,
   detailsUrl?: string
 ): string {
-  const phoneNumber =
-    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2348012345678";
-
   let message = `Hello Limer Properties,\n\nI would like to schedule a tour for the property: *${propertyTitle}*\n\nProperty ID: ${propertyId}`;
 
   if (detailsUrl) {
@@ -69,13 +65,11 @@ export function generateTourWhatsAppLink(
 }
 
 export function generateInquiryWhatsAppLink(
+  phoneNumber: string,
   propertyTitle: string,
   propertyId: string,
   detailsUrl?: string
 ): string {
-  const phoneNumber =
-    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2348012345678";
-
   let message = `Hello Limer Properties,\n\nI have some questions about the property: *${propertyTitle}*\n\nProperty ID: ${propertyId}`;
 
   if (detailsUrl) {
