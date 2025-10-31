@@ -15,15 +15,35 @@ import { CheckCircle } from "lucide-react";
 
 export default function Home() {
   const { properties, loading: propertiesLoading } = useSanityProperties();
-  const { locations, loading: filtersLoading } = useSanityFilters();
+  const {
+    locations,
+    propertyTypes,
+    structures,
+    loading: filtersLoading,
+  } = useSanityFilters();
   const { companyInfo, loading: companyLoading } = useSanityCompanyInfo();
 
   const {
     filteredProperties,
+    selectedPurpose,
+    setSelectedPurpose,
+    searchTerm,
+    setSearchTerm,
     selectedType,
     setSelectedType,
     selectedLocation,
     setSelectedLocation,
+    selectedBedrooms,
+    setSelectedBedrooms,
+    selectedBathrooms,
+    setSelectedBathrooms,
+    selectedStructure,
+    setSelectedStructure,
+    selectedFurnished,
+    setSelectedFurnished,
+    priceRange,
+    setPriceRange,
+    resetFilters,
   } = useSanityPropertyFilter({ properties });
 
   const featuredProperties = properties.filter(
@@ -42,11 +62,49 @@ export default function Home() {
             <FilterBarSkeleton />
           ) : (
             <FilterBar
+              selectedPurpose={selectedPurpose}
+              onPurposeChange={(purpose) => setSelectedPurpose(purpose)}
+              searchTerm={searchTerm}
+              onSearchTermChange={(term) => setSearchTerm(term)}
               selectedType={selectedType}
+              onTypeChange={(type) => setSelectedType(type)}
+              selectedBedrooms={selectedBedrooms}
+              onBedroomsChange={(bedrooms) => setSelectedBedrooms(bedrooms)}
+              selectedBathrooms={selectedBathrooms}
+              onBathroomsChange={(bathrooms) => setSelectedBathrooms(bathrooms)}
+              selectedStructure={selectedStructure}
+              onStructureChange={(structure) => setSelectedStructure(structure)}
+              selectedFurnished={selectedFurnished}
+              onFurnishedChange={(status) => setSelectedFurnished(status)}
               selectedLocation={selectedLocation}
-              onTypeChange={(value) => setSelectedType(value)}
-              onLocationChange={(value) => setSelectedLocation(value)}
-              locations={locations.map((loc) => loc.slug.current)}
+              onLocationChange={(location) => setSelectedLocation(location)}
+              priceRange={priceRange}
+              onPriceRangeChange={(range) => setPriceRange(range)}
+              onResetFilters={() => resetFilters()}
+              propertyTypeOptions={propertyTypes
+                .filter((type) => Boolean(type.slug?.current))
+                .map((type) => ({
+                  value: type.slug?.current ?? type._id,
+                  label: type.title,
+                }))}
+              locationOptions={locations
+                .filter((location) => Boolean(location.slug?.current))
+                .map((location) => ({
+                  value: location.slug?.current ?? location._id,
+                  label: [
+                    location.name,
+                    location.city?.name,
+                    location.state?.name,
+                  ]
+                    .filter((segment): segment is string => Boolean(segment))
+                    .join(", "),
+                }))}
+              structureOptions={structures
+                .filter((structure) => Boolean(structure.slug?.current))
+                .map((structure) => ({
+                  value: structure.slug?.current ?? structure._id,
+                  label: structure.title,
+                }))}
             />
           )}
         </div>

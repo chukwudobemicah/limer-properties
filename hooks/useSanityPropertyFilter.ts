@@ -3,6 +3,10 @@
 import { useState, useMemo } from "react";
 import { SanityProperty } from "@/types/sanity";
 
+export type PropertyPurpose = "buy" | "rent" | "shortlet";
+
+export const DEFAULT_MAX_PRICE = 500_000_000;
+
 interface UseSanityPropertyFilterProps {
   properties: SanityProperty[];
 }
@@ -10,6 +14,9 @@ interface UseSanityPropertyFilterProps {
 export function useSanityPropertyFilter({
   properties,
 }: UseSanityPropertyFilterProps) {
+  const [selectedPurpose, setSelectedPurpose] =
+    useState<PropertyPurpose>("buy");
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all");
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [selectedBedrooms, setSelectedBedrooms] = useState<number | "all">(
@@ -23,18 +30,56 @@ export function useSanityPropertyFilter({
     "all" | "furnished" | "unfurnished"
   >("all");
   const [priceRange, setPriceRange] = useState<[number, number]>([
-    0, 500000000,
+    0,
+    DEFAULT_MAX_PRICE,
   ]);
 
   const filteredProperties = useMemo(() => {
     return properties.filter((property) => {
+      const propertyTypeSlug = property.propertyType?.slug.current ?? "";
+
+      const matchesPurpose = (() => {
+        if (!propertyTypeSlug) {
+          return true;
+        }
+
+        if (selectedPurpose === "buy") {
+          return (
+            propertyTypeSlug.includes("for-sale") ||
+            propertyTypeSlug.includes("sale") ||
+            propertyTypeSlug.includes("land")
+          );
+        }
+
+        if (selectedPurpose === "rent") {
+          return propertyTypeSlug.includes("for-rent");
+        }
+
+        if (selectedPurpose === "shortlet") {
+          return propertyTypeSlug.includes("shortlet");
+        }
+
+        return true;
+      })();
+
       const matchesType =
-        selectedType === "all" ||
-        property.propertyType?.slug.current === selectedType;
+        selectedType === "all" || propertyTypeSlug === selectedType;
 
       const matchesLocation =
         selectedLocation === "all" ||
         property.location?.slug.current === selectedLocation;
+
+      const normalizedSearch = searchTerm.trim().toLowerCase();
+      const matchesSearch =
+        normalizedSearch.length === 0 ||
+        [
+          property.location?.name,
+          property.location?.city?.name,
+          property.location?.state?.name,
+          property.title,
+        ]
+          .filter((value): value is string => Boolean(value))
+          .some((value) => value.toLowerCase().includes(normalizedSearch));
 
       const matchesBedrooms =
         selectedBedrooms === "all" || property.bedrooms === selectedBedrooms;
@@ -55,8 +100,10 @@ export function useSanityPropertyFilter({
         property.price >= priceRange[0] && property.price <= priceRange[1];
 
       return (
+        matchesPurpose &&
         matchesType &&
         matchesLocation &&
+        matchesSearch &&
         matchesBedrooms &&
         matchesBathrooms &&
         matchesStructure &&
@@ -66,6 +113,8 @@ export function useSanityPropertyFilter({
     });
   }, [
     properties,
+    selectedPurpose,
+    searchTerm,
     selectedType,
     selectedLocation,
     selectedBedrooms,
@@ -76,13 +125,15 @@ export function useSanityPropertyFilter({
   ]);
 
   const resetFilters = () => {
+    setSelectedPurpose("buy");
+    setSearchTerm("");
     setSelectedType("all");
     setSelectedLocation("all");
     setSelectedBedrooms("all");
     setSelectedBathrooms("all");
     setSelectedStructure("all");
     setSelectedFurnished("all");
-    setPriceRange([0, 500000000]);
+    setPriceRange([0, DEFAULT_MAX_PRICE]);
   };
 
   return {
@@ -101,6 +152,10 @@ export function useSanityPropertyFilter({
     setSelectedStructure,
     setSelectedFurnished,
     setPriceRange,
+    searchTerm,
+    setSearchTerm,
+    selectedPurpose,
+    setSelectedPurpose,
     resetFilters,
   };
 }
