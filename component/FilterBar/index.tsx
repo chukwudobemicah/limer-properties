@@ -122,8 +122,6 @@ export default function FilterBar({
     const params = new URLSearchParams();
     const normalizedSearch = searchTerm.trim();
 
-    params.set("purpose", selectedPurpose);
-
     if (normalizedSearch.length > 0) {
       params.set("search", normalizedSearch);
     }
@@ -168,7 +166,13 @@ export default function FilterBar({
 
   const handlePurposeClick = (purpose: PropertyPurpose) => {
     onPurposeChange(purpose);
-    onTypeChange("all");
+    if (purpose === "land") {
+      onTypeChange("land");
+    } else if (purpose === "rent") {
+      onTypeChange("house-for-rent");
+    } else if (purpose === "shortlet") {
+      onTypeChange("shortlet");
+    }
   };
 
   const handleMinPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -217,7 +221,7 @@ export default function FilterBar({
   };
 
   const purposeTabs: Array<{ label: string; value: PropertyPurpose }> = [
-    { label: "Buy", value: "buy" },
+    { label: "Land", value: "land" },
     { label: "Rent", value: "rent" },
     { label: "Short Let", value: "shortlet" },
   ];

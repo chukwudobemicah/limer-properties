@@ -8,7 +8,6 @@ import { useSanityProperties } from "@/hooks/useSanityProperties";
 import { useSanityFilters } from "@/hooks/useSanityFilters";
 import {
   DEFAULT_MAX_PRICE,
-  FilterPurpose,
   useSanityPropertyFilter,
 } from "@/hooks/useSanityPropertyFilter";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
@@ -36,7 +35,6 @@ export default function PropertiesPage() {
     setSelectedFurnished,
     priceRange,
     setPriceRange,
-    setSelectedPurpose,
     setSearchTerm,
     resetFilters,
   } = useSanityPropertyFilter({ properties, initialPurpose: "all" });
@@ -83,14 +81,6 @@ export default function PropertiesPage() {
   useEffect(() => {
     if (hasAppliedQueryParams.current) {
       return;
-    }
-
-    const purposeParam = searchParams.get("purpose");
-    if (purposeParam) {
-      const normalizedPurpose = purposeParam.toLowerCase();
-      if (["all", "buy", "rent", "shortlet"].includes(normalizedPurpose)) {
-        setSelectedPurpose(normalizedPurpose as FilterPurpose);
-      }
     }
 
     const typeParam = searchParams.get("type");
@@ -177,7 +167,6 @@ export default function PropertiesPage() {
     hasAppliedQueryParams.current = true;
   }, [
     searchParams,
-    setSelectedPurpose,
     setSelectedType,
     setSelectedLocation,
     setSearchTerm,

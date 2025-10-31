@@ -81,7 +81,7 @@ export default function Home() {
     priceRange,
     setPriceRange,
     resetFilters,
-  } = useSanityPropertyFilter({ properties, initialPurpose: "buy" });
+  } = useSanityPropertyFilter({ properties, initialPurpose: "land" });
 
   const propertyTypeOptions = React.useMemo(
     () =>
