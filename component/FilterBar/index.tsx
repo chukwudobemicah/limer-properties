@@ -14,7 +14,6 @@ import {
   DEFAULT_MAX_PRICE,
   PropertyPurpose,
 } from "@/hooks/useSanityPropertyFilter";
-import { formatPrice } from "@/utils/functions";
 
 interface Option {
   label: string;
@@ -59,25 +58,6 @@ interface FilterBarProps {
   locationOptions: Option[];
   structureOptions: Option[];
 }
-
-const MIN_PRICE_OPTIONS: Array<{ value: string; label: string }> = [
-  { value: "all", label: "No Min" },
-  { value: "5000000", label: formatPrice(5_000_000) },
-  { value: "10000000", label: formatPrice(10_000_000) },
-  { value: "20000000", label: formatPrice(20_000_000) },
-  { value: "50000000", label: formatPrice(50_000_000) },
-  { value: "100000000", label: formatPrice(100_000_000) },
-];
-
-const MAX_PRICE_OPTIONS: Array<{ value: string; label: string }> = [
-  { value: "all", label: "No Max" },
-  { value: "10000000", label: formatPrice(10_000_000) },
-  { value: "20000000", label: formatPrice(20_000_000) },
-  { value: "50000000", label: formatPrice(50_000_000) },
-  { value: "100000000", label: formatPrice(100_000_000) },
-  { value: "200000000", label: formatPrice(200_000_000) },
-  { value: String(DEFAULT_MAX_PRICE), label: formatPrice(DEFAULT_MAX_PRICE) },
-];
 
 const BEDROOM_OPTIONS: Array<{ value: string; label: string }> = [
   { value: "all", label: "Bedrooms" },
@@ -191,14 +171,33 @@ export default function FilterBar({
     onTypeChange("all");
   };
 
-  const handleMinPriceChange = (value: string) => {
-    const minPrice = value === "all" ? 0 : Number(value);
-    onPriceRangeChange([minPrice, priceRange[1]]);
+  const handleMinPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    if (value === "") {
+      onPriceRangeChange([0, Math.max(priceRange[1], 0)]);
+      return;
+    }
+
+    const parsed = Number(value);
+    if (!Number.isNaN(parsed) && parsed >= 0) {
+      onPriceRangeChange([parsed, Math.max(parsed, priceRange[1])]);
+    }
   };
 
-  const handleMaxPriceChange = (value: string) => {
-    const maxPrice = value === "all" ? DEFAULT_MAX_PRICE : Number(value);
-    onPriceRangeChange([priceRange[0], maxPrice]);
+  const handleMaxPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    if (value === "") {
+      onPriceRangeChange([
+        Math.min(priceRange[0], DEFAULT_MAX_PRICE),
+        DEFAULT_MAX_PRICE,
+      ]);
+      return;
+    }
+
+    const parsed = Number(value);
+    if (!Number.isNaN(parsed) && parsed >= 0) {
+      onPriceRangeChange([Math.min(priceRange[0], parsed), parsed]);
+    }
   };
 
   const handleBedroomsChange = (value: string | number) => {
@@ -320,25 +319,41 @@ export default function FilterBar({
                 className="lg:col-span-1"
               />
 
-              <Select
-                value={priceRange[0] === 0 ? "all" : String(priceRange[0])}
-                onChange={(value) => handleMinPriceChange(String(value))}
-                options={MIN_PRICE_OPTIONS}
-                placeholder="Min price"
-                className="lg:col-span-1"
-              />
+              <div className="lg:col-span-1">
+                <label className="sr-only" htmlFor="min-price-input">
+                  Minimum price
+                </label>
+                <input
+                  id="min-price-input"
+                  type="number"
+                  min={0}
+                  step={1000}
+                  value={priceRange[0] === 0 ? "" : String(priceRange[0])}
+                  onChange={handleMinPriceChange}
+                  placeholder="Min price"
+                  className="w-full rounded-xl border border-gray-200 bg-white py-3 px-4 text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
+                />
+              </div>
 
-              <Select
-                value={
-                  priceRange[1] === DEFAULT_MAX_PRICE
-                    ? "all"
-                    : String(priceRange[1])
-                }
-                onChange={(value) => handleMaxPriceChange(String(value))}
-                options={MAX_PRICE_OPTIONS}
-                placeholder="Max price"
-                className="lg:col-span-1"
-              />
+              <div className="lg:col-span-1">
+                <label className="sr-only" htmlFor="max-price-input">
+                  Maximum price
+                </label>
+                <input
+                  id="max-price-input"
+                  type="number"
+                  min={0}
+                  step={1000}
+                  value={
+                    priceRange[1] === DEFAULT_MAX_PRICE
+                      ? ""
+                      : String(priceRange[1])
+                  }
+                  onChange={handleMaxPriceChange}
+                  placeholder="Max price"
+                  className="w-full rounded-xl border border-gray-200 bg-white py-3 px-4 text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
+                />
+              </div>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
