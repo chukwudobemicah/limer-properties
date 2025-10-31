@@ -1,21 +1,26 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { SanityProperty } from "@/types/sanity";
 
 export type PropertyPurpose = "buy" | "rent" | "shortlet";
+export type FilterPurpose = PropertyPurpose | "all";
 
 export const DEFAULT_MAX_PRICE = 500_000_000;
 
 interface UseSanityPropertyFilterProps {
   properties: SanityProperty[];
+  initialPurpose?: FilterPurpose;
 }
 
 export function useSanityPropertyFilter({
   properties,
+  initialPurpose = "all",
 }: UseSanityPropertyFilterProps) {
-  const [selectedPurpose, setSelectedPurpose] =
-    useState<PropertyPurpose>("buy");
+  const initialPurposeReference = useRef<FilterPurpose>(initialPurpose);
+  const [selectedPurpose, setSelectedPurpose] = useState<FilterPurpose>(
+    initialPurposeReference.current
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all");
   const [selectedLocation, setSelectedLocation] = useState("all");
@@ -39,6 +44,10 @@ export function useSanityPropertyFilter({
       const propertyTypeSlug = property.propertyType?.slug.current ?? "";
 
       const matchesPurpose = (() => {
+        if (selectedPurpose === "all") {
+          return true;
+        }
+
         if (!propertyTypeSlug) {
           return true;
         }
@@ -125,7 +134,7 @@ export function useSanityPropertyFilter({
   ]);
 
   const resetFilters = () => {
-    setSelectedPurpose("buy");
+    setSelectedPurpose(initialPurposeReference.current);
     setSearchTerm("");
     setSelectedType("all");
     setSelectedLocation("all");

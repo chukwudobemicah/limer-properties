@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import {
   Search,
   SlidersHorizontal,
@@ -19,6 +20,20 @@ interface Option {
   label: string;
   value: string;
 }
+
+const dedupeByLabel = (options: Option[]) => {
+  const seen = new Set<string>();
+
+  return options.filter((option) => {
+    const key = option.label.trim().toLowerCase();
+    if (seen.has(key)) {
+      return false;
+    }
+
+    seen.add(key);
+    return true;
+  });
+};
 
 interface FilterBarProps {
   selectedPurpose: PropertyPurpose;
@@ -115,14 +130,60 @@ export default function FilterBar({
   locationOptions,
   structureOptions,
 }: FilterBarProps) {
+  const router = useRouter();
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
+
+  const uniquePropertyTypeOptions = dedupeByLabel(propertyTypeOptions);
+  const uniqueLocationOptions = dedupeByLabel(locationOptions);
+  const uniqueStructureOptions = dedupeByLabel(structureOptions);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const propertiesSection = document.getElementById("properties");
-    if (propertiesSection) {
-      propertiesSection.scrollIntoView({ behavior: "smooth" });
+    const params = new URLSearchParams();
+    const normalizedSearch = searchTerm.trim();
+
+    params.set("purpose", selectedPurpose);
+
+    if (normalizedSearch.length > 0) {
+      params.set("search", normalizedSearch);
     }
+
+    if (selectedType !== "all") {
+      params.set("type", selectedType);
+    }
+
+    if (selectedLocation !== "all") {
+      params.set("location", selectedLocation);
+    }
+
+    if (selectedBedrooms !== "all") {
+      params.set("bedrooms", String(selectedBedrooms));
+    }
+
+    if (selectedBathrooms !== "all") {
+      params.set("bathrooms", String(selectedBathrooms));
+    }
+
+    if (selectedStructure !== "all") {
+      params.set("structure", selectedStructure);
+    }
+
+    if (selectedFurnished !== "all") {
+      params.set("furnished", selectedFurnished);
+    }
+
+    if (priceRange[0] > 0) {
+      params.set("minPrice", String(priceRange[0]));
+    }
+
+    if (priceRange[1] < DEFAULT_MAX_PRICE) {
+      params.set("maxPrice", String(priceRange[1]));
+    }
+
+    setIsMoreOptionsOpen(false);
+
+    const queryString = params.toString();
+    router.push(`/properties${queryString ? `?${queryString}` : ""}`);
   };
 
   const handlePurposeClick = (purpose: PropertyPurpose) => {
@@ -164,17 +225,17 @@ export default function FilterBar({
 
   const resolvedTypeOptions: Option[] = [
     { value: "all", label: "All Types" },
-    ...propertyTypeOptions,
+    ...uniquePropertyTypeOptions,
   ];
 
   const resolvedLocationOptions: Option[] = [
     { value: "all", label: "All Locations" },
-    ...locationOptions,
+    ...uniqueLocationOptions,
   ];
 
   const resolvedStructureOptions: Option[] = [
     { value: "all", label: "All Structures" },
-    ...structureOptions,
+    ...uniqueStructureOptions,
   ];
 
   return (

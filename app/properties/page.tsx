@@ -1,12 +1,16 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import PropertyCard from "@/component/PropertyCard";
 import AdvancedPropertyFilter from "@/component/AdvancedPropertyFilter";
 import { useSanityProperties } from "@/hooks/useSanityProperties";
 import { useSanityFilters } from "@/hooks/useSanityFilters";
-import { useSanityPropertyFilter } from "@/hooks/useSanityPropertyFilter";
+import {
+  DEFAULT_MAX_PRICE,
+  FilterPurpose,
+  useSanityPropertyFilter,
+} from "@/hooks/useSanityPropertyFilter";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 import PropertyCardSkeleton from "@/component/PropertyCardSkeleton";
 
@@ -32,18 +36,157 @@ export default function PropertiesPage() {
     setSelectedFurnished,
     priceRange,
     setPriceRange,
+    setSelectedPurpose,
+    setSearchTerm,
     resetFilters,
-  } = useSanityPropertyFilter({ properties });
+  } = useSanityPropertyFilter({ properties, initialPurpose: "all" });
+
+  const locationOptions = useMemo(() => {
+    const seenLabels = new Set<string>();
+    const seenValues = new Set<string>();
+
+    return locations.reduce<Array<{ value: string; label: string }>>(
+      (options, location) => {
+        const value = location.slug?.current;
+        if (!value) {
+          return options;
+        }
+
+        if (seenValues.has(value)) {
+          return options;
+        }
+
+        const label = [location.name, location.city?.name, location.state?.name]
+          .filter((segment): segment is string => Boolean(segment))
+          .join(", ")
+          .trim();
+
+        const normalizedLabel = label.toLowerCase();
+        if (seenLabels.has(normalizedLabel)) {
+          return options;
+        }
+
+        seenValues.add(value);
+        seenLabels.add(normalizedLabel);
+        options.push({ value, label: label || value });
+        return options;
+      },
+      []
+    );
+  }, [locations]);
+
+  const hasAppliedQueryParams = useRef(false);
 
   const loading = propertiesLoading || filtersLoading || companyLoading;
 
   // Handle URL query parameters
   useEffect(() => {
+    if (hasAppliedQueryParams.current) {
+      return;
+    }
+
+    const purposeParam = searchParams.get("purpose");
+    if (purposeParam) {
+      const normalizedPurpose = purposeParam.toLowerCase();
+      if (["all", "buy", "rent", "shortlet"].includes(normalizedPurpose)) {
+        setSelectedPurpose(normalizedPurpose as FilterPurpose);
+      }
+    }
+
     const typeParam = searchParams.get("type");
-    if (typeParam && typeParam !== "all") {
+    if (typeParam) {
       setSelectedType(typeParam);
     }
-  }, [searchParams, setSelectedType]);
+
+    const locationParam = searchParams.get("location");
+    if (locationParam) {
+      setSelectedLocation(locationParam);
+    }
+
+    const searchParam = searchParams.get("search");
+    if (searchParam) {
+      setSearchTerm(searchParam);
+    }
+
+    const bedroomsParam = searchParams.get("bedrooms");
+    if (bedroomsParam) {
+      if (bedroomsParam === "all") {
+        setSelectedBedrooms("all");
+      } else {
+        const parsedBedrooms = Number(bedroomsParam);
+        if (!Number.isNaN(parsedBedrooms)) {
+          setSelectedBedrooms(parsedBedrooms);
+        }
+      }
+    }
+
+    const bathroomsParam = searchParams.get("bathrooms");
+    if (bathroomsParam) {
+      if (bathroomsParam === "all") {
+        setSelectedBathrooms("all");
+      } else {
+        const parsedBathrooms = Number(bathroomsParam);
+        if (!Number.isNaN(parsedBathrooms)) {
+          setSelectedBathrooms(parsedBathrooms);
+        }
+      }
+    }
+
+    const structureParam = searchParams.get("structure");
+    if (structureParam) {
+      setSelectedStructure(structureParam);
+    }
+
+    const furnishedParam = searchParams.get("furnished");
+    if (furnishedParam) {
+      const normalizedFurnished = furnishedParam.toLowerCase();
+      if (["all", "furnished", "unfurnished"].includes(normalizedFurnished)) {
+        setSelectedFurnished(
+          normalizedFurnished as "all" | "furnished" | "unfurnished"
+        );
+      }
+    }
+
+    const minPriceParam = searchParams.get("minPrice");
+    const maxPriceParam = searchParams.get("maxPrice");
+
+    let minPrice = 0;
+    let maxPrice = DEFAULT_MAX_PRICE;
+    let shouldUpdatePrice = false;
+
+    if (minPriceParam) {
+      const parsedMin = Number(minPriceParam);
+      if (!Number.isNaN(parsedMin)) {
+        minPrice = parsedMin;
+        shouldUpdatePrice = true;
+      }
+    }
+
+    if (maxPriceParam) {
+      const parsedMax = Number(maxPriceParam);
+      if (!Number.isNaN(parsedMax)) {
+        maxPrice = parsedMax;
+        shouldUpdatePrice = true;
+      }
+    }
+
+    if (shouldUpdatePrice) {
+      setPriceRange([minPrice, maxPrice]);
+    }
+
+    hasAppliedQueryParams.current = true;
+  }, [
+    searchParams,
+    setSelectedPurpose,
+    setSelectedType,
+    setSelectedLocation,
+    setSearchTerm,
+    setSelectedBedrooms,
+    setSelectedBathrooms,
+    setSelectedStructure,
+    setSelectedFurnished,
+    setPriceRange,
+  ]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -114,7 +257,7 @@ export default function PropertiesPage() {
                   onFurnishedChange={setSelectedFurnished}
                   onPriceRangeChange={setPriceRange}
                   onResetFilters={resetFilters}
-                  locations={locations.map((loc) => loc.slug.current)}
+                  locationOptions={locationOptions}
                   resultsCount={filteredProperties.length}
                 />
               )}

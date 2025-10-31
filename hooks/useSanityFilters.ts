@@ -8,6 +8,26 @@ import {
   SanityPropertyStructure,
 } from "@/types/sanity";
 
+function uniqueBySlug<T extends { slug?: { current?: string }; _id: string }>(
+  items: T[]
+) {
+  const seen = new Set<string>();
+
+  return items.filter((item) => {
+    const key = item.slug?.current ?? item._id;
+    if (!key) {
+      return false;
+    }
+
+    if (seen.has(key)) {
+      return false;
+    }
+
+    seen.add(key);
+    return true;
+  });
+}
+
 export function useSanityFilters() {
   const [propertyTypes, setPropertyTypes] = useState<SanityPropertyType[]>([]);
   const [locations, setLocations] = useState<SanityLocation[]>([]);
@@ -38,9 +58,9 @@ export function useSanityFilters() {
           ),
         ]);
 
-        setPropertyTypes(typesData);
-        setLocations(locationsData);
-        setStructures(structuresData);
+        setPropertyTypes(uniqueBySlug(typesData));
+        setLocations(uniqueBySlug(locationsData));
+        setStructures(uniqueBySlug(structuresData));
         setError(null);
       } catch (error) {
         console.error("Error fetching filters:", error);

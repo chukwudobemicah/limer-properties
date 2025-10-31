@@ -4,6 +4,25 @@ import React from "react";
 import { Search, X } from "lucide-react";
 import Select from "@/component/Select";
 
+interface Option {
+  value: string;
+  label: string;
+}
+
+const dedupeByLabel = (options: Option[]) => {
+  const seen = new Set<string>();
+
+  return options.filter((option) => {
+    const key = option.label.trim().toLowerCase();
+    if (seen.has(key)) {
+      return false;
+    }
+
+    seen.add(key);
+    return true;
+  });
+};
+
 interface AdvancedPropertyFilterProps {
   selectedType: string;
   selectedLocation: string;
@@ -20,7 +39,7 @@ interface AdvancedPropertyFilterProps {
   onFurnishedChange: (furnished: "all" | "furnished" | "unfurnished") => void;
   onPriceRangeChange: (range: [number, number]) => void;
   onResetFilters: () => void;
-  locations: string[];
+  locationOptions: Option[];
   resultsCount: number;
 }
 
@@ -40,7 +59,7 @@ export default function AdvancedPropertyFilter({
   onFurnishedChange,
   onPriceRangeChange,
   onResetFilters,
-  locations,
+  locationOptions,
   resultsCount,
 }: AdvancedPropertyFilterProps) {
   const handleMinPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,6 +71,11 @@ export default function AdvancedPropertyFilter({
     const value = Number(event.target.value);
     onPriceRangeChange([priceRange[0], value]);
   };
+
+  const resolvedLocationOptions: Option[] = [
+    { value: "all", label: "All Locations" },
+    ...dedupeByLabel(locationOptions),
+  ];
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 sticky top-20">
@@ -89,10 +113,7 @@ export default function AdvancedPropertyFilter({
           label="Location"
           value={selectedLocation}
           onChange={(value) => onLocationChange(String(value))}
-          options={locations.map((location) => ({
-            value: location,
-            label: location,
-          }))}
+          options={resolvedLocationOptions}
         />
 
         {/* Structure Type */}

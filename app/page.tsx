@@ -7,11 +7,48 @@ import PropertyCard from "@/component/PropertyCard";
 import ContactSection from "@/component/ContactSection";
 import { useSanityProperties } from "@/hooks/useSanityProperties";
 import { useSanityFilters } from "@/hooks/useSanityFilters";
-import { useSanityPropertyFilter } from "@/hooks/useSanityPropertyFilter";
+import {
+  PropertyPurpose,
+  useSanityPropertyFilter,
+} from "@/hooks/useSanityPropertyFilter";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 import PropertyCardSkeleton from "@/component/PropertyCardSkeleton";
 import FilterBarSkeleton from "@/component/FilterBarSkeleton";
 import { CheckCircle } from "lucide-react";
+
+type Option = {
+  value: string;
+  label: string;
+};
+
+const buildOptions = <T extends { slug?: { current?: string }; _id: string }>(
+  items: T[],
+  getLabel: (item: T) => string
+): Option[] => {
+  const seenValues = new Set<string>();
+  const seenLabels = new Set<string>();
+
+  return items.reduce<Option[]>((options, item) => {
+    const value = item.slug?.current ?? item._id;
+    if (!value || seenValues.has(value)) {
+      return options;
+    }
+
+    const label = getLabel(item).trim();
+    const normalizedLabel = label.toLowerCase();
+    if (normalizedLabel && seenLabels.has(normalizedLabel)) {
+      return options;
+    }
+
+    seenValues.add(value);
+    if (normalizedLabel) {
+      seenLabels.add(normalizedLabel);
+    }
+
+    options.push({ value, label: label || value });
+    return options;
+  }, []);
+};
 
 export default function Home() {
   const { properties, loading: propertiesLoading } = useSanityProperties();
@@ -44,7 +81,31 @@ export default function Home() {
     priceRange,
     setPriceRange,
     resetFilters,
-  } = useSanityPropertyFilter({ properties });
+  } = useSanityPropertyFilter({ properties, initialPurpose: "buy" });
+
+  const propertyTypeOptions = React.useMemo(
+    () =>
+      buildOptions(
+        propertyTypes,
+        (type) => type.title ?? type.slug?.current ?? ""
+      ),
+    [propertyTypes]
+  );
+
+  const locationOptions = React.useMemo(
+    () =>
+      buildOptions(locations, (location) =>
+        [location.name, location.city?.name, location.state?.name]
+          .filter((segment): segment is string => Boolean(segment))
+          .join(", ")
+      ),
+    [locations]
+  );
+
+  const structureOptions = React.useMemo(
+    () => buildOptions(structures, (structure) => structure.title ?? ""),
+    [structures]
+  );
 
   const featuredProperties = properties.filter(
     (property) => property.isFeatured
@@ -62,7 +123,7 @@ export default function Home() {
             <FilterBarSkeleton />
           ) : (
             <FilterBar
-              selectedPurpose={selectedPurpose}
+              selectedPurpose={selectedPurpose as PropertyPurpose}
               onPurposeChange={(purpose) => setSelectedPurpose(purpose)}
               searchTerm={searchTerm}
               onSearchTermChange={(term) => setSearchTerm(term)}
@@ -81,30 +142,9 @@ export default function Home() {
               priceRange={priceRange}
               onPriceRangeChange={(range) => setPriceRange(range)}
               onResetFilters={() => resetFilters()}
-              propertyTypeOptions={propertyTypes
-                .filter((type) => Boolean(type.slug?.current))
-                .map((type) => ({
-                  value: type.slug?.current ?? type._id,
-                  label: type.title,
-                }))}
-              locationOptions={locations
-                .filter((location) => Boolean(location.slug?.current))
-                .map((location) => ({
-                  value: location.slug?.current ?? location._id,
-                  label: [
-                    location.name,
-                    location.city?.name,
-                    location.state?.name,
-                  ]
-                    .filter((segment): segment is string => Boolean(segment))
-                    .join(", "),
-                }))}
-              structureOptions={structures
-                .filter((structure) => Boolean(structure.slug?.current))
-                .map((structure) => ({
-                  value: structure.slug?.current ?? structure._id,
-                  label: structure.title,
-                }))}
+              propertyTypeOptions={propertyTypeOptions}
+              locationOptions={locationOptions}
+              structureOptions={structureOptions}
             />
           )}
         </div>
