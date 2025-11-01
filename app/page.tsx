@@ -118,7 +118,7 @@ export default function Home() {
       {/* Hero Section with Slider */}
       <div className="relative">
         <Hero />
-        <div className="absolute w-full bg-black/50 py-10 left-1/2 z-50 -translate-x-1/2 bottom-0">
+        <div className="absolute w-full py-10 left-1/2 z-50 -translate-x-1/2 top-1/2 -translate-y-1/2">
           {loading ? (
             <FilterBarSkeleton />
           ) : (
@@ -197,45 +197,6 @@ export default function Home() {
             <div className="text-center py-12">
               <p className="text-gray-600 text-lg">
                 No featured properties available at the moment.
-              </p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* All Properties Section */}
-      <section id="properties" className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              All Properties
-            </h2>
-            <p className="text-lg text-gray-600">
-              Browse through our extensive collection of properties
-            </p>
-          </div>
-
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[...Array(9)].map((_, index) => (
-                <PropertyCardSkeleton key={index} />
-              ))}
-            </div>
-          ) : filteredProperties.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProperties.map((property) => (
-                <PropertyCard
-                  key={property._id}
-                  property={property}
-                  phoneNumber={companyInfo?.phone || ""}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">
-                No properties found matching your filters. Please try adjusting
-                your search criteria.
               </p>
             </div>
           )}

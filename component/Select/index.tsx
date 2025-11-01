@@ -16,6 +16,7 @@ interface SelectProps {
   placeholder?: string;
   label?: string;
   className?: string;
+  labelId?: string;
 }
 
 export default function Select({
@@ -25,6 +26,7 @@ export default function Select({
   placeholder = "Select an option",
   label,
   className = "",
+  labelId,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const selectReference = useRef<HTMLDivElement>(null);
@@ -67,6 +69,7 @@ export default function Select({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-left flex items-center justify-between hover:border-primary transition-colors duration-200"
+        {...(labelId ? { "aria-labelledby": labelId } : {})}
       >
         <span className={selectedOption ? "text-gray-900" : "text-gray-400"}>
           {selectedOption ? selectedOption.label : placeholder}

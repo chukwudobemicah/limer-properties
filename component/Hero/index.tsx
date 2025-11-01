@@ -115,7 +115,7 @@ export default function Hero() {
       </AnimatePresence>
 
       {/* Navigation Arrows */}
-      <button
+      {/* <button
         onClick={goToPrevious}
         className="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-white bg-opacity-30 hover:bg-opacity-50 text-white p-3 rounded-full transition-all duration-200"
         aria-label="Previous slide"
@@ -128,10 +128,10 @@ export default function Hero() {
         aria-label="Next slide"
       >
         <ChevronRight size={24} />
-      </button>
+      </button> */}
 
       {/* Dots Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex space-x-3">
+      {/* <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex space-x-3">
         {slides.map((slide, index) => (
           <button
             key={slide.id}
@@ -142,7 +142,7 @@ export default function Hero() {
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

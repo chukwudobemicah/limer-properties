@@ -1,14 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import {
-  Search,
-  SlidersHorizontal,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+import { Search } from "lucide-react";
 import Select from "@/component/Select";
 import {
   DEFAULT_MAX_PRICE,
@@ -111,7 +106,6 @@ export default function FilterBar({
   structureOptions,
 }: FilterBarProps) {
   const router = useRouter();
-  const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
 
   const uniquePropertyTypeOptions = dedupeByLabel(propertyTypeOptions);
   const uniqueLocationOptions = dedupeByLabel(locationOptions);
@@ -158,8 +152,6 @@ export default function FilterBar({
       params.set("maxPrice", String(priceRange[1]));
     }
 
-    setIsMoreOptionsOpen(false);
-
     const queryString = params.toString();
     router.push(`/properties${queryString ? `?${queryString}` : ""}`);
   };
@@ -168,6 +160,8 @@ export default function FilterBar({
     onPurposeChange(purpose);
     if (purpose === "land") {
       onTypeChange("land");
+      onBedroomsChange("all");
+      onBathroomsChange("all");
     } else if (purpose === "rent") {
       onTypeChange("house-for-rent");
     } else if (purpose === "shortlet") {
@@ -270,62 +264,122 @@ export default function FilterBar({
                 );
               })}
             </div>
-
-            <button
-              type="button"
-              onClick={() => setIsMoreOptionsOpen((previous) => !previous)}
-              className="inline-flex items-center gap-2 self-end lg:self-auto text-sm font-medium text-primary"
-            >
-              <SlidersHorizontal size={16} />
-              More search options
-              {isMoreOptionsOpen ? (
-                <ChevronUp size={16} />
-              ) : (
-                <ChevronDown size={16} />
-              )}
-            </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))] gap-3">
-              <div className="col-span-1 lg:col-span-1">
-                <div className="relative h-full">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+              <div className="lg:col-span-2">
+                <label
+                  htmlFor="filter-search"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Location, landmark or keyword
+                </label>
+                <div className="relative">
                   <Search
                     className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
                     size={18}
                   />
                   <input
+                    id="filter-search"
                     type="text"
                     value={searchTerm}
                     onChange={(event) => onSearchTermChange(event.target.value)}
                     placeholder="Enter a state, locality or area"
-                    className="w-full h-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
+                    className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
               </div>
 
-              <Select
-                value={selectedType}
-                onChange={(value) => onTypeChange(String(value))}
-                options={resolvedTypeOptions.map((option) => ({
-                  value: option.value,
-                  label: option.label,
-                }))}
-                placeholder="Type"
-                className="lg:col-span-1"
-              />
+              <div>
+                <label
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                  htmlFor="filter-type"
+                >
+                  Property type
+                </label>
+                <Select
+                  className="w-full"
+                  value={selectedType}
+                  onChange={(value) => onTypeChange(String(value))}
+                  options={resolvedTypeOptions.map((option) => ({
+                    value: option.value,
+                    label: option.label,
+                  }))}
+                  placeholder="Select type"
+                  labelId="filter-type"
+                />
+              </div>
+            </div>
 
-              <Select
-                value={selectedBedrooms}
-                onChange={handleBedroomsChange}
-                options={BEDROOM_OPTIONS}
-                placeholder="Bedrooms"
-                className="lg:col-span-1"
-              />
+            <div
+              className={`grid grid-cols-1 ${
+                selectedPurpose === "land" ? "md:grid-cols-1" : "md:grid-cols-3"
+              } gap-3`}
+            >
+              <div>
+                <label
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                  htmlFor="filter-location"
+                >
+                  Location
+                </label>
+                <Select
+                  className="w-full"
+                  value={selectedLocation}
+                  onChange={(value) => onLocationChange(String(value))}
+                  options={resolvedLocationOptions}
+                  placeholder="Select location"
+                  labelId="filter-location"
+                />
+              </div>
 
-              <div className="lg:col-span-1">
-                <label className="sr-only" htmlFor="min-price-input">
-                  Minimum price
+              {selectedPurpose !== "land" && (
+                <>
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      htmlFor="filter-bedrooms"
+                    >
+                      Bedrooms
+                    </label>
+                    <Select
+                      className="w-full"
+                      value={selectedBedrooms}
+                      onChange={handleBedroomsChange}
+                      options={BEDROOM_OPTIONS}
+                      placeholder="Any bedrooms"
+                      labelId="filter-bedrooms"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      htmlFor="filter-bathrooms"
+                    >
+                      Bathrooms
+                    </label>
+                    <Select
+                      className="w-full"
+                      value={selectedBathrooms}
+                      onChange={handleBathroomsChange}
+                      options={BATHROOM_OPTIONS}
+                      placeholder="Any bathrooms"
+                      labelId="filter-bathrooms"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                  htmlFor="min-price-input"
+                >
+                  Minimum price (₦)
                 </label>
                 <input
                   id="min-price-input"
@@ -334,14 +388,17 @@ export default function FilterBar({
                   step={1000}
                   value={priceRange[0] === 0 ? "" : String(priceRange[0])}
                   onChange={handleMinPriceChange}
-                  placeholder="Min price"
+                  placeholder="No minimum"
                   className="w-full rounded-xl border border-gray-200 bg-white py-3 px-4 text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
                 />
               </div>
 
-              <div className="lg:col-span-1">
-                <label className="sr-only" htmlFor="max-price-input">
-                  Maximum price
+              <div>
+                <label
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                  htmlFor="max-price-input"
+                >
+                  Maximum price (₦)
                 </label>
                 <input
                   id="max-price-input"
@@ -354,13 +411,21 @@ export default function FilterBar({
                       : String(priceRange[1])
                   }
                   onChange={handleMaxPriceChange}
-                  placeholder="Max price"
+                  placeholder="No maximum"
                   className="w-full rounded-xl border border-gray-200 bg-white py-3 px-4 text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
                 />
               </div>
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <button
+                type="button"
+                onClick={onResetFilters}
+                className="inline-flex items-center justify-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
+              >
+                Reset filters
+              </button>
+
               <button
                 type="submit"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
@@ -371,71 +436,38 @@ export default function FilterBar({
             </div>
           </form>
 
-          <AnimatePresence initial={false}>
-            {isMoreOptionsOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="overflow-hidden border-t border-gray-100 pt-4"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <Select
-                    label="Location"
-                    value={selectedLocation}
-                    onChange={(value) => onLocationChange(String(value))}
-                    options={resolvedLocationOptions}
-                  />
+          {selectedPurpose !== "land" && (
+            <div className="border-t border-gray-100 pt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Select
+                  label="Structure"
+                  value={selectedStructure}
+                  onChange={(value) => onStructureChange(String(value))}
+                  options={resolvedStructureOptions}
+                  placeholder="All structures"
+                  labelId="filter-structure"
+                />
 
-                  <Select
-                    label="Bathrooms"
-                    value={selectedBathrooms}
-                    onChange={handleBathroomsChange}
-                    options={BATHROOM_OPTIONS}
-                  />
+                <Select
+                  label="Furnishing"
+                  value={selectedFurnished}
+                  onChange={(value) =>
+                    onFurnishedChange(
+                      value as "all" | "furnished" | "unfurnished"
+                    )
+                  }
+                  options={FURNISHING_OPTIONS}
+                  placeholder="Any"
+                  labelId="filter-furnishing"
+                />
+              </div>
 
-                  <Select
-                    label="Structure"
-                    value={selectedStructure}
-                    onChange={(value) => onStructureChange(String(value))}
-                    options={resolvedStructureOptions}
-                  />
-
-                  <Select
-                    label="Furnishing"
-                    value={selectedFurnished}
-                    onChange={(value) =>
-                      onFurnishedChange(
-                        value as "all" | "furnished" | "unfurnished"
-                      )
-                    }
-                    options={FURNISHING_OPTIONS}
-                  />
-                </div>
-
-                <div className="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <button
-                    type="button"
-                    onClick={() => setIsMoreOptionsOpen(false)}
-                    className="text-sm font-medium text-gray-500 hover:text-gray-700"
-                  >
-                    Hide options
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onResetFilters();
-                      setIsMoreOptionsOpen(false);
-                    }}
-                    className="inline-flex items-center justify-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
-                  >
-                    Reset filters
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              <div className="mt-4 text-sm text-gray-600">
+                Refine your search with furnished and structure details for
+                rentals and short lets.
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </motion.div>
