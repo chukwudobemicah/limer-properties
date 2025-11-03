@@ -240,12 +240,12 @@ export default function FilterBar({
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.4, duration: 0.5 }}
-      className="max-w-5xl w-full mx-auto"
+      className="max-w-5xl w-full mx-auto px-3 sm:px-4 lg:px-0"
     >
-      <div className="bg-white/95 backdrop-blur-md w-full rounded-3xl shadow-xl border border-white/40 p-5 sm:p-8">
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-gray-100 pb-4">
-            <div className="flex items-center bg-gray-100 rounded-full p-1 text-sm font-medium w-full lg:w-auto">
+      <div className="bg-white/95 backdrop-blur-md w-full rounded-2xl sm:rounded-3xl shadow-xl border border-white/40 p-4 sm:p-6 lg:p-8">
+        <div className="flex flex-col gap-4 sm:gap-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4 border-b border-gray-100 pb-3 sm:pb-4">
+            <div className="flex items-center bg-gray-100 rounded-full p-0.5 sm:p-1 text-xs sm:text-sm font-medium w-full lg:w-auto">
               {purposeTabs.map((tab) => {
                 const isActive = tab.value === selectedPurpose;
                 return (
@@ -253,7 +253,7 @@ export default function FilterBar({
                     key={tab.value}
                     type="button"
                     onClick={() => handlePurposeClick(tab.value)}
-                    className={`flex-1 lg:flex-none px-4 sm:px-6 py-2 rounded-full transition-colors ${
+                    className={`flex-1 lg:flex-none px-3 sm:px-4 lg:px-6 py-2 rounded-full transition-colors text-xs sm:text-sm ${
                       isActive
                         ? "bg-white shadow text-gray-900"
                         : "text-gray-500 hover:text-gray-800"
@@ -266,34 +266,31 @@ export default function FilterBar({
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
               <div className="lg:col-span-2">
                 <label
                   htmlFor="filter-search"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
                 >
                   Location, landmark or keyword
                 </label>
                 <div className="relative">
-                  <Search
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                    size={18}
-                  />
+                  <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-[18px] sm:h-[18px]" />
                   <input
                     id="filter-search"
                     type="text"
                     value={searchTerm}
                     onChange={(event) => onSearchTermChange(event.target.value)}
                     placeholder="Enter a state, locality or area"
-                    className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
+                    className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 pl-10 sm:pl-11 pr-3 sm:pr-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
               </div>
 
               <div>
                 <label
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
                   htmlFor="filter-type"
                 >
                   Property type
@@ -319,7 +316,7 @@ export default function FilterBar({
             >
               <div>
                 <label
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
                   htmlFor="filter-location"
                 >
                   Location
@@ -338,7 +335,7 @@ export default function FilterBar({
                 <>
                   <div>
                     <label
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
                       htmlFor="filter-bedrooms"
                     >
                       Bedrooms
@@ -355,7 +352,7 @@ export default function FilterBar({
 
                   <div>
                     <label
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
                       htmlFor="filter-bathrooms"
                     >
                       Bathrooms
@@ -376,7 +373,7 @@ export default function FilterBar({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
                   htmlFor="min-price-input"
                 >
                   Minimum price (₦)
@@ -389,13 +386,13 @@ export default function FilterBar({
                   value={priceRange[0] === 0 ? "" : String(priceRange[0])}
                   onChange={handleMinPriceChange}
                   placeholder="No minimum"
-                  className="w-full rounded-xl border border-gray-200 bg-white py-3 px-4 text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
+                  className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
                 />
               </div>
 
               <div>
                 <label
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
                   htmlFor="max-price-input"
                 >
                   Maximum price (₦)
@@ -412,14 +409,14 @@ export default function FilterBar({
                   }
                   onChange={handleMaxPriceChange}
                   placeholder="No maximum"
-                  className="w-full rounded-xl border border-gray-200 bg-white py-3 px-4 text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
+                  className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
                 />
               </div>
             </div>
 
             {selectedPurpose !== "land" && (
-              <div className="border-t border-gray-100 pt-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="border-t border-gray-100 pt-3 sm:pt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                   <Select
                     label="Structure"
                     value={selectedStructure}
@@ -443,26 +440,26 @@ export default function FilterBar({
                   />
                 </div>
 
-                <div className="mt-4 text-sm text-gray-600">
+                <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-600">
                   Refine your search with furnished and structure details for
                   rentals and short lets.
                 </div>
               </div>
             )}
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 sm:items-center sm:justify-between pt-2">
               <button
                 type="button"
                 onClick={onResetFilters}
-                className="inline-flex items-center justify-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
+                className="inline-flex items-center justify-center rounded-lg border border-primary px-4 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold text-primary transition-colors hover:bg-primary/10 w-full sm:w-auto"
               >
                 Reset filters
               </button>
 
               <button
                 type="submit"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+                className="inline-flex items-center justify-center gap-2 rounded-lg sm:rounded-xl bg-primary px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-primary-dark w-full sm:w-auto"
               >
-                <Search size={18} />
+                <Search className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
                 Search
               </button>
             </div>
