@@ -193,14 +193,14 @@ export default function AdvancedPropertyFilter({
               placeholder="Min Price"
               value={priceRange[0]}
               onChange={handleMinPriceChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
             <input
               type="number"
               placeholder="Max Price"
               value={priceRange[1]}
               onChange={handleMaxPriceChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
         </div>

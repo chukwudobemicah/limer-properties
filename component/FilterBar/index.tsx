@@ -417,6 +417,38 @@ export default function FilterBar({
               </div>
             </div>
 
+            {selectedPurpose !== "land" && (
+              <div className="border-t border-gray-100 pt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <Select
+                    label="Structure"
+                    value={selectedStructure}
+                    onChange={(value) => onStructureChange(String(value))}
+                    options={resolvedStructureOptions}
+                    placeholder="All structures"
+                    labelId="filter-structure"
+                  />
+
+                  <Select
+                    label="Furnishing"
+                    value={selectedFurnished}
+                    onChange={(value) =>
+                      onFurnishedChange(
+                        value as "all" | "furnished" | "unfurnished"
+                      )
+                    }
+                    options={FURNISHING_OPTIONS}
+                    placeholder="Any"
+                    labelId="filter-furnishing"
+                  />
+                </div>
+
+                <div className="mt-4 text-sm text-gray-600">
+                  Refine your search with furnished and structure details for
+                  rentals and short lets.
+                </div>
+              </div>
+            )}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <button
                 type="button"
@@ -435,39 +467,6 @@ export default function FilterBar({
               </button>
             </div>
           </form>
-
-          {selectedPurpose !== "land" && (
-            <div className="border-t border-gray-100 pt-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Select
-                  label="Structure"
-                  value={selectedStructure}
-                  onChange={(value) => onStructureChange(String(value))}
-                  options={resolvedStructureOptions}
-                  placeholder="All structures"
-                  labelId="filter-structure"
-                />
-
-                <Select
-                  label="Furnishing"
-                  value={selectedFurnished}
-                  onChange={(value) =>
-                    onFurnishedChange(
-                      value as "all" | "furnished" | "unfurnished"
-                    )
-                  }
-                  options={FURNISHING_OPTIONS}
-                  placeholder="Any"
-                  labelId="filter-furnishing"
-                />
-              </div>
-
-              <div className="mt-4 text-sm text-gray-600">
-                Refine your search with furnished and structure details for
-                rentals and short lets.
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </motion.div>

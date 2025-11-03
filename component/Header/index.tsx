@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import Button from "@/component/Button";
+import Image from "next/image";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -13,14 +14,23 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className="bg-white shadow-sm sticky top-0 z-50 py-2">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <span className="text-2xl font-bold text-primary">
+            {/* <span className="text-2xl font-bold text-primary">
               Limer Properties
-            </span>
+            </span> */}
+            <Image
+              src="/images/logo.png"
+              alt="Limer Properties"
+              width={100}
+              height={100}
+              priority
+              quality={100}
+              className="w-68"
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -43,12 +53,12 @@ export default function Header() {
             >
               About
             </Link>
-            <Link
+            {/* <Link
               href="/studio"
               className="text-gray-700 hover:text-primary transition-colors duration-200"
             >
               Studio
-            </Link>
+            </Link> */}
             <Button variant="primary" href="/#contact">
               Contact Us
             </Button>
@@ -89,13 +99,13 @@ export default function Header() {
               >
                 About
               </Link>
-              <Link
+              {/* <Link
                 href="/studio"
                 onClick={toggleMobileMenu}
                 className="text-gray-700 hover:text-primary transition-colors duration-200"
               >
                 Studio
-              </Link>
+              </Link> */}
               <Button variant="primary" href="/#contact" className="w-full">
                 Contact Us
               </Button>

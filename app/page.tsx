@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Hero from "@/component/Hero";
+import HeroSlider from "@/component/HeroSlider";
 import FilterBar from "@/component/FilterBar";
 import PropertyCard from "@/component/PropertyCard";
 import ContactSection from "@/component/ContactSection";
@@ -15,6 +15,7 @@ import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 import PropertyCardSkeleton from "@/component/PropertyCardSkeleton";
 import FilterBarSkeleton from "@/component/FilterBarSkeleton";
 import { CheckCircle } from "lucide-react";
+import Image from "next/image";
 
 type Option = {
   value: string;
@@ -116,9 +117,21 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section with Slider */}
-      <div className="relative">
-        <Hero />
-        <div className="absolute w-full py-10 left-1/2 z-50 -translate-x-1/2 top-1/2 -translate-y-1/2">
+      <div className="relative min-h-[80vh] flex items-center justify-center isolate">
+        <div className="absolute inset-0 bg-black opacity-40" />
+
+        <div className="absolute w-full h-full left-1/2 -z-50 -translate-x-1/2 top-1/2 -translate-y-1/2">
+          <Image
+            src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80"
+            alt="Background Image"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
+        {/* <HeroSlider /> */}
+        <div>
           {loading ? (
             <FilterBarSkeleton />
           ) : (

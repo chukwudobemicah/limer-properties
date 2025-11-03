@@ -12,6 +12,7 @@ import {
   Linkedin,
 } from "lucide-react";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
+import Image from "next/image";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -24,7 +25,17 @@ export default function Footer() {
           {/* Company Info */}
           <div>
             <h3 className="text-white text-xl font-bold mb-4">
-              {companyInfo?.companyName || "Limer Properties"}
+              <Link href="/" className="flex items-center">
+                <Image
+                  src="/images/logo.png"
+                  alt="Limer Properties"
+                  width={100}
+                  height={100}
+                  priority
+                  quality={100}
+                  className="w-68"
+                />
+              </Link>
             </h3>
             <p className="text-sm mb-4">
               {companyInfo?.description ||

@@ -45,7 +45,7 @@ const slides: HeroSlide[] = [
   },
 ];
 
-export default function Hero() {
+export default function HeroSlider() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
@@ -67,55 +67,56 @@ export default function Hero() {
   };
 
   return (
-    <div className="relative h-[600px] overflow-hidden">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentSlide}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="absolute inset-0"
-        >
-          {/* Background Image */}
-          <div className="absolute inset-0">
-            <Image
-              src={slides[currentSlide].image}
-              alt={slides[currentSlide].title}
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-black opacity-40 z-10" />
-          </div>
-
-          {/* Content */}
-          <div className="relative z-20 h-full flex items-center justify-center text-center px-4">
-            <div className="max-w-4xl w-full">
-              <motion.h1
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className="text-4xl md:text-6xl font-bold text-white mb-4"
-              >
-                {slides[currentSlide].title}
-              </motion.h1>
-              <motion.p
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
-                className="text-xl md:text-2xl text-white mb-8"
-              >
-                {slides[currentSlide].subtitle}
-              </motion.p>
+    <div className="absolute w-full h-full left-1/2 -z-50 -translate-x-1/2 top-1/2 -translate-y-1/2">
+      <div className="relative h-[600px] overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0"
+          >
+            {/* Background Image */}
+            <div className="absolute inset-0">
+              <Image
+                src={slides[currentSlide].image}
+                alt={slides[currentSlide].title}
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-black opacity-40 z-10" />
             </div>
-          </div>
-        </motion.div>
-      </AnimatePresence>
 
-      {/* Navigation Arrows */}
-      {/* <button
+            {/* Content */}
+            <div className="relative z-20 h-full flex items-center justify-center text-center px-4">
+              <div className="max-w-4xl w-full">
+                <motion.h1
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.5 }}
+                  className="text-4xl md:text-6xl font-bold text-white mb-4"
+                >
+                  {slides[currentSlide].title}
+                </motion.h1>
+                <motion.p
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                  className="text-xl md:text-2xl text-white mb-8"
+                >
+                  {slides[currentSlide].subtitle}
+                </motion.p>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Navigation Arrows */}
+        {/* <button
         onClick={goToPrevious}
         className="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-white bg-opacity-30 hover:bg-opacity-50 text-white p-3 rounded-full transition-all duration-200"
         aria-label="Previous slide"
@@ -130,8 +131,8 @@ export default function Hero() {
         <ChevronRight size={24} />
       </button> */}
 
-      {/* Dots Indicator */}
-      {/* <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex space-x-3">
+        {/* Dots Indicator */}
+        {/* <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex space-x-3">
         {slides.map((slide, index) => (
           <button
             key={slide.id}
@@ -143,6 +144,7 @@ export default function Hero() {
           />
         ))}
       </div> */}
+      </div>
     </div>
   );
 }
