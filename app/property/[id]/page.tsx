@@ -19,6 +19,7 @@ import {
 import { client } from "@/lib/sanity.client";
 import { SanityProperty } from "@/types/sanity";
 import { urlFor } from "@/lib/sanity.image";
+import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import {
   formatPrice,
   generateTourWhatsAppLink,
@@ -120,8 +121,22 @@ export default function PropertyDetails() {
   const mediaItems = React.useMemo(() => {
     if (!property) return [];
 
-    const items: Array<{ type: "image" | "video"; data: any; index: number }> =
-      [];
+    type MediaItem =
+      | {
+          type: "image";
+          data: { asset: SanityImageSource; alt?: string; caption?: string };
+          index: number;
+        }
+      | {
+          type: "video";
+          data: {
+            asset: { _ref: string; _type: string; url?: string };
+            title?: string;
+          };
+          index: number;
+        };
+
+    const items: MediaItem[] = [];
 
     // Add all images
     property.images?.forEach((image, index) => {
@@ -377,7 +392,7 @@ export default function PropertyDetails() {
                             return url || null;
                           }
                           return null;
-                        } catch (error) {
+                        } catch {
                           return null;
                         }
                       };
