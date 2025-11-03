@@ -26,8 +26,18 @@ export default function ContactSection() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted:", formData);
+
+    const recipientEmail = "limerproperties50@gmail.com";
+    const subject = encodeURIComponent(
+      `Contact Form Submission from ${formData.name}`
+    );
+    const body = encodeURIComponent(
+      `Name: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\n\nMessage:\n${formData.message}`
+    );
+
+    const mailtoLink = `mailto:${recipientEmail}?subject=${subject}&body=${body}`;
+    window.location.href = mailtoLink;
+
     // Reset form
     setFormData({ name: "", email: "", phone: "", message: "" });
   };

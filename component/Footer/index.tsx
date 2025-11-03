@@ -37,6 +37,7 @@ export default function Footer() {
                 />
               </Link>
             </h3>
+            <p>Awoyaya lagos, nigeria</p>
             <p className="text-sm mb-4">
               {companyInfo?.description ||
                 "Your trusted partner in finding the perfect property. We offer a wide range of houses, lands, and shortlets across Nigeria."}

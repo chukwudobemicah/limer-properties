@@ -226,11 +226,11 @@ export default function PropertyDetails() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-6 sm:py-8 lg:py-12">
         {/* Breadcrumb */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <nav className="flex" aria-label="Breadcrumb">
-            <ol className="flex items-center space-x-2 text-sm">
+            <ol className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm overflow-x-auto">
               <li>
                 <Link href="/" className="text-gray-500 hover:text-primary">
                   Home
@@ -255,12 +255,12 @@ export default function PropertyDetails() {
           </nav>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
             {/* Media Gallery (Images & Video) */}
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="relative h-96 md:h-[500px] bg-gray-200">
+              <div className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] bg-gray-200">
                 {currentMedia ? (
                   <AnimatePresence mode="wait">
                     <motion.div
@@ -309,7 +309,7 @@ export default function PropertyDetails() {
                   <div className="absolute inset-0 flex items-center justify-center text-gray-400">
                     <div className="text-center">
                       <svg
-                        className="mx-auto h-24 w-24 text-gray-300"
+                        className="mx-auto h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24 text-gray-300"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -321,7 +321,9 @@ export default function PropertyDetails() {
                           d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                         />
                       </svg>
-                      <p className="mt-4 text-lg">No media available</p>
+                      <p className="mt-2 sm:mt-4 text-sm sm:text-base lg:text-lg">
+                        No media available
+                      </p>
                     </div>
                   </div>
                 )}
@@ -330,30 +332,30 @@ export default function PropertyDetails() {
                   <>
                     <button
                       onClick={previousMedia}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-900 p-2 rounded-full transition-all z-10"
+                      className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-900 p-1.5 sm:p-2 rounded-full transition-all z-10 shadow-md"
                       aria-label="Previous media"
                     >
-                      <ChevronLeft size={24} />
+                      <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
                     </button>
                     <button
                       onClick={nextMedia}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-900 p-2 rounded-full transition-all z-10"
+                      className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-900 p-1.5 sm:p-2 rounded-full transition-all z-10 shadow-md"
                       aria-label="Next media"
                     >
-                      <ChevronRight size={24} />
+                      <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
                     </button>
                   </>
                 )}
 
-                <div className="absolute top-4 left-4">
-                  <span className="bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold">
+                <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-10">
+                  <span className="bg-primary text-white px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-semibold">
                     {getPropertyTypeLabel(propertyTypeSlug)}
                   </span>
                 </div>
 
                 {property.isFeatured && (
-                  <div className="absolute top-4 right-4">
-                    <span className="bg-accent text-white px-4 py-2 rounded-full text-sm font-semibold">
+                  <div className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10">
+                    <span className="bg-accent text-white px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-semibold">
                       Featured
                     </span>
                   </div>
@@ -362,7 +364,7 @@ export default function PropertyDetails() {
 
               {/* Thumbnail Gallery */}
               {mediaItems.length > 1 && (
-                <div className="p-4 flex gap-2 overflow-x-auto">
+                <div className="p-2 sm:p-3 lg:p-4 flex gap-1.5 sm:gap-2 overflow-x-auto">
                   {mediaItems.map((media, index) => {
                     if (media.type === "image") {
                       const getThumbnailUrl = () => {
@@ -388,9 +390,9 @@ export default function PropertyDetails() {
                         <button
                           key={index}
                           onClick={() => setCurrentMediaIndex(index)}
-                          className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden ${
+                          className={`relative w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-md sm:rounded-lg overflow-hidden transition-all ${
                             index === currentMediaIndex
-                              ? "ring-2 ring-primary"
+                              ? "ring-2 ring-primary ring-offset-2"
                               : "opacity-60 hover:opacity-100"
                           }`}
                         >
@@ -410,15 +412,15 @@ export default function PropertyDetails() {
                         <button
                           key={index}
                           onClick={() => setCurrentMediaIndex(index)}
-                          className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-900 ${
+                          className={`relative w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-md sm:rounded-lg overflow-hidden bg-gray-900 transition-all ${
                             index === currentMediaIndex
-                              ? "ring-2 ring-primary"
+                              ? "ring-2 ring-primary ring-offset-2"
                               : "opacity-60 hover:opacity-100"
                           }`}
                         >
                           <div className="absolute inset-0 flex items-center justify-center">
                             <svg
-                              className="w-8 h-8 text-white"
+                              className="w-6 h-6 sm:w-8 sm:h-8 text-white"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >
@@ -426,7 +428,7 @@ export default function PropertyDetails() {
                             </svg>
                           </div>
                           <span
-                            className="absolute bottom-1 left-1 right-1 text-xs text-white bg-black/60 px-1 py-0.5 rounded text-center truncate"
+                            className="absolute bottom-1 left-1 right-1 text-[10px] sm:text-xs text-white bg-black/60 px-1 py-0.5 rounded text-center truncate"
                             title={media.data.title || "Video"}
                           >
                             {media.data.title || "Video"}
@@ -440,53 +442,65 @@ export default function PropertyDetails() {
             </div>
 
             {/* Property Details */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
                 {property.title}
               </h1>
 
-              <div className="flex items-center text-gray-600 mb-6">
-                <MapPin size={20} className="mr-2" />
-                <span className="text-lg">
+              <div className="flex items-center text-gray-600 mb-4 sm:mb-6">
+                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 flex-shrink-0" />
+                <span className="text-sm sm:text-base lg:text-lg">
                   {property.location.name}, {property.location.city.name},{" "}
                   {property.location.state.name}
                 </span>
               </div>
 
-              <div className="flex flex-wrap gap-6 mb-6 pb-6 border-b border-gray-200">
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-gray-200">
                 {property.bedrooms && (
                   <div className="flex items-center">
-                    <Bed size={24} className="mr-2 text-primary" />
+                    <Bed className="w-5 h-5 sm:w-6 sm:h-6 mr-1.5 sm:mr-2 text-primary flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-gray-600">Bedrooms</p>
-                      <p className="font-semibold">{property.bedrooms}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">
+                        Bedrooms
+                      </p>
+                      <p className="text-sm sm:text-base font-semibold">
+                        {property.bedrooms}
+                      </p>
                     </div>
                   </div>
                 )}
                 {property.bathrooms && (
                   <div className="flex items-center">
-                    <Bath size={24} className="mr-2 text-primary" />
+                    <Bath className="w-5 h-5 sm:w-6 sm:h-6 mr-1.5 sm:mr-2 text-primary flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-gray-600">Bathrooms</p>
-                      <p className="font-semibold">{property.bathrooms}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">
+                        Bathrooms
+                      </p>
+                      <p className="text-sm sm:text-base font-semibold">
+                        {property.bathrooms}
+                      </p>
                     </div>
                   </div>
                 )}
                 {property.area && (
                   <div className="flex items-center">
-                    <Maximize size={24} className="mr-2 text-primary" />
+                    <Maximize className="w-5 h-5 sm:w-6 sm:h-6 mr-1.5 sm:mr-2 text-primary flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-gray-600">Area</p>
-                      <p className="font-semibold">{property.area} sqm</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Area</p>
+                      <p className="text-sm sm:text-base font-semibold">
+                        {property.area} sqm
+                      </p>
                     </div>
                   </div>
                 )}
                 {property.structure && (
                   <div className="flex items-center">
-                    <Building2 size={24} className="mr-2 text-primary" />
+                    <Building2 className="w-5 h-5 sm:w-6 sm:h-6 mr-1.5 sm:mr-2 text-primary flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-gray-600">Structure</p>
-                      <p className="font-semibold">
+                      <p className="text-xs sm:text-sm text-gray-600">
+                        Structure
+                      </p>
+                      <p className="text-sm sm:text-base font-semibold">
                         {property.structure.title}
                       </p>
                     </div>
@@ -494,10 +508,10 @@ export default function PropertyDetails() {
                 )}
                 {property.floors && (
                   <div className="flex items-center">
-                    <Building2 size={24} className="mr-2 text-primary" />
+                    <Building2 className="w-5 h-5 sm:w-6 sm:h-6 mr-1.5 sm:mr-2 text-primary flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-gray-600">Floors</p>
-                      <p className="font-semibold">
+                      <p className="text-xs sm:text-sm text-gray-600">Floors</p>
+                      <p className="text-sm sm:text-base font-semibold">
                         {property.floors}{" "}
                         {property.floors === 1 ? "floor" : "floors"}
                       </p>
@@ -507,10 +521,12 @@ export default function PropertyDetails() {
                 {property.floorPosition !== undefined &&
                   property.floorPosition !== null && (
                     <div className="flex items-center">
-                      <Building2 size={24} className="mr-2 text-primary" />
+                      <Building2 className="w-5 h-5 sm:w-6 sm:h-6 mr-1.5 sm:mr-2 text-primary flex-shrink-0" />
                       <div>
-                        <p className="text-sm text-gray-600">Floor Position</p>
-                        <p className="font-semibold">
+                        <p className="text-xs sm:text-sm text-gray-600">
+                          Floor Position
+                        </p>
+                        <p className="text-sm sm:text-base font-semibold">
                           {property.floorPosition === 0
                             ? "Ground Floor"
                             : `${property.floorPosition}${
@@ -528,29 +544,37 @@ export default function PropertyDetails() {
                   )}
                 {property.parking && (
                   <div className="flex items-center">
-                    <Car size={24} className="mr-2 text-primary" />
+                    <Car className="w-5 h-5 sm:w-6 sm:h-6 mr-1.5 sm:mr-2 text-primary flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-gray-600">Parking</p>
-                      <p className="font-semibold">{property.parking} spaces</p>
+                      <p className="text-xs sm:text-sm text-gray-600">
+                        Parking
+                      </p>
+                      <p className="text-sm sm:text-base font-semibold">
+                        {property.parking} spaces
+                      </p>
                     </div>
                   </div>
                 )}
                 {property.yearBuilt && (
                   <div className="flex items-center">
-                    <Calendar size={24} className="mr-2 text-primary" />
+                    <Calendar className="w-5 h-5 sm:w-6 sm:h-6 mr-1.5 sm:mr-2 text-primary flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-gray-600">Year Built</p>
-                      <p className="font-semibold">{property.yearBuilt}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">
+                        Year Built
+                      </p>
+                      <p className="text-sm sm:text-base font-semibold">
+                        {property.yearBuilt}
+                      </p>
                     </div>
                   </div>
                 )}
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">
                   Description
                 </h2>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                   {property.description}
                 </p>
               </div>
@@ -558,18 +582,17 @@ export default function PropertyDetails() {
 
             {/* Features */}
             {property.features && property.features.length > 0 && (
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">
                   Features & Amenities
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
                   {property.features.map((feature, index) => (
                     <div key={index} className="flex items-center">
-                      <Check
-                        size={20}
-                        className="text-success mr-2 flex-shrink-0"
-                      />
-                      <span className="text-gray-700">{feature}</span>
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5 text-success mr-2 flex-shrink-0" />
+                      <span className="text-xs sm:text-sm md:text-base text-gray-700">
+                        {feature}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -579,32 +602,32 @@ export default function PropertyDetails() {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
-              <div className="mb-6">
-                <p className="text-sm text-gray-600 mb-1">Price</p>
-                <p className="text-4xl font-bold text-primary">
+            <div className="bg-white rounded-lg shadow-md p-4 sm:p-5 lg:p-6 sticky top-4 sm:top-6 lg:top-24">
+              <div className="mb-4 sm:mb-6">
+                <p className="text-xs sm:text-sm text-gray-600 mb-1">Price</p>
+                <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary">
                   {formatPrice(property.price)}
                 </p>
                 {getPriceLabel(propertyTypeSlug) && (
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-xs sm:text-sm text-gray-600 mt-1">
                     {getPriceLabel(propertyTypeSlug)}
                   </p>
                 )}
               </div>
 
               {property.furnished !== undefined && (
-                <div className="mb-6 pb-6 border-b border-gray-200">
-                  <p className="text-sm text-gray-600">Status</p>
-                  <p className="font-semibold">
+                <div className="mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-gray-200">
+                  <p className="text-xs sm:text-sm text-gray-600">Status</p>
+                  <p className="text-sm sm:text-base font-semibold">
                     {property.furnished ? "Furnished" : "Unfurnished"}
                   </p>
                 </div>
               )}
 
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <Button
                   variant="primary"
-                  className="w-full"
+                  className="w-full text-sm sm:text-base"
                   href={generateTourWhatsAppLink(
                     companyInfo?.phone || "",
                     property.title,
@@ -616,7 +639,7 @@ export default function PropertyDetails() {
                 </Button>
                 <Button
                   variant="secondary"
-                  className="w-full"
+                  className="w-full text-sm sm:text-base"
                   href={generateInquiryWhatsAppLink(
                     companyInfo?.phone || "",
                     property.title,
@@ -628,12 +651,14 @@ export default function PropertyDetails() {
                 </Button>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-4">Need Help?</h3>
-                <p className="text-sm text-gray-600 mb-4">
+              <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
+                <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2 sm:mb-4">
+                  Need Help?
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
                   Contact our team for more information about this property.
                 </p>
-                <div className="space-y-2 text-sm">
+                <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
                   {companyInfo?.phone && (
                     <p className="text-gray-700">
                       <span className="font-medium">Phone:</span>{" "}
