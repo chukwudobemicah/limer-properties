@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Filter, X } from "lucide-react";
@@ -15,7 +15,7 @@ import {
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 import PropertyCardSkeleton from "@/component/PropertyCardSkeleton";
 
-export default function PropertiesPage() {
+function PropertiesContent() {
   const searchParams = useSearchParams();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const { properties, loading: propertiesLoading } = useSanityProperties();
@@ -374,5 +374,22 @@ export default function PropertiesPage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function PropertiesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
+            <p className="mt-4 text-gray-600">Loading properties...</p>
+          </div>
+        </div>
+      }
+    >
+      <PropertiesContent />
+    </Suspense>
   );
 }
