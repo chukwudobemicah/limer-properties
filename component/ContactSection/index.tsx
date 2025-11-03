@@ -11,7 +11,6 @@ export default function ContactSection() {
   const [showContactModal, setShowContactModal] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
     phone: "",
     message: "",
   });
@@ -34,10 +33,9 @@ export default function ContactSection() {
   const handleContact = (method: "whatsapp" | "email" | "call") => {
     if (!companyInfo) return;
 
-    const { name, email, phone, message } = formData;
+    const { name, phone, message } = formData;
 
     const detailsMessage = `Name: ${name}
-Email: ${email}
 Phone: ${phone}
 
 Message:
@@ -63,7 +61,7 @@ ${message}`;
 
     // Reset form after sending
     setShowContactModal(false);
-    setFormData({ name: "", email: "", phone: "", message: "" });
+    setFormData({ name: "", phone: "", message: "" });
   };
 
   return (
@@ -153,25 +151,6 @@ ${message}`;
                   required
                   className="w-full px-4 py-3 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Your name"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="your@email.com"
                 />
               </div>
 
