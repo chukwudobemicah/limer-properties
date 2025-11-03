@@ -242,7 +242,7 @@ export default function FilterBar({
       transition={{ delay: 0.4, duration: 0.5 }}
       className="max-w-5xl w-full mx-auto"
     >
-      <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-xl border border-white/40 p-5 sm:p-8">
+      <div className="bg-white/95 backdrop-blur-md w-full rounded-3xl shadow-xl border border-white/40 p-5 sm:p-8">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-gray-100 pb-4">
             <div className="flex items-center bg-gray-100 rounded-full p-1 text-sm font-medium w-full lg:w-auto">

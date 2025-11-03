@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import HeroSlider from "@/component/HeroSlider";
 import FilterBar from "@/component/FilterBar";
 import PropertyCard from "@/component/PropertyCard";
 import ContactSection from "@/component/ContactSection";
@@ -117,7 +116,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section with Slider */}
-      <div className="relative min-h-[80vh] flex items-center justify-center isolate">
+      <div className="relative min-h-[80vh] py-4 flex items-center justify-center isolate">
         <div className="absolute inset-0 bg-black opacity-40" />
 
         <div className="absolute w-full h-full left-1/2 -z-50 -translate-x-1/2 top-1/2 -translate-y-1/2">
@@ -131,7 +130,7 @@ export default function Home() {
           />
         </div>
         {/* <HeroSlider /> */}
-        <div>
+        <div className="max-md:w-full px-4">
           {loading ? (
             <FilterBarSkeleton />
           ) : (
