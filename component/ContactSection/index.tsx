@@ -4,10 +4,11 @@ import React, { useState } from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 import Button from "@/component/Button";
-import { COMPANY_DETAILS } from "@/constants/companydetails";
+import ContactMethodModal from "@/component/ContactMethodModal";
 
 export default function ContactSection() {
   const { companyInfo } = useSanityCompanyInfo();
+  const [showContactModal, setShowContactModal] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -25,21 +26,43 @@ export default function ContactSection() {
     }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setShowContactModal(true);
+  };
 
-    const recipientEmail = COMPANY_DETAILS.email;
-    const subject = encodeURIComponent(
-      `Contact Form Submission from ${formData.name}`
-    );
-    const body = encodeURIComponent(
-      `Name: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\n\nMessage:\n${formData.message}`
-    );
+  const handleContact = (method: "whatsapp" | "email" | "call") => {
+    if (!companyInfo) return;
 
-    const mailtoLink = `mailto:${recipientEmail}?subject=${subject}&body=${body}`;
-    window.location.href = mailtoLink;
+    const { name, email, phone, message } = formData;
 
-    // Reset form
+    const detailsMessage = `Name: ${name}
+Email: ${email}
+Phone: ${phone}
+
+Message:
+${message}`;
+
+    if (method === "call" && companyInfo.phone) {
+      window.location.href = `tel:${companyInfo.phone.replace(/\s+/g, "")}`;
+    } else if (method === "whatsapp" && companyInfo.phone) {
+      const whatsappMessage = encodeURIComponent(detailsMessage);
+      const whatsappUrl = `https://wa.me/${companyInfo.phone.replace(
+        /\D/g,
+        ""
+      )}?text=${whatsappMessage}`;
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    } else if (method === "email" && companyInfo.email) {
+      const subject = encodeURIComponent(
+        `Contact Form Submission from ${name}`
+      );
+      const emailBody = encodeURIComponent(detailsMessage);
+      const mailtoUrl = `mailto:${companyInfo.email}?subject=${subject}&body=${emailBody}`;
+      window.location.href = mailtoUrl;
+    }
+
+    // Reset form after sending
+    setShowContactModal(false);
     setFormData({ name: "", email: "", phone: "", message: "" });
   };
 
@@ -113,7 +136,7 @@ export default function ContactSection() {
 
           {/* Contact Form */}
           <div className="bg-white p-8 rounded-lg shadow-md">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleFormSubmit}>
               <div className="mb-4">
                 <label
                   htmlFor="name"
@@ -190,12 +213,19 @@ export default function ContactSection() {
               </div>
 
               <Button type="submit" variant="primary" className="w-full">
-                Send Message
+                Submit
               </Button>
             </form>
           </div>
         </div>
       </div>
+
+      <ContactMethodModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        companyInfo={companyInfo}
+        onSubmit={handleContact}
+      />
     </section>
   );
 }

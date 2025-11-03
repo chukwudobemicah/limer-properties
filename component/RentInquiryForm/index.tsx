@@ -4,26 +4,26 @@ import React, { useState } from "react";
 import ContactMethodModal from "@/component/ContactMethodModal";
 import { SanityCompanyInfo } from "@/types/sanity";
 
-interface ManagementCTAProps {
+interface RentInquiryFormProps {
   companyInfo: SanityCompanyInfo | null;
 }
 
 interface FormData {
-  propertyType: string;
-  propertyAddress: string;
-  propertyState: string;
-  propertyCountry: string;
+  location: string;
+  bedrooms: string;
+  bathrooms: string;
+  budget: string;
+  structure: string;
 }
 
-const PROPERTY_TYPES = ["Land", "House", "Estate", "Apartment", "Commercial"];
-
-export default function ManagementCTA({ companyInfo }: ManagementCTAProps) {
-  const [showContactModal, setShowContactModal] = useState(false);
+export default function RentInquiryForm({ companyInfo }: RentInquiryFormProps) {
+  const [showContactOptions, setShowContactOptions] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    propertyType: "",
-    propertyAddress: "",
-    propertyState: "",
-    propertyCountry: "",
+    location: "",
+    bedrooms: "",
+    bathrooms: "",
+    budget: "",
+    structure: "",
   });
 
   const handleInputChange = (field: keyof FormData, value: string) => {
@@ -32,39 +32,25 @@ export default function ManagementCTA({ companyInfo }: ManagementCTAProps) {
 
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
-    const { propertyType, propertyAddress, propertyState, propertyCountry } =
-      formData;
-
-    if (
-      !propertyType ||
-      !propertyAddress ||
-      !propertyState ||
-      !propertyCountry
-    ) {
-      alert("Please fill in all fields");
-      return;
-    }
-
-    setShowContactModal(true);
+    setShowContactOptions(true);
   };
 
   const handleContact = (method: "whatsapp" | "email" | "call") => {
     if (!companyInfo) return;
 
-    const { propertyType, propertyAddress, propertyState, propertyCountry } =
-      formData;
+    const { location, bedrooms, bathrooms, budget, structure } = formData;
 
-    const detailsMessage = `Property Type: ${propertyType}
-Property Address: ${propertyAddress}
-Property State: ${propertyState}
-Property Country: ${propertyCountry}`;
+    const detailsMessage = `Location: ${location || "Any"}
+Bedrooms: ${bedrooms || "Any"}
+Bathrooms: ${bathrooms || "Any"}
+Maximum Budget: ${budget || "Any budget"}
+House Structure: ${structure || "Any"}`;
 
     if (method === "call" && companyInfo.phone) {
       window.location.href = `tel:${companyInfo.phone.replace(/\s+/g, "")}`;
     } else if (method === "whatsapp" && companyInfo.phone) {
       const whatsappMessage = encodeURIComponent(
-        `Hello! I'm interested in your property management services.\n\n${detailsMessage}\n\nPlease provide more information.`
+        `Hello! I'm looking for a property to rent.\n\n${detailsMessage}\n\nPlease let me know if you have anything that matches my criteria.\n\nThank you!`
       );
       const whatsappUrl = `https://wa.me/${companyInfo.phone.replace(
         /\D/g,
@@ -72,23 +58,22 @@ Property Country: ${propertyCountry}`;
       )}?text=${whatsappMessage}`;
       window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     } else if (method === "email" && companyInfo.email) {
-      const subject = encodeURIComponent(
-        "Property Management Services Inquiry"
-      );
+      const subject = encodeURIComponent("Property Rental Inquiry");
       const emailBody = encodeURIComponent(
-        `Hello! I'm interested in your property management services.\n\n${detailsMessage}\n\nPlease provide more information.\n\nThank you!`
+        `Hello! I'm looking for a property to rent.\n\n${detailsMessage}\n\nPlease let me know if you have anything that matches my criteria.\n\nThank you!`
       );
       const mailtoUrl = `mailto:${companyInfo.email}?subject=${subject}&body=${emailBody}`;
       window.location.href = mailtoUrl;
     }
 
     // Reset form after sending
-    setShowContactModal(false);
+    setShowContactOptions(false);
     setFormData({
-      propertyType: "",
-      propertyAddress: "",
-      propertyState: "",
-      propertyCountry: "",
+      location: "",
+      bedrooms: "",
+      bathrooms: "",
+      budget: "",
+      structure: "",
     });
   };
 
@@ -96,97 +81,111 @@ Property Country: ${propertyCountry}`;
     <>
       <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 sm:p-6 md:p-8">
         <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 text-center">
-          Ready to Get Started?
+          Looking for a Property to Rent?
         </h3>
         <p className="text-gray-700 mb-6 text-center text-xs sm:text-sm md:text-base">
-          Contact us today to discuss how we can help manage your property
-          portfolio.
+          Share your requirements and we&apos;ll find the perfect rental for
+          you.
         </p>
 
         <form onSubmit={handleFormSubmit} className="space-y-4">
-          <div className="space-y-3">
-            {/* Property Type */}
-            <div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Location */}
+            <div className="sm:col-span-2">
               <label
-                htmlFor="management-property-type"
+                htmlFor="rent-location"
                 className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
               >
-                Property Type *
+                Location
               </label>
               <input
-                id="management-property-type"
+                id="rent-location"
                 type="text"
-                list="management-property-types-list"
-                value={formData.propertyType}
+                value={formData.location}
                 onChange={(event) =>
-                  handleInputChange("propertyType", event.target.value)
+                  handleInputChange("location", event.target.value)
                 }
-                placeholder="Land, House, Estate, Apartment, Commercial"
-                className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
-              />
-              <datalist id="management-property-types-list">
-                {PROPERTY_TYPES.map((type) => (
-                  <option key={type} value={type} />
-                ))}
-              </datalist>
-            </div>
-
-            {/* Property Address */}
-            <div>
-              <label
-                htmlFor="management-property-address"
-                className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-              >
-                Property Address *
-              </label>
-              <input
-                id="management-property-address"
-                type="text"
-                value={formData.propertyAddress}
-                onChange={(event) =>
-                  handleInputChange("propertyAddress", event.target.value)
-                }
-                placeholder="Enter property address"
+                placeholder="Enter preferred location"
                 className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
               />
             </div>
 
-            {/* Property State */}
+            {/* Bedrooms */}
             <div>
               <label
-                htmlFor="management-property-state"
+                htmlFor="rent-bedrooms"
                 className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
               >
-                Property State *
+                Bedrooms
               </label>
               <input
-                id="management-property-state"
+                id="rent-bedrooms"
                 type="text"
-                value={formData.propertyState}
+                value={formData.bedrooms}
                 onChange={(event) =>
-                  handleInputChange("propertyState", event.target.value)
+                  handleInputChange("bedrooms", event.target.value)
                 }
-                placeholder="Enter state"
+                placeholder="Number of bedrooms"
                 className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
               />
             </div>
 
-            {/* Property Country */}
+            {/* Bathrooms */}
             <div>
               <label
-                htmlFor="management-property-country"
+                htmlFor="rent-bathrooms"
                 className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
               >
-                Property Country *
+                Bathrooms
               </label>
               <input
-                id="management-property-country"
+                id="rent-bathrooms"
                 type="text"
-                value={formData.propertyCountry}
+                value={formData.bathrooms}
                 onChange={(event) =>
-                  handleInputChange("propertyCountry", event.target.value)
+                  handleInputChange("bathrooms", event.target.value)
                 }
-                placeholder="Enter country"
+                placeholder="Number of bathrooms"
+                className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
+              />
+            </div>
+
+            {/* Budget */}
+            <div>
+              <label
+                htmlFor="rent-budget"
+                className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+              >
+                Maximum Budget
+              </label>
+              <input
+                id="rent-budget"
+                type="text"
+                value={formData.budget}
+                onChange={(event) =>
+                  handleInputChange("budget", event.target.value)
+                }
+                placeholder="Your maximum budget"
+                className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
+              />
+            </div>
+
+            {/* House Structure */}
+            <div>
+              <label
+                htmlFor="rent-structure"
+                className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+              >
+                House Structure
+              </label>
+              <input
+                id="rent-structure"
+                type="text"
+                value={formData.structure}
+                onChange={(event) =>
+                  handleInputChange("structure", event.target.value)
+                }
+                placeholder="e.g., Bungalow, Duplex, Flat"
                 className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
               />
             </div>
@@ -204,8 +203,8 @@ Property Country: ${propertyCountry}`;
       </div>
 
       <ContactMethodModal
-        isOpen={showContactModal}
-        onClose={() => setShowContactModal(false)}
+        isOpen={showContactOptions}
+        onClose={() => setShowContactOptions(false)}
         companyInfo={companyInfo}
         onSubmit={handleContact}
       />

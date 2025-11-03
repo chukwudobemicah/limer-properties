@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import Select from "@/component/Select";
 import ManagementCTA from "@/component/ManagementCTA";
+import RentInquiryForm from "@/component/RentInquiryForm";
 import {
   DEFAULT_MAX_PRICE,
   PropertyPurpose,
@@ -273,6 +274,10 @@ export default function FilterBar({
           {selectedPurpose === "management" && companyInfo ? (
             <div className="pt-4">
               <ManagementCTA companyInfo={companyInfo} />
+            </div>
+          ) : selectedPurpose === "rent" && companyInfo ? (
+            <div className="pt-4">
+              <RentInquiryForm companyInfo={companyInfo} />
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
