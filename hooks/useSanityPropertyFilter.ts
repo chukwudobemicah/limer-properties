@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import { SanityProperty } from "@/types/sanity";
 
-export type PropertyPurpose = "land" | "rent" | "shortlet";
+export type PropertyPurpose = "land" | "rent" | "management";
 export type FilterPurpose = PropertyPurpose | "all";
 
 export const DEFAULT_MAX_PRICE = 500_000_000;
@@ -60,8 +60,8 @@ export function useSanityPropertyFilter({
           return propertyTypeSlug.includes("for-rent");
         }
 
-        if (selectedPurpose === "shortlet") {
-          return propertyTypeSlug.includes("shortlet");
+        if (selectedPurpose === "management") {
+          return propertyTypeSlug.includes("management");
         }
 
         return true;

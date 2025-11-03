@@ -5,10 +5,12 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import Select from "@/component/Select";
+import ManagementCTA from "@/component/ManagementCTA";
 import {
   DEFAULT_MAX_PRICE,
   PropertyPurpose,
 } from "@/hooks/useSanityPropertyFilter";
+import { SanityCompanyInfo } from "@/types/sanity";
 
 interface Option {
   label: string;
@@ -52,6 +54,7 @@ interface FilterBarProps {
   propertyTypeOptions: Option[];
   locationOptions: Option[];
   structureOptions: Option[];
+  companyInfo?: SanityCompanyInfo | null;
 }
 
 const BEDROOM_OPTIONS: Array<{ value: string; label: string }> = [
@@ -104,6 +107,7 @@ export default function FilterBar({
   propertyTypeOptions,
   locationOptions,
   structureOptions,
+  companyInfo,
 }: FilterBarProps) {
   const router = useRouter();
 
@@ -164,8 +168,8 @@ export default function FilterBar({
       onBathroomsChange("all");
     } else if (purpose === "rent") {
       onTypeChange("house-for-rent");
-    } else if (purpose === "shortlet") {
-      onTypeChange("shortlet");
+    } else if (purpose === "management") {
+      onTypeChange("management");
     }
   };
 
@@ -217,7 +221,7 @@ export default function FilterBar({
   const purposeTabs: Array<{ label: string; value: PropertyPurpose }> = [
     { label: "Land", value: "land" },
     { label: "Rent", value: "rent" },
-    { label: "Short Let", value: "shortlet" },
+    { label: "Management", value: "management" },
   ];
 
   const resolvedTypeOptions: Option[] = [
@@ -266,204 +270,214 @@ export default function FilterBar({
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-              <div className="lg:col-span-2">
-                <label
-                  htmlFor="filter-search"
-                  className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-                >
-                  Location, landmark or keyword
-                </label>
-                <div className="relative">
-                  <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-[18px] sm:h-[18px]" />
-                  <input
-                    id="filter-search"
-                    type="text"
-                    value={searchTerm}
-                    onChange={(event) => onSearchTermChange(event.target.value)}
-                    placeholder="Enter a state, locality or area"
-                    className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 pl-10 sm:pl-11 pr-3 sm:pr-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
+          {selectedPurpose === "management" && companyInfo ? (
+            <div className="pt-4">
+              <ManagementCTA companyInfo={companyInfo} />
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                <div className="lg:col-span-2">
+                  <label
+                    htmlFor="filter-search"
+                    className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+                  >
+                    Location, landmark or keyword
+                  </label>
+                  <div className="relative">
+                    <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+                    <input
+                      id="filter-search"
+                      type="text"
+                      value={searchTerm}
+                      onChange={(event) =>
+                        onSearchTermChange(event.target.value)
+                      }
+                      placeholder="Enter a state, locality or area"
+                      className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 pl-10 sm:pl-11 pr-3 sm:pr-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+                    htmlFor="filter-type"
+                  >
+                    Property type
+                  </label>
+                  <Select
+                    className="w-full"
+                    value={selectedType}
+                    onChange={(value) => onTypeChange(String(value))}
+                    options={resolvedTypeOptions.map((option) => ({
+                      value: option.value,
+                      label: option.label,
+                    }))}
+                    placeholder="Select type"
+                    labelId="filter-type"
                   />
                 </div>
               </div>
 
-              <div>
-                <label
-                  className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-                  htmlFor="filter-type"
-                >
-                  Property type
-                </label>
-                <Select
-                  className="w-full"
-                  value={selectedType}
-                  onChange={(value) => onTypeChange(String(value))}
-                  options={resolvedTypeOptions.map((option) => ({
-                    value: option.value,
-                    label: option.label,
-                  }))}
-                  placeholder="Select type"
-                  labelId="filter-type"
-                />
-              </div>
-            </div>
+              <div
+                className={`grid grid-cols-1 ${
+                  selectedPurpose === "land"
+                    ? "md:grid-cols-1"
+                    : "md:grid-cols-3"
+                } gap-3`}
+              >
+                <div>
+                  <label
+                    className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+                    htmlFor="filter-location"
+                  >
+                    Location
+                  </label>
+                  <Select
+                    className="w-full"
+                    value={selectedLocation}
+                    onChange={(value) => onLocationChange(String(value))}
+                    options={resolvedLocationOptions}
+                    placeholder="Select location"
+                    labelId="filter-location"
+                  />
+                </div>
 
-            <div
-              className={`grid grid-cols-1 ${
-                selectedPurpose === "land" ? "md:grid-cols-1" : "md:grid-cols-3"
-              } gap-3`}
-            >
-              <div>
-                <label
-                  className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-                  htmlFor="filter-location"
-                >
-                  Location
-                </label>
-                <Select
-                  className="w-full"
-                  value={selectedLocation}
-                  onChange={(value) => onLocationChange(String(value))}
-                  options={resolvedLocationOptions}
-                  placeholder="Select location"
-                  labelId="filter-location"
-                />
+                {selectedPurpose !== "land" && (
+                  <>
+                    <div>
+                      <label
+                        className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+                        htmlFor="filter-bedrooms"
+                      >
+                        Bedrooms
+                      </label>
+                      <Select
+                        className="w-full"
+                        value={selectedBedrooms}
+                        onChange={handleBedroomsChange}
+                        options={BEDROOM_OPTIONS}
+                        placeholder="Any bedrooms"
+                        labelId="filter-bedrooms"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+                        htmlFor="filter-bathrooms"
+                      >
+                        Bathrooms
+                      </label>
+                      <Select
+                        className="w-full"
+                        value={selectedBathrooms}
+                        onChange={handleBathroomsChange}
+                        options={BATHROOM_OPTIONS}
+                        placeholder="Any bathrooms"
+                        labelId="filter-bathrooms"
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label
+                    className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+                    htmlFor="min-price-input"
+                  >
+                    Minimum price (₦)
+                  </label>
+                  <input
+                    id="min-price-input"
+                    type="number"
+                    min={0}
+                    step={1000}
+                    value={priceRange[0] === 0 ? "" : String(priceRange[0])}
+                    onChange={handleMinPriceChange}
+                    placeholder="No minimum"
+                    className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+                    htmlFor="max-price-input"
+                  >
+                    Maximum price (₦)
+                  </label>
+                  <input
+                    id="max-price-input"
+                    type="number"
+                    min={0}
+                    step={1000}
+                    value={
+                      priceRange[1] === DEFAULT_MAX_PRICE
+                        ? ""
+                        : String(priceRange[1])
+                    }
+                    onChange={handleMaxPriceChange}
+                    placeholder="No maximum"
+                    className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
               </div>
 
               {selectedPurpose !== "land" && (
-                <>
-                  <div>
-                    <label
-                      className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-                      htmlFor="filter-bedrooms"
-                    >
-                      Bedrooms
-                    </label>
+                <div className="border-t border-gray-100 pt-3 sm:pt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     <Select
-                      className="w-full"
-                      value={selectedBedrooms}
-                      onChange={handleBedroomsChange}
-                      options={BEDROOM_OPTIONS}
-                      placeholder="Any bedrooms"
-                      labelId="filter-bedrooms"
+                      label="Structure"
+                      value={selectedStructure}
+                      onChange={(value) => onStructureChange(String(value))}
+                      options={resolvedStructureOptions}
+                      placeholder="All structures"
+                      labelId="filter-structure"
+                    />
+
+                    <Select
+                      label="Furnishing"
+                      value={selectedFurnished}
+                      onChange={(value) =>
+                        onFurnishedChange(
+                          value as "all" | "furnished" | "unfurnished"
+                        )
+                      }
+                      options={FURNISHING_OPTIONS}
+                      placeholder="Any"
+                      labelId="filter-furnishing"
                     />
                   </div>
 
-                  <div>
-                    <label
-                      className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-                      htmlFor="filter-bathrooms"
-                    >
-                      Bathrooms
-                    </label>
-                    <Select
-                      className="w-full"
-                      value={selectedBathrooms}
-                      onChange={handleBathroomsChange}
-                      options={BATHROOM_OPTIONS}
-                      placeholder="Any bathrooms"
-                      labelId="filter-bathrooms"
-                    />
+                  <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-600">
+                    Refine your search with furnished and structure details for
+                    rentals.
                   </div>
-                </>
+                </div>
               )}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <label
-                  className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-                  htmlFor="min-price-input"
+              <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 sm:items-center sm:justify-between pt-2">
+                <button
+                  type="button"
+                  onClick={onResetFilters}
+                  className="inline-flex items-center justify-center rounded-lg border border-primary px-4 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold text-primary transition-colors hover:bg-primary/10 w-full sm:w-auto"
                 >
-                  Minimum price (₦)
-                </label>
-                <input
-                  id="min-price-input"
-                  type="number"
-                  min={0}
-                  step={1000}
-                  value={priceRange[0] === 0 ? "" : String(priceRange[0])}
-                  onChange={handleMinPriceChange}
-                  placeholder="No minimum"
-                  className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
-                />
-              </div>
+                  Reset filters
+                </button>
 
-              <div>
-                <label
-                  className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-                  htmlFor="max-price-input"
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg sm:rounded-xl bg-primary px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-primary-dark w-full sm:w-auto"
                 >
-                  Maximum price (₦)
-                </label>
-                <input
-                  id="max-price-input"
-                  type="number"
-                  min={0}
-                  step={1000}
-                  value={
-                    priceRange[1] === DEFAULT_MAX_PRICE
-                      ? ""
-                      : String(priceRange[1])
-                  }
-                  onChange={handleMaxPriceChange}
-                  placeholder="No maximum"
-                  className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
-                />
+                  <Search className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+                  Search
+                </button>
               </div>
-            </div>
-
-            {selectedPurpose !== "land" && (
-              <div className="border-t border-gray-100 pt-3 sm:pt-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                  <Select
-                    label="Structure"
-                    value={selectedStructure}
-                    onChange={(value) => onStructureChange(String(value))}
-                    options={resolvedStructureOptions}
-                    placeholder="All structures"
-                    labelId="filter-structure"
-                  />
-
-                  <Select
-                    label="Furnishing"
-                    value={selectedFurnished}
-                    onChange={(value) =>
-                      onFurnishedChange(
-                        value as "all" | "furnished" | "unfurnished"
-                      )
-                    }
-                    options={FURNISHING_OPTIONS}
-                    placeholder="Any"
-                    labelId="filter-furnishing"
-                  />
-                </div>
-
-                <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-600">
-                  Refine your search with furnished and structure details for
-                  rentals and short lets.
-                </div>
-              </div>
-            )}
-            <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 sm:items-center sm:justify-between pt-2">
-              <button
-                type="button"
-                onClick={onResetFilters}
-                className="inline-flex items-center justify-center rounded-lg border border-primary px-4 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold text-primary transition-colors hover:bg-primary/10 w-full sm:w-auto"
-              >
-                Reset filters
-              </button>
-
-              <button
-                type="submit"
-                className="inline-flex items-center justify-center gap-2 rounded-lg sm:rounded-xl bg-primary px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-primary-dark w-full sm:w-auto"
-              >
-                <Search className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
-                Search
-              </button>
-            </div>
-          </form>
+            </form>
+          )}
         </div>
       </div>
     </motion.div>
