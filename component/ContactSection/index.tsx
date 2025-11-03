@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 import Button from "@/component/Button";
+import { COMPANY_DETAILS } from "@/constants/companydetails";
 
 export default function ContactSection() {
   const { companyInfo } = useSanityCompanyInfo();
@@ -27,7 +28,7 @@ export default function ContactSection() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const recipientEmail = "limerproperties50@gmail.com";
+    const recipientEmail = COMPANY_DETAILS.email;
     const subject = encodeURIComponent(
       `Contact Form Submission from ${formData.name}`
     );

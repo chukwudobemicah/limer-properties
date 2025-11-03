@@ -219,7 +219,7 @@ export default function FilterBar({
   };
 
   const purposeTabs: Array<{ label: string; value: PropertyPurpose }> = [
-    { label: "Land", value: "land" },
+    { label: "For Sale", value: "land" },
     { label: "Rent", value: "rent" },
     { label: "Management", value: "management" },
   ];

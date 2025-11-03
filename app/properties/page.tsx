@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Filter, X } from "lucide-react";
 import PropertyCard from "@/component/PropertyCard";
 import AdvancedPropertyFilter from "@/component/AdvancedPropertyFilter";
+import PropertyInquiryForm from "@/component/PropertyInquiryForm";
 import { useSanityProperties } from "@/hooks/useSanityProperties";
 import { useSanityFilters } from "@/hooks/useSanityFilters";
 import {
@@ -287,21 +288,7 @@ function PropertiesContent() {
                   ))}
                 </div>
               ) : (
-                <div className="bg-white rounded-lg shadow-md p-12 text-center">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                    No Properties Found
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    We couldn&apos;t find any properties matching your filters.
-                    Try adjusting your search criteria.
-                  </p>
-                  <button
-                    onClick={resetFilters}
-                    className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors"
-                  >
-                    Reset Filters
-                  </button>
-                </div>
+                <PropertyInquiryForm companyInfo={companyInfo} />
               )}
             </main>
           </div>
