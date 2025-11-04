@@ -117,7 +117,7 @@ export default function AdvancedPropertyFilter({
         />
 
         {/* Structure Type */}
-        <Select
+        {/* <Select
           label="Property Structure"
           value={selectedStructure}
           onChange={(value) => onStructureChange(String(value))}
@@ -131,10 +131,10 @@ export default function AdvancedPropertyFilter({
             { value: "detached-house", label: "Detached House" },
             { value: "semi-detached", label: "Semi-Detached" },
           ]}
-        />
+        /> */}
 
         {/* Bedrooms */}
-        <Select
+        {/* <Select
           label="Bedrooms"
           value={selectedBedrooms}
           onChange={(value) => {
@@ -149,10 +149,10 @@ export default function AdvancedPropertyFilter({
             { value: "5", label: "5 Bedrooms" },
             { value: "6", label: "6+ Bedrooms" },
           ]}
-        />
+        /> */}
 
         {/* Bathrooms */}
-        <Select
+        {/* <Select
           label="Bathrooms"
           value={selectedBathrooms}
           onChange={(value) => {
@@ -166,10 +166,10 @@ export default function AdvancedPropertyFilter({
             { value: "4", label: "4 Bathrooms" },
             { value: "5", label: "5+ Bathrooms" },
           ]}
-        />
+        /> */}
 
         {/* Furnished Status */}
-        <Select
+        {/* <Select
           label="Furnishing"
           value={selectedFurnished}
           onChange={(value) =>
@@ -180,7 +180,7 @@ export default function AdvancedPropertyFilter({
             { value: "furnished", label: "Furnished" },
             { value: "unfurnished", label: "Unfurnished" },
           ]}
-        />
+        /> */}
 
         {/* Price Range */}
         <div>

@@ -45,7 +45,7 @@ export default function Header() {
               href="/properties"
               className="text-gray-700 hover:text-primary transition-colors duration-200"
             >
-              Properties
+              Properties For Sale
             </Link>
             <Link
               href="/about"
@@ -90,7 +90,7 @@ export default function Header() {
                 onClick={toggleMobileMenu}
                 className="text-gray-700 hover:text-primary transition-colors duration-200"
               >
-                Properties
+                Properties For Sale
               </Link>
               <Link
                 href="/about"

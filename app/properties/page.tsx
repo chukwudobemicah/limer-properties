@@ -210,7 +210,7 @@ function PropertiesContent() {
         <div className="max-w-[95%] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-4xl md:text-5xl font-bold">
-              Browse All Properties
+              Properties For Sale
             </h1>
             <button
               onClick={() => setIsFilterDrawerOpen(true)}
@@ -221,7 +221,8 @@ function PropertiesContent() {
             </button>
           </div>
           <p className="text-xl text-white/90">
-            Find your perfect home from our extensive collection
+            Find your property from our extensive collection of properties for
+            sale
           </p>
         </div>
       </section>

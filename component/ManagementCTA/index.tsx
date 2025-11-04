@@ -96,7 +96,7 @@ Property Country: ${propertyCountry}`;
     <>
       <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 sm:p-6 md:p-8">
         <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 text-center">
-          Ready to Get Started?
+          Let's manage your property.
         </h3>
         <p className="text-gray-700 mb-6 text-center text-xs sm:text-sm md:text-base">
           Contact us today to discuss how we can help manage your property
