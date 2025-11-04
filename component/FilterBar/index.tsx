@@ -281,112 +281,63 @@ export default function FilterBar({
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-                <div className="lg:col-span-2">
-                  <label
-                    htmlFor="filter-search"
-                    className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-                  >
-                    Location, landmark or keyword
-                  </label>
-                  <div className="relative">
-                    <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-[18px] sm:h-[18px]" />
-                    <input
-                      id="filter-search"
-                      type="text"
-                      value={searchTerm}
-                      onChange={(event) =>
-                        onSearchTermChange(event.target.value)
-                      }
-                      placeholder="Enter a state, locality or area"
-                      className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 pl-10 sm:pl-11 pr-3 sm:pr-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
+              <div>
+                <label
+                  htmlFor="filter-search"
+                  className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+                >
+                  Location, landmark or keyword
+                </label>
+                <div className="relative">
+                  <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+                  <input
+                    id="filter-search"
+                    type="text"
+                    value={searchTerm}
+                    onChange={(event) => onSearchTermChange(event.target.value)}
+                    placeholder="Enter a state, locality or area"
+                    className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 pl-10 sm:pl-11 pr-3 sm:pr-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
+              </div>
+
+              {selectedPurpose !== "land" && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label
+                      className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+                      htmlFor="filter-bedrooms"
+                    >
+                      Bedrooms
+                    </label>
+                    <Select
+                      className="w-full"
+                      value={selectedBedrooms}
+                      onChange={handleBedroomsChange}
+                      options={BEDROOM_OPTIONS}
+                      placeholder="Any bedrooms"
+                      labelId="filter-bedrooms"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+                      htmlFor="filter-bathrooms"
+                    >
+                      Bathrooms
+                    </label>
+                    <Select
+                      className="w-full"
+                      value={selectedBathrooms}
+                      onChange={handleBathroomsChange}
+                      options={BATHROOM_OPTIONS}
+                      placeholder="Any bathrooms"
+                      labelId="filter-bathrooms"
                     />
                   </div>
                 </div>
-
-                <div>
-                  <label
-                    className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-                    htmlFor="filter-type"
-                  >
-                    Property type
-                  </label>
-                  <Select
-                    className="w-full"
-                    value={selectedType}
-                    onChange={(value) => onTypeChange(String(value))}
-                    options={resolvedTypeOptions.map((option) => ({
-                      value: option.value,
-                      label: option.label,
-                    }))}
-                    placeholder="Select type"
-                    labelId="filter-type"
-                  />
-                </div>
-              </div>
-
-              <div
-                className={`grid grid-cols-1 ${
-                  selectedPurpose === "land"
-                    ? "md:grid-cols-1"
-                    : "md:grid-cols-3"
-                } gap-3`}
-              >
-                <div>
-                  <label
-                    className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-                    htmlFor="filter-location"
-                  >
-                    Location
-                  </label>
-                  <Select
-                    className="w-full"
-                    value={selectedLocation}
-                    onChange={(value) => onLocationChange(String(value))}
-                    options={resolvedLocationOptions}
-                    placeholder="Select location"
-                    labelId="filter-location"
-                  />
-                </div>
-
-                {selectedPurpose !== "land" && (
-                  <>
-                    <div>
-                      <label
-                        className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-                        htmlFor="filter-bedrooms"
-                      >
-                        Bedrooms
-                      </label>
-                      <Select
-                        className="w-full"
-                        value={selectedBedrooms}
-                        onChange={handleBedroomsChange}
-                        options={BEDROOM_OPTIONS}
-                        placeholder="Any bedrooms"
-                        labelId="filter-bedrooms"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-                        htmlFor="filter-bathrooms"
-                      >
-                        Bathrooms
-                      </label>
-                      <Select
-                        className="w-full"
-                        value={selectedBathrooms}
-                        onChange={handleBathroomsChange}
-                        options={BATHROOM_OPTIONS}
-                        placeholder="Any bathrooms"
-                        labelId="filter-bathrooms"
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>

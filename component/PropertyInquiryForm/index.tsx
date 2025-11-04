@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import ContactMethodModal from "@/component/ContactMethodModal";
 import { SanityCompanyInfo } from "@/types/sanity";
+import { DEFAULT_MAX_PRICE } from "@/hooks/useSanityPropertyFilter";
 
 interface PropertyInquiryFormProps {
   companyInfo: SanityCompanyInfo | null;
+  locationQuery?: string;
+  priceRange?: [number, number];
 }
 
 interface FormData {
@@ -18,9 +21,48 @@ interface FormData {
 
 const PROPERTY_TYPES = ["Land", "House", "Estate", "Apartment", "Commercial"];
 
+const formatPrice = (price: number): string => {
+  return `₦${new Intl.NumberFormat("en-NG", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(price)}`;
+};
+
 export default function PropertyInquiryForm({
   companyInfo,
+  locationQuery,
+  priceRange,
 }: PropertyInquiryFormProps) {
+  const headingText = useMemo(() => {
+    const parts: string[] = ["Couldn't find property"];
+
+    if (locationQuery?.trim()) {
+      parts.push(`in ${locationQuery.trim()}`);
+    }
+
+    if (
+      priceRange &&
+      (priceRange[0] > 0 || priceRange[1] < DEFAULT_MAX_PRICE)
+    ) {
+      const priceParts: string[] = [];
+      if (priceRange[0] > 0) {
+        priceParts.push(formatPrice(priceRange[0]));
+      }
+      if (priceRange[1] < DEFAULT_MAX_PRICE) {
+        priceParts.push(formatPrice(priceRange[1]));
+      }
+
+      if (priceParts.length > 0) {
+        const priceText =
+          priceParts.length === 2
+            ? `${priceParts[0]} - ${priceParts[1]}`
+            : priceParts[0];
+        parts.push(`within ${priceText}`);
+      }
+    }
+
+    return parts.join(" ") + "?";
+  }, [locationQuery, priceRange]);
   const [showContactModal, setShowContactModal] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     propertyType: "",
@@ -87,7 +129,7 @@ Budget: ${budget || "Any budget"}`;
     <>
       <div className="bg-white rounded-lg shadow-md p-8">
         <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">
-          Couldn't Find What You're Looking For?
+          {headingText}
         </h3>
         <p className="text-gray-600 mb-6 text-center">
           No worries! Let us know what you need and we'll find the perfect

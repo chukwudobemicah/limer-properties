@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Filter, X } from "lucide-react";
@@ -20,15 +20,13 @@ function PropertiesContent() {
   const searchParams = useSearchParams();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const { properties, loading: propertiesLoading } = useSanityProperties();
-  const { locations, loading: filtersLoading } = useSanityFilters();
+  const { loading: filtersLoading } = useSanityFilters();
   const { companyInfo, loading: companyLoading } = useSanityCompanyInfo();
 
   const {
     filteredProperties,
     selectedType,
     setSelectedType,
-    selectedLocation,
-    setSelectedLocation,
     selectedBedrooms,
     setSelectedBedrooms,
     selectedBathrooms,
@@ -39,43 +37,10 @@ function PropertiesContent() {
     setSelectedFurnished,
     priceRange,
     setPriceRange,
+    searchTerm,
     setSearchTerm,
     resetFilters,
   } = useSanityPropertyFilter({ properties, initialPurpose: "all" });
-
-  const locationOptions = useMemo(() => {
-    const seenLabels = new Set<string>();
-    const seenValues = new Set<string>();
-
-    return locations.reduce<Array<{ value: string; label: string }>>(
-      (options, location) => {
-        const value = location.slug?.current;
-        if (!value) {
-          return options;
-        }
-
-        if (seenValues.has(value)) {
-          return options;
-        }
-
-        const label = [location.name, location.city?.name, location.state?.name]
-          .filter((segment): segment is string => Boolean(segment))
-          .join(", ")
-          .trim();
-
-        const normalizedLabel = label.toLowerCase();
-        if (seenLabels.has(normalizedLabel)) {
-          return options;
-        }
-
-        seenValues.add(value);
-        seenLabels.add(normalizedLabel);
-        options.push({ value, label: label || value });
-        return options;
-      },
-      []
-    );
-  }, [locations]);
 
   const hasAppliedQueryParams = useRef(false);
 
@@ -93,13 +58,13 @@ function PropertiesContent() {
     }
 
     const locationParam = searchParams.get("location");
-    if (locationParam) {
-      setSelectedLocation(locationParam);
-    }
-
     const searchParam = searchParams.get("search");
+
+    // Support both "location" and "search" params for backward compatibility
     if (searchParam) {
       setSearchTerm(searchParam);
+    } else if (locationParam) {
+      setSearchTerm(locationParam);
     }
 
     const bedroomsParam = searchParams.get("bedrooms");
@@ -172,7 +137,6 @@ function PropertiesContent() {
   }, [
     searchParams,
     setSelectedType,
-    setSelectedLocation,
     setSearchTerm,
     setSelectedBedrooms,
     setSelectedBathrooms,
@@ -183,22 +147,19 @@ function PropertiesContent() {
 
   const filterComponent = (
     <AdvancedPropertyFilter
-      selectedType={selectedType}
-      selectedLocation={selectedLocation}
+      searchTerm={searchTerm}
       selectedBedrooms={selectedBedrooms}
       selectedBathrooms={selectedBathrooms}
       selectedStructure={selectedStructure}
       selectedFurnished={selectedFurnished}
       priceRange={priceRange}
-      onTypeChange={setSelectedType}
-      onLocationChange={setSelectedLocation}
+      onSearchTermChange={setSearchTerm}
       onBedroomsChange={setSelectedBedrooms}
       onBathroomsChange={setSelectedBathrooms}
       onStructureChange={setSelectedStructure}
       onFurnishedChange={setSelectedFurnished}
       onPriceRangeChange={setPriceRange}
       onResetFilters={resetFilters}
-      locationOptions={locationOptions}
       resultsCount={filteredProperties.length}
     />
   );
@@ -289,7 +250,11 @@ function PropertiesContent() {
                   ))}
                 </div>
               ) : (
-                <PropertyInquiryForm companyInfo={companyInfo} />
+                <PropertyInquiryForm
+                  companyInfo={companyInfo}
+                  locationQuery={searchTerm}
+                  priceRange={priceRange}
+                />
               )}
             </main>
           </div>
