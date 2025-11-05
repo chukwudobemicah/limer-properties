@@ -245,7 +245,7 @@ function PropertiesContent() {
                     <PropertyCard
                       key={property._id}
                       property={property}
-                      phoneNumber={companyInfo?.phone || ""}
+                      companyInfo={companyInfo}
                     />
                   ))}
                 </div>

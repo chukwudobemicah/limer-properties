@@ -49,7 +49,7 @@ export default function ContactMethodModal({
             </p>
 
             <div className="flex flex-col gap-3">
-              {companyInfo?.phone && (
+              {/* {companyInfo?.phone && (
                 <button
                   onClick={() => handleContact("call")}
                   className="flex items-center justify-center gap-2 bg-white text-primary px-4 md:px-6 py-2.5 md:py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-sm md:text-base border border-primary"
@@ -57,7 +57,7 @@ export default function ContactMethodModal({
                   <Phone size={18} />
                   Call
                 </button>
-              )}
+              )} */}
 
               {companyInfo?.phone && (
                 <button
