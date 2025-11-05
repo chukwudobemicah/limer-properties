@@ -18,7 +18,7 @@ export default function AboutPage() {
       window.location.href = `tel:${companyInfo.phone.replace(/\s+/g, "")}`;
     } else if (method === "whatsapp" && companyInfo.phone) {
       const whatsappMessage = encodeURIComponent(
-        "Hello! I'd like to get in touch with Limer Properties. Please provide more information."
+        "Hello! I'd like to get in touch with Limer Estate And Facility Management LTD. Please provide more information."
       );
       const whatsappUrl = `https://wa.me/${companyInfo.phone.replace(
         /\D/g,
@@ -26,9 +26,11 @@ export default function AboutPage() {
       )}?text=${whatsappMessage}`;
       window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     } else if (method === "email" && companyInfo.email) {
-      const subject = encodeURIComponent("Inquiry - Limer Properties");
+      const subject = encodeURIComponent(
+        "Inquiry - Limer Estate And Facility Management LTD"
+      );
       const emailBody = encodeURIComponent(
-        "Hello! I'd like to get in touch with Limer Properties. Please provide more information.\n\nThank you!"
+        "Hello! I'd like to get in touch with Limer Estate And Facility Management LTD. Please provide more information.\n\nThank you!"
       );
       const mailtoUrl = `mailto:${companyInfo.email}?subject=${subject}&body=${emailBody}`;
       window.location.href = mailtoUrl;
@@ -41,7 +43,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              About Limer Properties
+              About Limer Estate And Facility Management LTD
             </h1>
             <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto">
               Your trusted partner in finding the perfect property across
@@ -62,9 +64,9 @@ export default function AboutPage() {
               <div className="space-y-4 text-gray-600 leading-relaxed">
                 <p>
                   Founded with a vision to revolutionize the real estate
-                  industry in Nigeria, Limer Properties has grown to become one
-                  of the most trusted names in property acquisition and
-                  management.
+                  industry in Nigeria, Limer Estate And Facility Management LTD
+                  has grown to become one of the most trusted names in property
+                  acquisition and management.
                 </p>
                 <p>
                   We understand that finding the perfect property is more than

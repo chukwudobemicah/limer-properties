@@ -1,4 +1,4 @@
-# Sanity CMS Setup Guide for Limer Properties
+# Sanity CMS Setup Guide for Limer Estate And Facility Management LTD
 
 ## 🚀 Quick Start
 
@@ -7,7 +7,7 @@
 1. Visit [https://www.sanity.io/manage](https://www.sanity.io/manage)
 2. Sign up or log in
 3. Click "Create project"
-4. Name your project: **Limer Properties**
+4. Name your project: **Limer Estate And Facility Management LTD**
 5. Choose dataset name: **production**
 6. Copy your **Project ID**
 

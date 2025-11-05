@@ -28,7 +28,7 @@ export function generateWhatsAppLink(
   detailsUrl?: string,
   imageUrl?: string
 ): string {
-  let message = `Hello Limer Properties,\n\nI'm interested in the property: *${propertyTitle}*\n\nProperty ID: ${propertyId}`;
+  let message = `Hello Limer Estate And Facility Management LTD,\n\nI'm interested in the property: *${propertyTitle}*\n\nProperty ID: ${propertyId}`;
 
   if (detailsUrl) {
     message += `\n\nView Details: ${detailsUrl}`;
@@ -51,7 +51,7 @@ export function generateTourWhatsAppLink(
   propertyId: string,
   detailsUrl?: string
 ): string {
-  let message = `Hello Limer Properties,\n\nI would like to schedule a tour for the property: *${propertyTitle}*\n\nProperty ID: ${propertyId}`;
+  let message = `Hello Limer Estate And Facility Management LTD,\n\nI would like to schedule a tour for the property: *${propertyTitle}*\n\nProperty ID: ${propertyId}`;
 
   if (detailsUrl) {
     message += `\n\nView Details: ${detailsUrl}`;
@@ -70,7 +70,7 @@ export function generateInquiryWhatsAppLink(
   propertyId: string,
   detailsUrl?: string
 ): string {
-  let message = `Hello Limer Properties,\n\nI have some questions about the property: *${propertyTitle}*\n\nProperty ID: ${propertyId}`;
+  let message = `Hello Limer Estate And Facility Management LTD,\n\nI have some questions about the property: *${propertyTitle}*\n\nProperty ID: ${propertyId}`;
 
   if (detailsUrl) {
     message += `\n\nView Details: ${detailsUrl}`;

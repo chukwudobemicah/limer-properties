@@ -5,7 +5,7 @@ import { schemaTypes } from "./sanity/schema";
 
 export default defineConfig({
   name: "default",
-  title: "Limer Properties",
+  title: "Limer Estate And Facility Management LTD",
 
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,

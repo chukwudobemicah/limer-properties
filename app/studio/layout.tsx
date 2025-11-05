@@ -7,6 +7,7 @@ export default function StudioLayout({
 }
 
 export const metadata = {
-  title: "Limer Properties - Studio",
-  description: "Content management for Limer Properties",
+  title: "Limer Estate And Facility Management LTD - Studio",
+  description:
+    "Content management for Limer Estate And Facility Management LTD",
 };

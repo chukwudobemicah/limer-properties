@@ -1,4 +1,4 @@
-# Limer Properties
+# Limer Estate And Facility Management LTD
 
 A modern, responsive real estate website built with Next.js 15, React 19, TypeScript, and Tailwind CSS.
 
@@ -246,6 +246,6 @@ For support, email info@limerproperties.com or call +234 801 234 5678.
 
 ---
 
-Built with ❤️ by Limer Properties Team
+Built with ❤️ by Limer Estate And Facility Management LTD Team
 
 # limer-properties

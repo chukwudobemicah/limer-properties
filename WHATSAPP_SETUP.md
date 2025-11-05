@@ -2,7 +2,7 @@
 
 ## Overview
 
-Limer Properties includes WhatsApp integration that allows potential buyers/renters to instantly contact you about properties they're interested in.
+Limer Estate And Facility Management LTD includes WhatsApp integration that allows potential buyers/renters to instantly contact you about properties they're interested in.
 
 ## Setup Instructions
 
@@ -56,7 +56,7 @@ pnpm dev
 The default message includes:
 
 ```
-Hello Limer Properties,
+Hello Limer Estate And Facility Management LTD,
 
 I'm interested in the property: *[Property Title]*
 
@@ -117,7 +117,7 @@ export function generateWhatsAppLink(
   const phoneNumber =
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2348012345678";
 
-  const message = `Hello Limer Properties,
+  const message = `Hello Limer Estate And Facility Management LTD,
 
 I'm interested in: *${propertyTitle}*
 

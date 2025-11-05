@@ -28,7 +28,7 @@ export default function Footer() {
               <Link href="/" className="flex items-center">
                 <Image
                   src="/images/logo.png"
-                  alt="Limer Properties"
+                  alt="Limer Estate And Facility Management LTD"
                   width={100}
                   height={100}
                   priority
@@ -37,7 +37,7 @@ export default function Footer() {
                 />
               </Link>
             </h3>
-            <p>Awoyaya lagos, nigeria</p>
+            {/* <p>Awoyaya lagos, nigeria</p> */}
             <p className="text-sm mb-4">
               {companyInfo?.description ||
                 "Your trusted partner in finding the perfect property. We offer a wide range of houses, lands, and shortlets across Nigeria."}
@@ -207,8 +207,9 @@ export default function Footer() {
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="text-sm">
             &copy; {currentYear}{" "}
-            {companyInfo?.companyName || "Limer Properties"}. All rights
-            reserved.
+            {companyInfo?.companyName ||
+              "Limer Estate And Facility Management LTD"}
+            . All rights reserved.
           </p>
         </div>
       </div>

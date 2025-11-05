@@ -28,15 +28,15 @@ export const metadata: Metadata = {
     "shortlets",
     "Nigeria properties",
     "Lagos properties",
-    "Limer properties",
+    "Limer Estate And Facility Management LTD",
     "Limer Estate & Facility Management",
   ],
-  authors: [{ name: "Limer Properties" }],
+  authors: [{ name: "Limer Estate And Facility Management LTD" }],
   openGraph: {
     title:
       "Limer Estate & Facility Management - Find Your Dream Home in Nigeria",
     description:
-      "Discover the perfect property with Limer Properties. Browse houses for sale, rent, land, and shortlets across Nigeria.",
+      "Discover the perfect property with Limer Estate And Facility Management LTD. Browse houses for sale, rent, land, and shortlets across Nigeria.",
     type: "website",
     locale: "en_NG",
     siteName: "Limer Estate & Facility Management",

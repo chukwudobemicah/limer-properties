@@ -2,7 +2,7 @@
 
 ## Summary
 
-Successfully migrated the Limer Properties website from dummy/mock data to live Sanity CMS integration!
+Successfully migrated the Limer Estate And Facility Management LTD website from dummy/mock data to live Sanity CMS integration!
 
 ## What Changed
 
