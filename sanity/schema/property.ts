@@ -72,7 +72,7 @@ export default defineType({
       title: "Description",
       type: "text",
       rows: 5,
-      validation: (Rule) => Rule.required().min(50).max(1000),
+      validation: (Rule) => Rule.required().min(10).max(1000),
     }),
     defineField({
       name: "price",
