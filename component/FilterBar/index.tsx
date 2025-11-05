@@ -247,7 +247,7 @@ export default function FilterBar({
       transition={{ delay: 0.4, duration: 0.5 }}
       className="max-w-5xl w-full mx-auto"
     >
-      <div className="bg-white/95 backdrop-blur-md w-full rounded-2xl sm:rounded-3xl shadow-xl border border-white/40 p-4 sm:p-6 lg:p-8">
+      <div className="bg-white/95 backdrop-blur-md w-full rounded-2xl sm:rounded-3xl shadow-xl border border-white/40 p-4 sm:p-6 lg:p-8 sm:min-w-[580px]">
         <div className="flex flex-col">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4 border-b border-gray-100 pb-3 sm:pb-4">
             <div className="flex items-center bg-gray-100 rounded-full p-0.5 sm:p-1 text-xs sm:text-sm font-medium w-full lg:w-auto">
@@ -339,48 +339,25 @@ export default function FilterBar({
                 </div>
               )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <label
-                    className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-                    htmlFor="min-price-input"
-                  >
-                    Minimum price (₦)
-                  </label>
-                  <input
-                    id="min-price-input"
-                    type="number"
-                    min={0}
-                    step={1000}
-                    value={priceRange[0] === 0 ? "" : String(priceRange[0])}
-                    onChange={handleMinPriceChange}
-                    placeholder="No minimum"
-                    className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-                    htmlFor="max-price-input"
-                  >
-                    Maximum price (₦)
-                  </label>
-                  <input
-                    id="max-price-input"
-                    type="number"
-                    min={0}
-                    step={1000}
-                    value={
-                      priceRange[1] === DEFAULT_MAX_PRICE
-                        ? ""
-                        : String(priceRange[1])
-                    }
-                    onChange={handleMaxPriceChange}
-                    placeholder="No maximum"
-                    className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
-                  />
-                </div>
+              <div>
+                <label
+                  className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+                  htmlFor="max-price-input"
+                >
+                  Budget (₦)
+                </label>
+                <input
+                  id="max-price-input"
+                  type="number"
+                  value={
+                    priceRange[1] === DEFAULT_MAX_PRICE
+                      ? ""
+                      : String(priceRange[1])
+                  }
+                  onChange={handleMaxPriceChange}
+                  placeholder="No maximum"
+                  className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
+                />
               </div>
 
               {selectedPurpose !== "land" && (
@@ -415,18 +392,10 @@ export default function FilterBar({
                   </div>
                 </div>
               )}
-              <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 sm:items-center sm:justify-between pt-2">
-                <button
-                  type="button"
-                  onClick={onResetFilters}
-                  className="inline-flex items-center justify-center rounded-lg border border-primary px-4 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold text-primary transition-colors hover:bg-primary/10 w-full sm:w-auto"
-                >
-                  Reset filters
-                </button>
-
+              <div className="flex flex-col-reverse sm:flex-row gap-2 w-full sm:gap-3 sm:items-center sm:justify-between pt-2">
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center gap-2 rounded-lg sm:rounded-xl bg-primary px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-primary-dark w-full sm:w-auto"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg sm:rounded-xl bg-primary px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white transition-all hover:bg-primary-dark hover:translate-y-[-2px] ease-in-out duration-200 hover:shadow-md"
                 >
                   <Search className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
                   Search
