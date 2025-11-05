@@ -218,11 +218,11 @@ export default function AboutPage() {
               <p className="text-white/90">Happy Clients</p>
             </div>
             <div>
-              <p className="text-5xl font-bold mb-2">50+</p>
+              <p className="text-5xl font-bold mb-2">150+</p>
               <p className="text-white/90">Locations</p>
             </div>
             <div>
-              <p className="text-5xl font-bold mb-2">10+</p>
+              <p className="text-5xl font-bold mb-2">40+</p>
               <p className="text-white/90">Years Experience</p>
             </div>
           </div>
@@ -230,7 +230,7 @@ export default function AboutPage() {
       </section>
 
       {/* Team Section */}
-      <section className="py-16">
+      {/* <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -297,7 +297,7 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
       <section className="py-16 bg-gray-100">

@@ -8,13 +8,13 @@ import companyInfo from "./companyInfo";
 
 export const schemaTypes = [
   // Base schemas (create these first)
-  city,
-  state,
+  // city,
+  // state,
 
   // Filter schemas (create these second)
-  propertyType,
-  propertyStructure,
-  location,
+  // propertyType,
+  // propertyStructure,
+  // location,
 
   // Main property schema
   property,
