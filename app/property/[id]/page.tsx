@@ -17,7 +17,12 @@ import {
   Building2,
 } from "lucide-react";
 import { client } from "@/lib/sanity.client";
-import { SanityProperty } from "@/types/sanity";
+import {
+  SanityProperty,
+  SanityPropertyType,
+  SanityLocation,
+  SanityPropertyStructure,
+} from "@/types/sanity";
 import { urlFor } from "@/lib/sanity.image";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { formatPrice } from "@/utils/functions";
@@ -157,7 +162,9 @@ export default function PropertyDetails() {
   }
 
   // Convert propertyType string to slug format for compatibility
-  const getPropertyTypeSlug = (propertyType: string | any): string => {
+  const getPropertyTypeSlug = (
+    propertyType: string | SanityPropertyType
+  ): string => {
     if (typeof propertyType === "string") {
       // Normalize to slug format
       const normalized = propertyType.toLowerCase().replace(/\s+/g, "-");
@@ -212,7 +219,7 @@ export default function PropertyDetails() {
     return "";
   };
 
-  const getLocationString = (location: string | any): string => {
+  const getLocationString = (location: string | SanityLocation): string => {
     if (typeof location === "string") {
       return location;
     }
@@ -584,7 +591,8 @@ View property: ${propertyDetailsUrl}`;
                       <p className="text-black text-sm sm:text-base font-semibold">
                         {typeof property.structure === "string"
                           ? property.structure
-                          : (property.structure as any)?.title || "N/A"}
+                          : (property.structure as SanityPropertyStructure)
+                              ?.title || "N/A"}
                       </p>
                     </div>
                   </div>
