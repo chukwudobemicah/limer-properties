@@ -58,7 +58,7 @@ export default function ManagementCTA({ companyInfo }: ManagementCTAProps) {
     propertyCountry,
     phoneNumber,
   } = formData;
-
+  // jsjj
   const detailsMessage = `Property Type: ${propertyType}
 Property Address: ${propertyAddress}
 Property State: ${propertyState}
