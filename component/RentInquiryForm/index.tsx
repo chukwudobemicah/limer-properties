@@ -35,19 +35,25 @@ export default function RentInquiryForm({ companyInfo }: RentInquiryFormProps) {
     setShowContactOptions(true);
   };
 
-  const handleContact = (method: "whatsapp" | "email" | "call") => {
-    if (!companyInfo) return;
+  const { location, bedrooms, bathrooms, budget, structure } = formData;
 
-    const { location, bedrooms, bathrooms, budget, structure } = formData;
-
-    const detailsMessage = `Location: ${location || "Any"}
+  const detailsMessage = `Location: ${location || "Any"}
 Bedrooms: ${bedrooms || "Any"}
 Bathrooms: ${bathrooms || "Any"}
 Maximum Budget: ${budget || "Any budget"}
 House Structure: ${structure || "Any"}`;
 
+  const emailData = {
+    subject: "Property Rental Inquiry",
+    message: `Hello! I'm looking for a property to rent.\n\n${detailsMessage}\n\nPlease let me know if you have anything that matches my criteria.\n\nThank you!`,
+  };
+
+  const handleContact = (method: "whatsapp" | "email" | "call") => {
+    if (!companyInfo) return;
+
     if (method === "call" && companyInfo.phone) {
       window.location.href = `tel:${companyInfo.phone.replace(/\s+/g, "")}`;
+      setShowContactOptions(false);
     } else if (method === "whatsapp" && companyInfo.phone) {
       const whatsappMessage = encodeURIComponent(
         `Hello! I'm looking for a property to rent.\n\n${detailsMessage}\n\nPlease let me know if you have anything that matches my criteria.\n\nThank you!`
@@ -57,24 +63,16 @@ House Structure: ${structure || "Any"}`;
         ""
       )}?text=${whatsappMessage}`;
       window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    } else if (method === "email" && companyInfo.email) {
-      const subject = encodeURIComponent("Property Rental Inquiry");
-      const emailBody = encodeURIComponent(
-        `Hello! I'm looking for a property to rent.\n\n${detailsMessage}\n\nPlease let me know if you have anything that matches my criteria.\n\nThank you!`
-      );
-      const mailtoUrl = `mailto:${companyInfo.email}?subject=${subject}&body=${emailBody}`;
-      window.location.href = mailtoUrl;
+      setShowContactOptions(false);
+      setFormData({
+        location: "",
+        bedrooms: "",
+        bathrooms: "",
+        budget: "",
+        structure: "",
+      });
     }
-
-    // Reset form after sending
-    setShowContactOptions(false);
-    setFormData({
-      location: "",
-      bedrooms: "",
-      bathrooms: "",
-      budget: "",
-      structure: "",
-    });
+    // Email is now handled by ContactMethodModal via API
   };
 
   return (
@@ -204,9 +202,19 @@ House Structure: ${structure || "Any"}`;
 
       <ContactMethodModal
         isOpen={showContactOptions}
-        onClose={() => setShowContactOptions(false)}
+        onClose={() => {
+          setShowContactOptions(false);
+          setFormData({
+            location: "",
+            bedrooms: "",
+            bathrooms: "",
+            budget: "",
+            structure: "",
+          });
+        }}
         companyInfo={companyInfo}
         onSubmit={handleContact}
+        emailData={emailData}
       />
     </>
   );

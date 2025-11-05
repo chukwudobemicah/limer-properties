@@ -3,7 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-
+  --text: #000000;
   /* Primary Blue Theme */
   --primary: #2563eb;
   --primary-dark: #1e40af;
@@ -38,6 +38,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-text: #000000;
 
   /* Primary Theme Colors */
   --color-primary: var(--primary);
@@ -52,8 +53,10 @@
   /* Accent Colors */
   --color-accent: var(--accent);
   --color-success: var(--success);
+  --color-positive: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
+  --color-negative: var(--error);
 
   /* Neutral Shades */
   --color-gray-50: var(--gray-50);
@@ -93,7 +96,7 @@ body {
 
 .button_secondary {
   background: white;
-  color: var(--foreground);
+  color: #000;
 }
 
 .button_secondary:hover {

@@ -30,19 +30,27 @@ export default function ContactSection() {
     setShowContactModal(true);
   };
 
-  const handleContact = (method: "whatsapp" | "email" | "call") => {
-    if (!companyInfo) return;
+  const { name, phone, message } = formData;
 
-    const { name, phone, message } = formData;
-
-    const detailsMessage = `Name: ${name}
+  const detailsMessage = `Name: ${name}
 Phone: ${phone}
 
 Message:
 ${message}`;
 
+  const emailData = {
+    subject: `Contact Form Submission from ${name}`,
+    message: detailsMessage,
+    fromEmail: phone, // Using phone as identifier since no email field
+    fromName: name,
+  };
+
+  const handleContact = (method: "whatsapp" | "email" | "call") => {
+    if (!companyInfo) return;
+
     if (method === "call" && companyInfo.phone) {
       window.location.href = `tel:${companyInfo.phone.replace(/\s+/g, "")}`;
+      setShowContactModal(false);
     } else if (method === "whatsapp" && companyInfo.phone) {
       const whatsappMessage = encodeURIComponent(detailsMessage);
       const whatsappUrl = `https://wa.me/${companyInfo.phone.replace(
@@ -50,18 +58,10 @@ ${message}`;
         ""
       )}?text=${whatsappMessage}`;
       window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    } else if (method === "email" && companyInfo.email) {
-      const subject = encodeURIComponent(
-        `Contact Form Submission from ${name}`
-      );
-      const emailBody = encodeURIComponent(detailsMessage);
-      const mailtoUrl = `mailto:${companyInfo.email}?subject=${subject}&body=${emailBody}`;
-      window.location.href = mailtoUrl;
+      setShowContactModal(false);
+      setFormData({ name: "", phone: "", message: "" });
     }
-
-    // Reset form after sending
-    setShowContactModal(false);
-    setFormData({ name: "", phone: "", message: "" });
+    // Email is now handled by ContactMethodModal via API
   };
 
   return (
@@ -201,9 +201,13 @@ ${message}`;
 
       <ContactMethodModal
         isOpen={showContactModal}
-        onClose={() => setShowContactModal(false)}
+        onClose={() => {
+          setShowContactModal(false);
+          setFormData({ name: "", phone: "", message: "" });
+        }}
         companyInfo={companyInfo}
         onSubmit={handleContact}
+        emailData={emailData}
       />
     </section>
   );

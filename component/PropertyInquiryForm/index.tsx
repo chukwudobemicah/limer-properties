@@ -87,19 +87,25 @@ export default function PropertyInquiryForm({
     setShowContactModal(true);
   };
 
-  const handleContact = (method: "whatsapp" | "email" | "call") => {
-    if (!companyInfo) return;
+  const { propertyType, location, bedrooms, bathrooms, budget } = formData;
 
-    const { propertyType, location, bedrooms, bathrooms, budget } = formData;
-
-    const detailsMessage = `Property Type: ${propertyType || "Any"}
+  const detailsMessage = `Property Type: ${propertyType || "Any"}
 Location: ${location || "Any"}
 Bedrooms: ${bedrooms || "Any"}
 Bathrooms: ${bathrooms || "Any"}
 Budget: ${budget || "Any budget"}`;
 
+  const emailData = {
+    subject: "Property Inquiry - Couldn't Find What I'm Looking For",
+    message: `Hello! I'm looking for a property and couldn't find what I need on your website.\n\n${detailsMessage}\n\nPlease let me know if you have anything that matches my criteria.\n\nThank you!`,
+  };
+
+  const handleContact = (method: "whatsapp" | "email" | "call") => {
+    if (!companyInfo) return;
+
     if (method === "call" && companyInfo.phone) {
       window.location.href = `tel:${companyInfo.phone.replace(/\s+/g, "")}`;
+      setShowContactModal(false);
     } else if (method === "whatsapp" && companyInfo.phone) {
       const whatsappMessage = encodeURIComponent(
         `Hello! I'm looking for a property and couldn't find what I need on your website.\n\n${detailsMessage}\n\nPlease let me know if you have anything that matches my criteria.\n\nThank you!`
@@ -109,26 +115,14 @@ Budget: ${budget || "Any budget"}`;
         ""
       )}?text=${whatsappMessage}`;
       window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    } else if (method === "email" && companyInfo.email) {
-      const subject = encodeURIComponent(
-        "Property Inquiry - Couldn't Find What I'm Looking For"
-      );
-      const emailBody = encodeURIComponent(
-        `Hello! I'm looking for a property and couldn't find what I need on your website.\n\n${detailsMessage}\n\nPlease let me know if you have anything that matches my criteria.\n\nThank you!`
-      );
-      const mailtoUrl = `mailto:${companyInfo.email}?subject=${subject}&body=${emailBody}`;
-      window.location.href = mailtoUrl;
+      setShowContactModal(false);
     }
+    // Email is now handled by ContactMethodModal via API
+  };
 
-    // Reset form after sending
+  const handleModalClose = () => {
     setShowContactModal(false);
-    setFormData({
-      propertyType: "",
-      location: "",
-      bedrooms: "",
-      bathrooms: "",
-      budget: "",
-    });
+    // Reset form after successful email send (handled by ContactMethodModal)
   };
 
   return (
@@ -264,9 +258,10 @@ Budget: ${budget || "Any budget"}`;
 
       <ContactMethodModal
         isOpen={showContactModal}
-        onClose={() => setShowContactModal(false)}
+        onClose={handleModalClose}
         companyInfo={companyInfo}
         onSubmit={handleContact}
+        emailData={emailData}
       />
     </>
   );

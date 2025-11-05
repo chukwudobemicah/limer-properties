@@ -235,27 +235,37 @@ export default function PropertyDetails() {
     return "Location not specified";
   };
 
-  const handleContact = (method: "whatsapp" | "email" | "call") => {
-    if (!companyInfo || !property) return;
+  const propertyDetailsUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/property/${property?.slug.current}`
+      : `/property/${property?.slug.current}`;
 
-    const propertyDetailsUrl =
-      typeof window !== "undefined"
-        ? `${window.location.origin}/property/${property.slug.current}`
-        : `/property/${property.slug.current}`;
+  const locationString = property ? getLocationString(property.location) : "";
 
-    const locationString = getLocationString(property.location);
-
-    const propertyDetails = `Property: ${property.title}
+  const propertyDetails = property
+    ? `Property: ${property.title}
 Location: ${locationString}
 Price: ${formatPrice(property.price)}
 ${property.bedrooms ? `Bedrooms: ${property.bedrooms}` : ""}
 ${property.bathrooms ? `Bathrooms: ${property.bathrooms}` : ""}
 ${property.documentTitle ? `Document Title: ${property.documentTitle}` : ""}
 
-View property: ${propertyDetailsUrl}`;
+View property: ${propertyDetailsUrl}`
+    : "";
+
+  const emailData = property
+    ? {
+        subject: `Inquiry about ${property.title}`,
+        message: `Hello! I'm interested in this property:\n\n${propertyDetails}\n\nPlease provide more information.\n\nThank you!`,
+      }
+    : undefined;
+
+  const handleContact = (method: "whatsapp" | "email" | "call") => {
+    if (!companyInfo || !property) return;
 
     if (method === "call" && companyInfo.phone) {
       window.location.href = `tel:${companyInfo.phone.replace(/\s+/g, "")}`;
+      setShowContactModal(false);
     } else if (method === "whatsapp" && companyInfo.phone) {
       const whatsappMessage = encodeURIComponent(
         `Hello! I'm interested in this property:\n\n${propertyDetails}\n\nPlease provide more information.`
@@ -265,16 +275,9 @@ View property: ${propertyDetailsUrl}`;
         ""
       )}?text=${whatsappMessage}`;
       window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    } else if (method === "email" && companyInfo.email) {
-      const subject = encodeURIComponent(`Inquiry about ${property.title}`);
-      const emailBody = encodeURIComponent(
-        `Hello! I'm interested in this property:\n\n${propertyDetails}\n\nPlease provide more information.\n\nThank you!`
-      );
-      const mailtoUrl = `mailto:${companyInfo.email}?subject=${subject}&body=${emailBody}`;
-      window.location.href = mailtoUrl;
+      setShowContactModal(false);
     }
-
-    setShowContactModal(false);
+    // Email is now handled by ContactMethodModal via API
   };
 
   const nextMedia = () => {
@@ -768,6 +771,7 @@ View property: ${propertyDetailsUrl}`;
         onClose={() => setShowContactModal(false)}
         companyInfo={companyInfo}
         onSubmit={handleContact}
+        emailData={emailData}
         title="Contact us about this property"
         description="Choose how you'd like to get in touch with us."
       />

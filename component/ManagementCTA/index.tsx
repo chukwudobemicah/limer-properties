@@ -49,19 +49,25 @@ export default function ManagementCTA({ companyInfo }: ManagementCTAProps) {
     setShowContactModal(true);
   };
 
-  const handleContact = (method: "whatsapp" | "email" | "call") => {
-    if (!companyInfo) return;
+  const { propertyType, propertyAddress, propertyState, propertyCountry } =
+    formData;
 
-    const { propertyType, propertyAddress, propertyState, propertyCountry } =
-      formData;
-
-    const detailsMessage = `Property Type: ${propertyType}
+  const detailsMessage = `Property Type: ${propertyType}
 Property Address: ${propertyAddress}
 Property State: ${propertyState}
 Property Country: ${propertyCountry}`;
 
+  const emailData = {
+    subject: "Property Management Services Inquiry",
+    message: `Hello! I'm interested in your property management services.\n\n${detailsMessage}\n\nPlease provide more information.\n\nThank you!`,
+  };
+
+  const handleContact = (method: "whatsapp" | "email" | "call") => {
+    if (!companyInfo) return;
+
     if (method === "call" && companyInfo.phone) {
       window.location.href = `tel:${companyInfo.phone.replace(/\s+/g, "")}`;
+      setShowContactModal(false);
     } else if (method === "whatsapp" && companyInfo.phone) {
       const whatsappMessage = encodeURIComponent(
         `Hello! I'm interested in your property management services.\n\n${detailsMessage}\n\nPlease provide more information.`
@@ -71,25 +77,15 @@ Property Country: ${propertyCountry}`;
         ""
       )}?text=${whatsappMessage}`;
       window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    } else if (method === "email" && companyInfo.email) {
-      const subject = encodeURIComponent(
-        "Property Management Services Inquiry"
-      );
-      const emailBody = encodeURIComponent(
-        `Hello! I'm interested in your property management services.\n\n${detailsMessage}\n\nPlease provide more information.\n\nThank you!`
-      );
-      const mailtoUrl = `mailto:${companyInfo.email}?subject=${subject}&body=${emailBody}`;
-      window.location.href = mailtoUrl;
+      setShowContactModal(false);
+      setFormData({
+        propertyType: "",
+        propertyAddress: "",
+        propertyState: "",
+        propertyCountry: "",
+      });
     }
-
-    // Reset form after sending
-    setShowContactModal(false);
-    setFormData({
-      propertyType: "",
-      propertyAddress: "",
-      propertyState: "",
-      propertyCountry: "",
-    });
+    // Email is now handled by ContactMethodModal via API
   };
 
   return (
@@ -205,9 +201,18 @@ Property Country: ${propertyCountry}`;
 
       <ContactMethodModal
         isOpen={showContactModal}
-        onClose={() => setShowContactModal(false)}
+        onClose={() => {
+          setShowContactModal(false);
+          setFormData({
+            propertyType: "",
+            propertyAddress: "",
+            propertyState: "",
+            propertyCountry: "",
+          });
+        }}
         companyInfo={companyInfo}
         onSubmit={handleContact}
+        emailData={emailData}
       />
     </>
   );
