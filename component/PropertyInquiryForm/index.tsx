@@ -23,7 +23,7 @@ interface FormData {
 
 const PROPERTY_TYPES = ["Land", "House", "Estate", "Apartment", "Commercial"];
 
-const RENT_PROPERTY_TYPES = [
+export const RENT_PROPERTY_TYPES = [
   { value: "studio-apartment", label: "Studio Apartment" },
   { value: "mini-flat", label: "Mini Flat" },
   { value: "2-bedrooms-flat", label: "2 Bedrooms Flat" },

@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import ContactMethodModal from "@/component/ContactMethodModal";
 import { SanityCompanyInfo } from "@/types/sanity";
+import Select from "../Select";
+import { RENT_PROPERTY_TYPES } from "../PropertyInquiryForm";
 
 interface RentInquiryFormProps {
   companyInfo: SanityCompanyInfo | null;
@@ -38,10 +40,8 @@ export default function RentInquiryForm({ companyInfo }: RentInquiryFormProps) {
   const { location, bedrooms, bathrooms, budget, structure } = formData;
 
   const detailsMessage = `Location: ${location || "Any"}
-Bedrooms: ${bedrooms || "Any"}
-Bathrooms: ${bathrooms || "Any"}
-Maximum Budget: ${budget || "Any budget"}
-House Structure: ${structure || "Any"}`;
+Budget: ${budget || "Any budget"}
+House Type: ${structure || "Any"}`;
 
   const emailData = {
     subject: "Property Rental Inquiry",
@@ -87,9 +87,23 @@ House Structure: ${structure || "Any"}`;
         </p>
 
         <form onSubmit={handleFormSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
+            {/* House Structure */}
+            <div>
+              <Select
+                label="House Type"
+                value={formData.structure}
+                onChange={(value) =>
+                  handleInputChange("structure", String(value))
+                }
+                options={RENT_PROPERTY_TYPES}
+                placeholder="Select House type"
+                labelId="property-type"
+              />
+            </div>
+
             {/* Location */}
-            <div className="sm:col-span-2">
+            <div>
               <label
                 htmlFor="rent-location"
                 className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
@@ -108,53 +122,12 @@ House Structure: ${structure || "Any"}`;
               />
             </div>
 
-            {/* Bedrooms */}
-            <div>
-              <label
-                htmlFor="rent-bedrooms"
-                className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-              >
-                Bedrooms
-              </label>
-              <input
-                id="rent-bedrooms"
-                type="text"
-                value={formData.bedrooms}
-                onChange={(event) =>
-                  handleInputChange("bedrooms", event.target.value)
-                }
-                placeholder="Number of bedrooms"
-                className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
-              />
-            </div>
-
-            {/* Bathrooms */}
-            <div>
-              <label
-                htmlFor="rent-bathrooms"
-                className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-              >
-                Bathrooms
-              </label>
-              <input
-                id="rent-bathrooms"
-                type="text"
-                value={formData.bathrooms}
-                onChange={(event) =>
-                  handleInputChange("bathrooms", event.target.value)
-                }
-                placeholder="Number of bathrooms"
-                className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
-              />
-            </div>
-
-            {/* Budget */}
             <div>
               <label
                 htmlFor="rent-budget"
                 className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
               >
-                Maximum Budget
+                Budget
               </label>
               <input
                 id="rent-budget"
@@ -164,26 +137,6 @@ House Structure: ${structure || "Any"}`;
                   handleInputChange("budget", event.target.value)
                 }
                 placeholder="Your maximum budget"
-                className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
-              />
-            </div>
-
-            {/* House Structure */}
-            <div>
-              <label
-                htmlFor="rent-structure"
-                className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-              >
-                House Structure
-              </label>
-              <input
-                id="rent-structure"
-                type="text"
-                value={formData.structure}
-                onChange={(event) =>
-                  handleInputChange("structure", event.target.value)
-                }
-                placeholder="e.g., Bungalow, Duplex, Flat"
                 className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
               />
             </div>
