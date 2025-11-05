@@ -1,9 +1,39 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Image from "next/image";
 import { Target, Eye, Award, Users, CheckCircle } from "lucide-react";
 import Button from "@/component/Button";
+import ContactMethodModal from "@/component/ContactMethodModal";
+import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 
 export default function AboutPage() {
+  const [showContactModal, setShowContactModal] = useState(false);
+  const { companyInfo } = useSanityCompanyInfo();
+
+  const handleContact = (method: "whatsapp" | "email" | "call") => {
+    if (!companyInfo) return;
+
+    if (method === "call" && companyInfo.phone) {
+      window.location.href = `tel:${companyInfo.phone.replace(/\s+/g, "")}`;
+    } else if (method === "whatsapp" && companyInfo.phone) {
+      const whatsappMessage = encodeURIComponent(
+        "Hello! I'd like to get in touch with Limer Properties. Please provide more information."
+      );
+      const whatsappUrl = `https://wa.me/${companyInfo.phone.replace(
+        /\D/g,
+        ""
+      )}?text=${whatsappMessage}`;
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    } else if (method === "email" && companyInfo.email) {
+      const subject = encodeURIComponent("Inquiry - Limer Properties");
+      const emailBody = encodeURIComponent(
+        "Hello! I'd like to get in touch with Limer Properties. Please provide more information.\n\nThank you!"
+      );
+      const mailtoUrl = `mailto:${companyInfo.email}?subject=${subject}&body=${emailBody}`;
+      window.location.href = mailtoUrl;
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -50,7 +80,10 @@ export default function AboutPage() {
                 </p>
               </div>
               <div className="mt-8">
-                <Button variant="primary" href="/#contact">
+                <Button
+                  variant="primary"
+                  onClick={() => setShowContactModal(true)}
+                >
                   Get in Touch
                 </Button>
               </div>
@@ -275,15 +308,26 @@ export default function AboutPage() {
             and find the perfect property for your needs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="primary" href="/#properties">
+            <Button variant="primary" href="/properties">
               Browse Properties
             </Button>
-            <Button variant="secondary" href="/#contact">
+            <Button
+              variant="secondary"
+              onClick={() => setShowContactModal(true)}
+            >
               Contact Us
             </Button>
           </div>
         </div>
       </section>
+      <ContactMethodModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        companyInfo={companyInfo}
+        onSubmit={handleContact}
+        title="Contact Us"
+        description="How would you like to get in touch with us?"
+      />
     </div>
   );
 }

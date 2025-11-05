@@ -19,6 +19,9 @@ import PropertyCardSkeleton from "@/component/PropertyCardSkeleton";
 function PropertiesContent() {
   const searchParams = useSearchParams();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"for-sale" | "for-rent">(
+    "for-sale"
+  );
   const { properties, loading: propertiesLoading } = useSanityProperties();
   const { loading: filtersLoading } = useSanityFilters();
   const { companyInfo, loading: companyLoading } = useSanityCompanyInfo();
@@ -170,20 +173,47 @@ function PropertiesContent() {
       <section className="bg-primary text-white py-12">
         <div className="max-w-[95%] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-4xl md:text-5xl font-bold">
-              Properties For Sale
-            </h1>
-            <button
-              onClick={() => setIsFilterDrawerOpen(true)}
-              className="lg:hidden inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-            >
-              <Filter size={20} />
-              Filters
-            </button>
+            <h1 className="text-4xl md:text-5xl font-bold">Properties</h1>
+            {activeTab === "for-sale" && (
+              <button
+                onClick={() => setIsFilterDrawerOpen(true)}
+                className="lg:hidden inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+              >
+                <Filter size={20} />
+                Filters
+              </button>
+            )}
+          </div>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-center bg-white/20 backdrop-blur-sm rounded-full p-1 text-sm font-medium">
+              <button
+                type="button"
+                onClick={() => setActiveTab("for-sale")}
+                className={`px-4 md:px-6 py-2 rounded-full transition-colors text-sm ${
+                  activeTab === "for-sale"
+                    ? "bg-white shadow text-gray-900"
+                    : "text-white/80 hover:text-white"
+                }`}
+              >
+                For Sale
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("for-rent")}
+                className={`px-4 md:px-6 py-2 rounded-full transition-colors text-sm ${
+                  activeTab === "for-rent"
+                    ? "bg-white shadow text-gray-900"
+                    : "text-white/80 hover:text-white"
+                }`}
+              >
+                For Rent
+              </button>
+            </div>
           </div>
           <p className="text-xl text-white/90">
-            Find your property from our extensive collection of properties for
-            sale
+            {activeTab === "for-sale"
+              ? "Find your property from our extensive collection of properties for sale"
+              : "Looking for a property to rent? Contact us and we'll help you find the perfect place"}
           </p>
         </div>
       </section>
@@ -191,79 +221,90 @@ function PropertiesContent() {
       {/* Main Content */}
       <section className="py-12">
         <div className="sm:w-[95%] mx-auto max-sm:px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Filter Sidebar - Hidden on mobile */}
-            <aside className="hidden lg:block lg:col-span-1 min-w-[318px]">
-              {loading ? (
-                <div className="bg-white rounded-lg shadow-md p-6 animate-pulse">
-                  <div className="space-y-6">
-                    <div>
-                      <div className="h-5 bg-gray-200 rounded w-32 mb-3" />
-                      <div className="h-10 bg-gray-200 rounded" />
-                    </div>
-                    <div>
-                      <div className="h-5 bg-gray-200 rounded w-24 mb-3" />
-                      <div className="h-10 bg-gray-200 rounded" />
-                    </div>
-                    <div>
-                      <div className="h-5 bg-gray-200 rounded w-28 mb-3" />
-                      <div className="h-10 bg-gray-200 rounded" />
-                    </div>
-                    <div>
-                      <div className="h-5 bg-gray-200 rounded w-32 mb-3" />
-                      <div className="h-10 bg-gray-200 rounded" />
-                    </div>
-                    <div>
-                      <div className="h-5 bg-gray-200 rounded w-24 mb-3" />
-                      <div className="h-10 bg-gray-200 rounded" />
-                    </div>
-                    <div>
-                      <div className="h-5 bg-gray-200 rounded w-28 mb-3" />
-                      <div className="h-10 bg-gray-200 rounded" />
-                    </div>
-                    <div className="pt-4">
-                      <div className="h-12 bg-gray-200 rounded-lg" />
+          {activeTab === "for-sale" ? (
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Filter Sidebar - Hidden on mobile */}
+              <aside className="hidden lg:block lg:col-span-1 min-w-[318px]">
+                {loading ? (
+                  <div className="bg-white rounded-lg shadow-md p-6 animate-pulse">
+                    <div className="space-y-6">
+                      <div>
+                        <div className="h-5 bg-gray-200 rounded w-32 mb-3" />
+                        <div className="h-10 bg-gray-200 rounded" />
+                      </div>
+                      <div>
+                        <div className="h-5 bg-gray-200 rounded w-24 mb-3" />
+                        <div className="h-10 bg-gray-200 rounded" />
+                      </div>
+                      <div>
+                        <div className="h-5 bg-gray-200 rounded w-28 mb-3" />
+                        <div className="h-10 bg-gray-200 rounded" />
+                      </div>
+                      <div>
+                        <div className="h-5 bg-gray-200 rounded w-32 mb-3" />
+                        <div className="h-10 bg-gray-200 rounded" />
+                      </div>
+                      <div>
+                        <div className="h-5 bg-gray-200 rounded w-24 mb-3" />
+                        <div className="h-10 bg-gray-200 rounded" />
+                      </div>
+                      <div>
+                        <div className="h-5 bg-gray-200 rounded w-28 mb-3" />
+                        <div className="h-10 bg-gray-200 rounded" />
+                      </div>
+                      <div className="pt-4">
+                        <div className="h-12 bg-gray-200 rounded-lg" />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                filterComponent
-              )}
-            </aside>
+                ) : (
+                  filterComponent
+                )}
+              </aside>
 
-            {/* Properties Grid */}
-            <main className="lg:col-span-3">
-              {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[...Array(9)].map((_, index) => (
-                    <PropertyCardSkeleton key={index} />
-                  ))}
-                </div>
-              ) : filteredProperties.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredProperties.map((property) => (
-                    <PropertyCard
-                      key={property._id}
-                      property={property}
-                      companyInfo={companyInfo}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <PropertyInquiryForm
-                  companyInfo={companyInfo}
-                  locationQuery={searchTerm}
-                  priceRange={priceRange}
-                />
-              )}
-            </main>
-          </div>
+              {/* Properties Grid */}
+              <main className="lg:col-span-3">
+                {loading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[...Array(9)].map((_, index) => (
+                      <PropertyCardSkeleton key={index} />
+                    ))}
+                  </div>
+                ) : filteredProperties.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {filteredProperties.map((property) => (
+                      <PropertyCard
+                        key={property._id}
+                        property={property}
+                        companyInfo={companyInfo}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <PropertyInquiryForm
+                    companyInfo={companyInfo}
+                    locationQuery={searchTerm}
+                    priceRange={priceRange}
+                  />
+                )}
+              </main>
+            </div>
+          ) : (
+            <div className="max-w-4xl mx-auto">
+              <PropertyInquiryForm
+                companyInfo={companyInfo}
+                locationQuery={searchTerm}
+                priceRange={priceRange}
+                heading="Looking for a Property to Rent?"
+              />
+            </div>
+          )}
         </div>
       </section>
 
       {/* Mobile Filter Drawer */}
       <AnimatePresence>
-        {isFilterDrawerOpen && (
+        {isFilterDrawerOpen && activeTab === "for-sale" && (
           <>
             {/* Backdrop */}
             <motion.div

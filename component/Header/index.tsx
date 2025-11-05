@@ -5,12 +5,40 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import Button from "@/component/Button";
 import Image from "next/image";
+import ContactMethodModal from "@/component/ContactMethodModal";
+import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const { companyInfo } = useSanityCompanyInfo();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleContact = (method: "whatsapp" | "email" | "call") => {
+    if (!companyInfo) return;
+
+    if (method === "call" && companyInfo.phone) {
+      window.location.href = `tel:${companyInfo.phone.replace(/\s+/g, "")}`;
+    } else if (method === "whatsapp" && companyInfo.phone) {
+      const whatsappMessage = encodeURIComponent(
+        "Hello! I'd like to get in touch with Limer Properties. Please provide more information."
+      );
+      const whatsappUrl = `https://wa.me/${companyInfo.phone.replace(
+        /\D/g,
+        ""
+      )}?text=${whatsappMessage}`;
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    } else if (method === "email" && companyInfo.email) {
+      const subject = encodeURIComponent("Inquiry - Limer Properties");
+      const emailBody = encodeURIComponent(
+        "Hello! I'd like to get in touch with Limer Properties. Please provide more information.\n\nThank you!"
+      );
+      const mailtoUrl = `mailto:${companyInfo.email}?subject=${subject}&body=${emailBody}`;
+      window.location.href = mailtoUrl;
+    }
   };
 
   return (
@@ -45,7 +73,7 @@ export default function Header() {
               href="/properties"
               className="text-gray-700 hover:text-primary transition-colors duration-200"
             >
-              Properties For Sale
+              Properties
             </Link>
             <Link
               href="/about"
@@ -59,7 +87,7 @@ export default function Header() {
             >
               Studio
             </Link> */}
-            <Button variant="primary" href="/#contact">
+            <Button variant="primary" onClick={() => setShowContactModal(true)}>
               Contact Us
             </Button>
           </div>
@@ -90,7 +118,7 @@ export default function Header() {
                 onClick={toggleMobileMenu}
                 className="text-gray-700 hover:text-primary transition-colors duration-200"
               >
-                Properties For Sale
+                Properties
               </Link>
               <Link
                 href="/about"
@@ -106,13 +134,28 @@ export default function Header() {
               >
                 Studio
               </Link> */}
-              <Button variant="primary" href="/#contact" className="w-full">
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setShowContactModal(true);
+                  toggleMobileMenu();
+                }}
+                className="w-full"
+              >
                 Contact Us
               </Button>
             </div>
           </div>
         )}
       </nav>
+      <ContactMethodModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        companyInfo={companyInfo}
+        onSubmit={handleContact}
+        title="Contact Us"
+        description="How would you like to get in touch with us?"
+      />
     </header>
   );
 }

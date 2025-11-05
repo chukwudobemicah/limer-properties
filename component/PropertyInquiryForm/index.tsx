@@ -9,6 +9,7 @@ interface PropertyInquiryFormProps {
   companyInfo: SanityCompanyInfo | null;
   locationQuery?: string;
   priceRange?: [number, number];
+  heading?: string;
 }
 
 interface FormData {
@@ -32,8 +33,13 @@ export default function PropertyInquiryForm({
   companyInfo,
   locationQuery,
   priceRange,
+  heading,
 }: PropertyInquiryFormProps) {
   const headingText = useMemo(() => {
+    if (heading) {
+      return heading;
+    }
+
     const parts: string[] = ["Couldn't find property"];
 
     if (locationQuery?.trim()) {
@@ -62,7 +68,7 @@ export default function PropertyInquiryForm({
     }
 
     return parts.join(" ") + "?";
-  }, [locationQuery, priceRange]);
+  }, [locationQuery, priceRange, heading]);
   const [showContactModal, setShowContactModal] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     propertyType: "",
