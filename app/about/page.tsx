@@ -6,10 +6,12 @@ import { Target, Eye, Award, Users, CheckCircle } from "lucide-react";
 import Button from "@/component/Button";
 import ContactMethodModal from "@/component/ContactMethodModal";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
+import { useRouter } from "next/navigation";
 
 export default function AboutPage() {
   const [showContactModal, setShowContactModal] = useState(false);
   const { companyInfo } = useSanityCompanyInfo();
+  const router = useRouter();
 
   const handleContact = (method: "whatsapp" | "email" | "call") => {
     if (!companyInfo) return;
@@ -33,7 +35,7 @@ export default function AboutPage() {
         "Hello! I'd like to get in touch with Limer Estate And Facility Management LTD. Please provide more information.\n\nThank you!"
       );
       const mailtoUrl = `mailto:${companyInfo.email}?subject=${subject}&body=${emailBody}`;
-      window.location.href = mailtoUrl;
+      router.push(mailtoUrl);
     }
   };
   return (
