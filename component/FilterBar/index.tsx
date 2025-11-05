@@ -355,7 +355,7 @@ export default function FilterBar({
                       : String(priceRange[1])
                   }
                   onChange={handleMaxPriceChange}
-                  placeholder="No maximum"
+                  placeholder="budget"
                   className="w-full rounded-lg sm:rounded-xl border border-gray-200 bg-white py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/30"
                 />
               </div>

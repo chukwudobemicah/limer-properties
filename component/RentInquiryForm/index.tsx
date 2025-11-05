@@ -16,6 +16,8 @@ interface FormData {
   bathrooms: string;
   budget: string;
   structure: string;
+  fullName: string;
+  phoneNumber: string;
 }
 
 export default function RentInquiryForm({ companyInfo }: RentInquiryFormProps) {
@@ -26,6 +28,8 @@ export default function RentInquiryForm({ companyInfo }: RentInquiryFormProps) {
     bathrooms: "",
     budget: "",
     structure: "",
+    fullName: "",
+    phoneNumber: "",
   });
 
   const handleInputChange = (field: keyof FormData, value: string) => {
@@ -37,11 +41,21 @@ export default function RentInquiryForm({ companyInfo }: RentInquiryFormProps) {
     setShowContactOptions(true);
   };
 
-  const { location, bedrooms, bathrooms, budget, structure } = formData;
+  const {
+    location,
+    bedrooms,
+    bathrooms,
+    budget,
+    structure,
+    fullName,
+    phoneNumber,
+  } = formData;
 
   const detailsMessage = `Location: ${location || "Any"}
 Budget: ${budget || "Any budget"}
-House Type: ${structure || "Any"}`;
+  House Type: ${structure || "Any"}
+Full Name: ${fullName || "Any"}
+Phone Number: ${phoneNumber || "Any"}`;
 
   const emailData = {
     subject: "Property Rental Inquiry",
@@ -70,6 +84,8 @@ House Type: ${structure || "Any"}`;
         bathrooms: "",
         budget: "",
         structure: "",
+        fullName: "",
+        phoneNumber: "",
       });
     }
     // Email is now handled by ContactMethodModal via API
@@ -101,7 +117,25 @@ House Type: ${structure || "Any"}`;
                 labelId="property-type"
               />
             </div>
-
+            <div>
+              <label
+                htmlFor="rent-budget"
+                className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+              >
+                Budget
+              </label>
+              <input
+                id="rent-budget"
+                type="text"
+                value={formData.budget}
+                required
+                onChange={(event) =>
+                  handleInputChange("budget", event.target.value)
+                }
+                placeholder="Your maximum budget"
+                className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
+              />
+            </div>
             {/* Location */}
             <div>
               <label
@@ -121,22 +155,45 @@ House Type: ${structure || "Any"}`;
                 className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
               />
             </div>
+          </div>
 
-            <div>
+          <div className="flex max-sm:flex-col justify-between gap-2">
+            <div className="w-full">
               <label
-                htmlFor="rent-budget"
+                htmlFor="full-name"
                 className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
               >
-                Budget
+                Full Name
               </label>
               <input
-                id="rent-budget"
+                id="full-name"
                 type="text"
-                value={formData.budget}
+                value={formData.fullName}
+                required
                 onChange={(event) =>
-                  handleInputChange("budget", event.target.value)
+                  handleInputChange("fullName", event.target.value)
                 }
-                placeholder="Your maximum budget"
+                placeholder="Your full name"
+                className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
+              />
+            </div>
+
+            <div className="w-full">
+              <label
+                htmlFor="phone-number"
+                className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+              >
+                Phone Number
+              </label>
+              <input
+                id="phone-number"
+                type="number"
+                value={formData.phoneNumber}
+                required
+                onChange={(event) =>
+                  handleInputChange("phoneNumber", event.target.value)
+                }
+                placeholder="Your phone number"
                 className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
               />
             </div>
@@ -163,6 +220,8 @@ House Type: ${structure || "Any"}`;
             bathrooms: "",
             budget: "",
             structure: "",
+            fullName: "",
+            phoneNumber: "",
           });
         }}
         companyInfo={companyInfo}

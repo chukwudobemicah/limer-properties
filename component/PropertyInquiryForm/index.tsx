@@ -19,9 +19,11 @@ interface FormData {
   bedrooms: string;
   bathrooms: string;
   budget: string;
+  fullName: string;
+  phoneNumber: string;
 }
 
-const PROPERTY_TYPES = ["Land", "House", "Estate", "Apartment", "Commercial"];
+// const PROPERTY_TYPES = ["Land", "House", "Estate", "Apartment", "Commercial"];
 
 export const RENT_PROPERTY_TYPES = [
   { value: "studio-apartment", label: "Studio Apartment" },
@@ -87,6 +89,8 @@ export default function PropertyInquiryForm({
     bedrooms: "",
     bathrooms: "",
     budget: "",
+    fullName: "",
+    phoneNumber: "",
   });
 
   const handleInputChange = (field: keyof FormData, value: string) => {
@@ -98,7 +102,15 @@ export default function PropertyInquiryForm({
     setShowContactModal(true);
   };
 
-  const { propertyType, location, bedrooms, bathrooms, budget } = formData;
+  const {
+    propertyType,
+    location,
+    bedrooms,
+    bathrooms,
+    budget,
+    fullName,
+    phoneNumber,
+  } = formData;
 
   // Get the label for property type if it's from the rent dropdown
   const getPropertyTypeLabel = () => {
@@ -112,14 +124,11 @@ export default function PropertyInquiryForm({
     return propertyType;
   };
 
-  const detailsMessage = isForRent
-    ? `Property Type: ${getPropertyTypeLabel()}
+  const detailsMessage = `
+Property Type: ${propertyType || "Any"}
 Location: ${location || "Any"}
-Budget: ${budget || "Any budget"}`
-    : `Property Type: ${propertyType || "Any"}
-Location: ${location || "Any"}
-Bedrooms: ${bedrooms || "Any"}
-Bathrooms: ${bathrooms || "Any"}
+Full name:  ${fullName || "none"}
+Phone number:  ${phoneNumber || "none"}
 Budget: ${budget || "Any budget"}`;
 
   const emailData = {
@@ -167,43 +176,16 @@ Budget: ${budget || "Any budget"}`;
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Property Type */}
             <div className="sm:col-span-2">
-              {isForRent ? (
-                <Select
-                  label="Property Type"
-                  value={formData.propertyType}
-                  onChange={(value) =>
-                    handleInputChange("propertyType", String(value))
-                  }
-                  options={RENT_PROPERTY_TYPES}
-                  placeholder="Select property type"
-                  labelId="property-type"
-                />
-              ) : (
-                <>
-                  <label
-                    htmlFor="property-type"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Property Type
-                  </label>
-                  <input
-                    id="property-type"
-                    type="text"
-                    list="property-types-list"
-                    value={formData.propertyType}
-                    onChange={(event) =>
-                      handleInputChange("propertyType", event.target.value)
-                    }
-                    placeholder="Land, House, Estate, Apartment, Commercial"
-                    className="w-full rounded-lg border border-gray-300 bg-white py-2.5 px-4 text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
-                  />
-                  <datalist id="property-types-list">
-                    {PROPERTY_TYPES.map((type) => (
-                      <option key={type} value={type} />
-                    ))}
-                  </datalist>
-                </>
-              )}
+              <Select
+                label="Property Type"
+                value={formData.propertyType}
+                onChange={(value) =>
+                  handleInputChange("propertyType", String(value))
+                }
+                options={RENT_PROPERTY_TYPES}
+                placeholder="Select property type"
+                labelId="property-type"
+              />
             </div>
 
             {/* Location */}
@@ -226,50 +208,6 @@ Budget: ${budget || "Any budget"}`;
               />
             </div>
 
-            {/* Bedrooms - Only show if not for rent */}
-            {!isForRent && (
-              <div>
-                <label
-                  htmlFor="bedrooms"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Bedrooms
-                </label>
-                <input
-                  id="bedrooms"
-                  type="text"
-                  value={formData.bedrooms}
-                  onChange={(event) =>
-                    handleInputChange("bedrooms", event.target.value)
-                  }
-                  placeholder="Number of bedrooms"
-                  className="w-full rounded-lg border border-gray-300 bg-white py-2.5 px-4 text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
-                />
-              </div>
-            )}
-
-            {/* Bathrooms - Only show if not for rent */}
-            {!isForRent && (
-              <div>
-                <label
-                  htmlFor="bathrooms"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Bathrooms
-                </label>
-                <input
-                  id="bathrooms"
-                  type="text"
-                  value={formData.bathrooms}
-                  onChange={(event) =>
-                    handleInputChange("bathrooms", event.target.value)
-                  }
-                  placeholder="Number of bathrooms"
-                  className="w-full rounded-lg border border-gray-300 bg-white py-2.5 px-4 text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
-                />
-              </div>
-            )}
-
             {/* Budget */}
             <div className="sm:col-span-2">
               <label
@@ -286,6 +224,46 @@ Budget: ${budget || "Any budget"}`;
                   handleInputChange("budget", event.target.value)
                 }
                 placeholder="Your budget range"
+                className="w-full rounded-lg border border-gray-300 bg-white py-2.5 px-4 text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
+              />
+            </div>
+          </div>
+          <div className="flex justify-between gap-2 items-center sm:col-span-2">
+            <div className="w-full">
+              <label
+                htmlFor="full-name"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Full Name
+              </label>
+              <input
+                id="full-name"
+                type="text"
+                value={formData.fullName}
+                required
+                onChange={(event) =>
+                  handleInputChange("fullName", event.target.value)
+                }
+                placeholder="Your full name"
+                className="w-full rounded-lg border border-gray-300 bg-white py-2.5 px-4 text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
+              />
+            </div>
+            <div className="w-full">
+              <label
+                htmlFor="phone-number"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Phone number
+              </label>
+              <input
+                id="phone-number"
+                type="number"
+                value={formData.phoneNumber}
+                required
+                onChange={(event) =>
+                  handleInputChange("phoneNumber", event.target.value)
+                }
+                placeholder="Your phone number"
                 className="w-full rounded-lg border border-gray-300 bg-white py-2.5 px-4 text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
               />
             </div>

@@ -14,6 +14,7 @@ interface FormData {
   propertyState: string;
   propertyCountry: string;
   phoneNumber: string;
+  fullName: string;
 }
 
 const PROPERTY_TYPES = ["Land", "House", "Estate", "Apartment", "Commercial"];
@@ -26,6 +27,7 @@ export default function ManagementCTA({ companyInfo }: ManagementCTAProps) {
     propertyState: "",
     propertyCountry: "",
     phoneNumber: "",
+    fullName: "",
   });
 
   const handleInputChange = (field: keyof FormData, value: string) => {
@@ -35,8 +37,13 @@ export default function ManagementCTA({ companyInfo }: ManagementCTAProps) {
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    const { propertyType, propertyAddress, propertyState, propertyCountry } =
-      formData;
+    const {
+      propertyType,
+      propertyAddress,
+      propertyState,
+      propertyCountry,
+      fullName,
+    } = formData;
 
     if (
       !propertyType ||
@@ -57,12 +64,14 @@ export default function ManagementCTA({ companyInfo }: ManagementCTAProps) {
     propertyState,
     propertyCountry,
     phoneNumber,
+    fullName,
   } = formData;
   // jsjj
   const detailsMessage = `Property Type: ${propertyType}
 Property Address: ${propertyAddress}
 Property State: ${propertyState}
 Property Country: ${propertyCountry}
+Full Name: ${fullName}
 Phone Number: ${phoneNumber}`;
 
   const emailData = {
@@ -92,6 +101,7 @@ Phone Number: ${phoneNumber}`;
         propertyState: "",
         propertyCountry: "",
         phoneNumber: "",
+        fullName: "",
       });
     }
     // Email is now handled by ContactMethodModal via API
@@ -156,63 +166,87 @@ Phone Number: ${phoneNumber}`;
               />
             </div>
 
-            {/* Property State */}
-            <div>
-              <label
-                htmlFor="management-property-state"
-                className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-              >
-                Property State *
-              </label>
-              <input
-                id="management-property-state"
-                type="text"
-                value={formData.propertyState}
-                onChange={(event) =>
-                  handleInputChange("propertyState", event.target.value)
-                }
-                placeholder="Enter state"
-                className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
-              />
-            </div>
+            <div className="flex items-center justify-between gap-2">
+              {/* Property State */}
+              <div className="w-full">
+                <label
+                  htmlFor="management-property-state"
+                  className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+                >
+                  Property State *
+                </label>
+                <input
+                  id="management-property-state"
+                  type="text"
+                  value={formData.propertyState}
+                  onChange={(event) =>
+                    handleInputChange("propertyState", event.target.value)
+                  }
+                  placeholder="Enter state"
+                  className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
+                />
+              </div>
 
-            {/* Property Country */}
-            <div>
-              <label
-                htmlFor="management-property-country"
-                className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-              >
-                Property Country *
-              </label>
-              <input
-                id="management-property-country"
-                type="text"
-                value={formData.propertyCountry}
-                onChange={(event) =>
-                  handleInputChange("propertyCountry", event.target.value)
-                }
-                placeholder="Enter country"
-                className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
-              />
+              {/* Property Country */}
+              <div className="w-full">
+                <label
+                  htmlFor="management-property-country"
+                  className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+                >
+                  Property Country *
+                </label>
+                <input
+                  id="management-property-country"
+                  type="text"
+                  value={formData.propertyCountry}
+                  onChange={(event) =>
+                    handleInputChange("propertyCountry", event.target.value)
+                  }
+                  placeholder="Enter country"
+                  className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
+                />
+              </div>
             </div>
           </div>
-          <div>
-            <label
-              htmlFor="management-phone-number"
-              className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
-            >
-              Phone number*
-            </label>
-            <input
-              id="management-phone-number"
-              type="number"
-              value={formData.phoneNumber}
-              onChange={(event) =>
-                handleInputChange("phoneNumber", event.target.value)
-              }
-              placeholder="Enter phone number"
-              className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
-            />
+          <div className="flex justify-between gap-2 items-center">
+            <div className="w-full">
+              <label
+                htmlFor="management-full-name"
+                className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+              >
+                Full Name*
+              </label>
+              <input
+                id="management-full-name"
+                type="text"
+                value={formData.fullName}
+                required
+                onChange={(event) =>
+                  handleInputChange("fullName", event.target.value)
+                }
+                placeholder="Enter full name"
+                className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
+              />
+            </div>
+            <div className="w-full">
+              <label
+                htmlFor="management-phone-number"
+                className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+              >
+                Phone number*
+              </label>
+              <input
+                id="management-phone-number"
+                type="number"
+                value={formData.phoneNumber}
+                required
+                onChange={(event) =>
+                  handleInputChange("phoneNumber", event.target.value)
+                }
+                placeholder="Enter phone number"
+                className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
+              />
+            </div>
           </div>
 
           <div className="pt-2">
@@ -236,6 +270,7 @@ Phone Number: ${phoneNumber}`;
             propertyState: "",
             propertyCountry: "",
             phoneNumber: "",
+            fullName: "",
           });
         }}
         companyInfo={companyInfo}
