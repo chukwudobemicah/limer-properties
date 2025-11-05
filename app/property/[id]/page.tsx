@@ -20,14 +20,11 @@ import { client } from "@/lib/sanity.client";
 import { SanityProperty } from "@/types/sanity";
 import { urlFor } from "@/lib/sanity.image";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
-import {
-  formatPrice,
-  generateTourWhatsAppLink,
-  generateInquiryWhatsAppLink,
-} from "@/utils/functions";
+import { formatPrice } from "@/utils/functions";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 import Button from "@/component/Button";
 import PropertyDetailsSkeleton from "@/component/PropertyDetailsSkeleton";
+import ContactMethodModal from "@/component/ContactMethodModal";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function PropertyDetails() {
@@ -37,6 +34,7 @@ export default function PropertyDetails() {
   const [property, setProperty] = useState<SanityProperty | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [showContactModal, setShowContactModal] = useState(false);
 
   const { companyInfo, loading: companyLoading } = useSanityCompanyInfo();
 
@@ -49,32 +47,11 @@ export default function PropertyDetails() {
           _createdAt,
           title,
           slug,
-          propertyType->{
-            _id,
-            title,
-            slug
-          },
+          propertyType,
           status,
-          location->{
-            _id,
-            name,
-            city->{
-              _id,
-              name,
-              slug
-            },
-            state->{
-              _id,
-              name,
-              slug
-            },
-            slug
-          },
-          structure->{
-            _id,
-            title,
-            slug
-          },
+          location,
+          documentTitle,
+          structure,
           description,
           price,
           images[]{
@@ -179,7 +156,45 @@ export default function PropertyDetails() {
     );
   }
 
-  const propertyTypeSlug = property.propertyType.slug.current;
+  // Convert propertyType string to slug format for compatibility
+  const getPropertyTypeSlug = (propertyType: string | any): string => {
+    if (typeof propertyType === "string") {
+      // Normalize to slug format
+      const normalized = propertyType.toLowerCase().replace(/\s+/g, "-");
+      // Check for common variations
+      if (
+        normalized.includes("house-for-sale") ||
+        normalized.includes("for-sale")
+      ) {
+        return "house-for-sale";
+      }
+      if (
+        normalized.includes("house-for-rent") ||
+        normalized.includes("for-rent")
+      ) {
+        return "house-for-rent";
+      }
+      if (normalized.includes("land")) {
+        return "land";
+      }
+      if (normalized.includes("shortlet")) {
+        return "shortlet";
+      }
+      return normalized;
+    }
+    // Handle old reference format (backward compatibility)
+    if (
+      propertyType &&
+      typeof propertyType === "object" &&
+      "slug" in propertyType
+    ) {
+      const ref = propertyType as { slug?: { current?: string } };
+      return ref.slug?.current || "";
+    }
+    return "";
+  };
+
+  const propertyTypeSlug = getPropertyTypeSlug(property.propertyType);
 
   const getPropertyTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
@@ -197,11 +212,63 @@ export default function PropertyDetails() {
     return "";
   };
 
-  // Generate full property details URL
-  const propertyDetailsUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/property/${property.slug.current}`
-      : `/property/${property.slug.current}`;
+  const getLocationString = (location: string | any): string => {
+    if (typeof location === "string") {
+      return location;
+    }
+    // Handle old reference format (shouldn't happen but for backward compatibility)
+    if (location && typeof location === "object") {
+      if (location.name) {
+        const parts = [location.name];
+        if (location.city?.name) parts.push(location.city.name);
+        if (location.state?.name) parts.push(location.state.name);
+        return parts.join(", ");
+      }
+    }
+    return "Location not specified";
+  };
+
+  const handleContact = (method: "whatsapp" | "email" | "call") => {
+    if (!companyInfo || !property) return;
+
+    const propertyDetailsUrl =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/property/${property.slug.current}`
+        : `/property/${property.slug.current}`;
+
+    const locationString = getLocationString(property.location);
+
+    const propertyDetails = `Property: ${property.title}
+Location: ${locationString}
+Price: ${formatPrice(property.price)}
+${property.bedrooms ? `Bedrooms: ${property.bedrooms}` : ""}
+${property.bathrooms ? `Bathrooms: ${property.bathrooms}` : ""}
+${property.documentTitle ? `Document Title: ${property.documentTitle}` : ""}
+
+View property: ${propertyDetailsUrl}`;
+
+    if (method === "call" && companyInfo.phone) {
+      window.location.href = `tel:${companyInfo.phone.replace(/\s+/g, "")}`;
+    } else if (method === "whatsapp" && companyInfo.phone) {
+      const whatsappMessage = encodeURIComponent(
+        `Hello! I'm interested in this property:\n\n${propertyDetails}\n\nPlease provide more information.`
+      );
+      const whatsappUrl = `https://wa.me/${companyInfo.phone.replace(
+        /\D/g,
+        ""
+      )}?text=${whatsappMessage}`;
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    } else if (method === "email" && companyInfo.email) {
+      const subject = encodeURIComponent(`Inquiry about ${property.title}`);
+      const emailBody = encodeURIComponent(
+        `Hello! I'm interested in this property:\n\n${propertyDetails}\n\nPlease provide more information.\n\nThank you!`
+      );
+      const mailtoUrl = `mailto:${companyInfo.email}?subject=${subject}&body=${emailBody}`;
+      window.location.href = mailtoUrl;
+    }
+
+    setShowContactModal(false);
+  };
 
   const nextMedia = () => {
     setCurrentMediaIndex((previous) =>
@@ -465,8 +532,7 @@ export default function PropertyDetails() {
               <div className="flex items-center text-gray-600 mb-4 sm:mb-6">
                 <MapPin className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 flex-shrink-0" />
                 <span className="text-sm sm:text-base lg:text-lg">
-                  {property.location.name}, {property.location.city.name},{" "}
-                  {property.location.state.name}
+                  {getLocationString(property.location)}
                 </span>
               </div>
 
@@ -478,7 +544,7 @@ export default function PropertyDetails() {
                       <p className="text-xs sm:text-sm text-gray-600">
                         Bedrooms
                       </p>
-                      <p className="text-sm sm:text-base font-semibold">
+                      <p className="text-black text-sm sm:text-base font-semibold">
                         {property.bedrooms}
                       </p>
                     </div>
@@ -491,7 +557,7 @@ export default function PropertyDetails() {
                       <p className="text-xs sm:text-sm text-gray-600">
                         Bathrooms
                       </p>
-                      <p className="text-sm sm:text-base font-semibold">
+                      <p className="text-black text-sm sm:text-base font-semibold">
                         {property.bathrooms}
                       </p>
                     </div>
@@ -502,7 +568,7 @@ export default function PropertyDetails() {
                     <Maximize className="w-5 h-5 sm:w-6 sm:h-6 mr-1.5 sm:mr-2 text-primary flex-shrink-0" />
                     <div>
                       <p className="text-xs sm:text-sm text-gray-600">Area</p>
-                      <p className="text-sm sm:text-base font-semibold">
+                      <p className="text-black text-sm sm:text-base font-semibold">
                         {property.area} sqm
                       </p>
                     </div>
@@ -515,8 +581,10 @@ export default function PropertyDetails() {
                       <p className="text-xs sm:text-sm text-gray-600">
                         Structure
                       </p>
-                      <p className="text-sm sm:text-base font-semibold">
-                        {property.structure.title}
+                      <p className="text-black text-sm sm:text-base font-semibold">
+                        {typeof property.structure === "string"
+                          ? property.structure
+                          : (property.structure as any)?.title || "N/A"}
                       </p>
                     </div>
                   </div>
@@ -526,7 +594,7 @@ export default function PropertyDetails() {
                     <Building2 className="w-5 h-5 sm:w-6 sm:h-6 mr-1.5 sm:mr-2 text-primary flex-shrink-0" />
                     <div>
                       <p className="text-xs sm:text-sm text-gray-600">Floors</p>
-                      <p className="text-sm sm:text-base font-semibold">
+                      <p className="text-black text-sm sm:text-base font-semibold">
                         {property.floors}{" "}
                         {property.floors === 1 ? "floor" : "floors"}
                       </p>
@@ -541,7 +609,7 @@ export default function PropertyDetails() {
                         <p className="text-xs sm:text-sm text-gray-600">
                           Floor Position
                         </p>
-                        <p className="text-sm sm:text-base font-semibold">
+                        <p className="text-black text-sm sm:text-base font-semibold">
                           {property.floorPosition === 0
                             ? "Ground Floor"
                             : `${property.floorPosition}${
@@ -564,7 +632,7 @@ export default function PropertyDetails() {
                       <p className="text-xs sm:text-sm text-gray-600">
                         Parking
                       </p>
-                      <p className="text-sm sm:text-base font-semibold">
+                      <p className="text-black text-sm sm:text-base font-semibold">
                         {property.parking} spaces
                       </p>
                     </div>
@@ -577,7 +645,7 @@ export default function PropertyDetails() {
                       <p className="text-xs sm:text-sm text-gray-600">
                         Year Built
                       </p>
-                      <p className="text-sm sm:text-base font-semibold">
+                      <p className="text-black text-sm sm:text-base font-semibold">
                         {property.yearBuilt}
                       </p>
                     </div>
@@ -633,8 +701,19 @@ export default function PropertyDetails() {
               {property.furnished !== undefined && (
                 <div className="mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-gray-200">
                   <p className="text-xs sm:text-sm text-gray-600">Status</p>
-                  <p className="text-sm sm:text-base font-semibold">
+                  <p className="text-black text-sm sm:text-base font-semibold">
                     {property.furnished ? "Furnished" : "Unfurnished"}
+                  </p>
+                </div>
+              )}
+
+              {property.documentTitle && (
+                <div className="mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-gray-200">
+                  <p className="text-xs sm:text-sm text-gray-600">
+                    Document Title
+                  </p>
+                  <p className="text-black text-sm sm:text-base font-semibold">
+                    {property.documentTitle}
                   </p>
                 </div>
               )}
@@ -643,31 +722,14 @@ export default function PropertyDetails() {
                 <Button
                   variant="primary"
                   className="w-full text-sm sm:text-base"
-                  href={generateTourWhatsAppLink(
-                    companyInfo?.phone || "",
-                    property.title,
-                    property.slug.current,
-                    propertyDetailsUrl
-                  )}
+                  onClick={() => setShowContactModal(true)}
                 >
-                  Schedule a Tour
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="w-full text-sm sm:text-base"
-                  href={generateInquiryWhatsAppLink(
-                    companyInfo?.phone || "",
-                    property.title,
-                    property.slug.current,
-                    propertyDetailsUrl
-                  )}
-                >
-                  Make an Inquiry
+                  Contact Us
                 </Button>
               </div>
 
               <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
-                <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2 sm:mb-4">
+                <h3 className="text-black text-sm sm:text-base font-semibold text-gray-900 mb-2 sm:mb-4">
                   Need Help?
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
@@ -692,6 +754,15 @@ export default function PropertyDetails() {
           </div>
         </div>
       </div>
+
+      <ContactMethodModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        companyInfo={companyInfo}
+        onSubmit={handleContact}
+        title="Contact us about this property"
+        description="Choose how you'd like to get in touch with us."
+      />
     </div>
   );
 }

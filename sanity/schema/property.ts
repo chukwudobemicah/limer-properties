@@ -27,8 +27,8 @@ export default defineType({
     defineField({
       name: "propertyType",
       title: "Property Type",
-      type: "reference",
-      to: [{ type: "propertyType" }],
+      type: "string",
+      description: "e.g., House for Sale, House for Rent, Land, Shortlet, etc.",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -49,16 +49,23 @@ export default defineType({
     defineField({
       name: "location",
       title: "Location",
-      type: "reference",
-      to: [{ type: "location" }],
+      type: "string",
+      description: "e.g., Lekki Phase 1, Lagos or Victoria Island, Lagos",
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "documentTitle",
+      title: "Document Title",
+      type: "string",
+      description:
+        "e.g., C of O (Certificate of Occupancy), R of O (Right of Occupancy), Governor's Consent, etc.",
     }),
     defineField({
       name: "structure",
       title: "Property Structure",
-      type: "reference",
-      to: [{ type: "propertyStructure" }],
-      description: "Bungalow, Duplex, Flat, etc.",
+      type: "string",
+      description:
+        "e.g., Bungalow, Duplex, Flat/Apartment, Terrace, Mansion, etc.",
     }),
     defineField({
       name: "description",
@@ -208,7 +215,7 @@ export default defineType({
   preview: {
     select: {
       title: "title",
-      subtitle: "propertyType.title",
+      subtitle: "propertyType",
       media: "images.0",
       status: "status",
     },

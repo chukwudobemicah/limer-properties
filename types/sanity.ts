@@ -69,10 +69,11 @@ export interface SanityProperty {
   slug: {
     current: string;
   };
-  propertyType: SanityPropertyType;
+  propertyType: string | SanityPropertyType;
   status: PropertyStatus;
-  location: SanityLocation;
-  structure?: SanityPropertyStructure;
+  location: string | SanityLocation;
+  documentTitle?: string;
+  structure?: string | SanityPropertyStructure;
   description: string;
   price: number;
   images: Array<{

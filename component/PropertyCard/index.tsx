@@ -17,7 +17,45 @@ export default function PropertyCard({
   phoneNumber,
 }: PropertyCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const propertyTypeSlug = property.propertyType.slug.current;
+
+  // Convert propertyType string to slug format for compatibility
+  const getPropertyTypeSlug = (propertyType: string | any): string => {
+    if (typeof propertyType === "string") {
+      // Normalize to slug format
+      const normalized = propertyType.toLowerCase().replace(/\s+/g, "-");
+      // Check for common variations
+      if (
+        normalized.includes("house-for-sale") ||
+        normalized.includes("for-sale")
+      ) {
+        return "house-for-sale";
+      }
+      if (
+        normalized.includes("house-for-rent") ||
+        normalized.includes("for-rent")
+      ) {
+        return "house-for-rent";
+      }
+      if (normalized.includes("land")) {
+        return "land";
+      }
+      if (normalized.includes("shortlet")) {
+        return "shortlet";
+      }
+      return normalized;
+    }
+    // Handle old reference format (backward compatibility)
+    if (
+      propertyType &&
+      typeof propertyType === "object" &&
+      "slug" in propertyType
+    ) {
+      return propertyType.slug?.current || "";
+    }
+    return "";
+  };
+
+  const propertyTypeSlug = getPropertyTypeSlug(property.propertyType);
 
   const getPropertyTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
@@ -33,6 +71,22 @@ export default function PropertyCard({
     if (type === "house-for-rent") return "per year";
     if (type === "shortlet") return "per night";
     return "";
+  };
+
+  const getLocationString = (location: string | any): string => {
+    if (typeof location === "string") {
+      return location;
+    }
+    // Handle old reference format (for backward compatibility)
+    if (location && typeof location === "object") {
+      if (location.name) {
+        const parts = [location.name];
+        if (location.city?.name) parts.push(location.city.name);
+        if (location.state?.name) parts.push(location.state.name);
+        return parts.join(", ");
+      }
+    }
+    return "Location not specified";
   };
 
   // Get all image URLs
@@ -176,7 +230,7 @@ export default function PropertyCard({
         <div className="flex items-center text-gray-600 mb-4">
           <MapPin size={16} className="mr-1" />
           <span className="text-sm">
-            {property.location.name}, {property.location.city.name}
+            {getLocationString(property.location)}
           </span>
         </div>
 

@@ -9,32 +9,11 @@ const PROPERTIES_QUERY = `*[_type == "property"] | order(publishedAt desc) {
   _createdAt,
   title,
   slug,
-  propertyType->{
-    _id,
-    title,
-    slug
-  },
+  propertyType,
   status,
-  location->{
-    _id,
-    name,
-    city->{
-      _id,
-      name,
-      slug
-    },
-    state->{
-      _id,
-      name,
-      slug
-    },
-    slug
-  },
-  structure->{
-    _id,
-    title,
-    slug
-  },
+  location,
+  documentTitle,
+  structure,
   description,
   price,
   images[]{

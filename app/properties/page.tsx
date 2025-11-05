@@ -190,10 +190,10 @@ function PropertiesContent() {
 
       {/* Main Content */}
       <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="sm:w-[95%] mx-auto max-sm:px-4">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Filter Sidebar - Hidden on mobile */}
-            <aside className="hidden lg:block lg:col-span-1">
+            <aside className="hidden lg:block lg:col-span-1 min-w-[318px]">
               {loading ? (
                 <div className="bg-white rounded-lg shadow-md p-6 animate-pulse">
                   <div className="space-y-6">

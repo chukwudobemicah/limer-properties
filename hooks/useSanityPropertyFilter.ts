@@ -40,49 +40,66 @@ export function useSanityPropertyFilter({
   ]);
 
   const filteredProperties = useMemo(() => {
+    const normalizeSlug = (value?: string) =>
+      (value || "").toLowerCase().trim().replace(/\s+/g, "-");
+
+    const getPropertyTypeSlug = (pt: any): string => {
+      if (typeof pt === "string") return normalizeSlug(pt);
+      if (pt && typeof pt === "object") return pt.slug?.current || "";
+      return "";
+    };
+
+    const getLocationString = (loc: any): string => {
+      if (typeof loc === "string") return loc;
+      if (loc && typeof loc === "object") {
+        const parts: string[] = [];
+        if (loc.name) parts.push(loc.name);
+        if (loc.city?.name) parts.push(loc.city.name);
+        if (loc.state?.name) parts.push(loc.state.name);
+        return parts.join(", ");
+      }
+      return "";
+    };
+
+    const getLocationSlug = (loc: any): string => {
+      if (typeof loc === "string") return ""; // we no longer key by slug for strings
+      return loc?.slug?.current || "";
+    };
+
+    const getStructureSlug = (st: any): string => {
+      if (typeof st === "string") return normalizeSlug(st);
+      if (st && typeof st === "object") return st.slug?.current || "";
+      return "";
+    };
+
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+
     return properties.filter((property) => {
-      const propertyTypeSlug = property.propertyType?.slug.current ?? "";
+      const propertyTypeSlug = getPropertyTypeSlug(property.propertyType);
 
       const matchesPurpose = (() => {
-        if (selectedPurpose === "all") {
-          return true;
-        }
-
-        if (!propertyTypeSlug) {
-          return true;
-        }
-
-        if (selectedPurpose === "land") {
+        if (selectedPurpose === "all") return true;
+        if (!propertyTypeSlug) return true;
+        if (selectedPurpose === "land")
           return propertyTypeSlug.includes("land");
-        }
-
-        if (selectedPurpose === "rent") {
+        if (selectedPurpose === "rent")
           return propertyTypeSlug.includes("for-rent");
-        }
-
-        if (selectedPurpose === "management") {
+        if (selectedPurpose === "management")
           return propertyTypeSlug.includes("management");
-        }
-
         return true;
       })();
 
       const matchesType =
         selectedType === "all" || propertyTypeSlug === selectedType;
 
+      const locationSlug = getLocationSlug(property.location as any);
       const matchesLocation =
-        selectedLocation === "all" ||
-        property.location?.slug.current === selectedLocation;
+        selectedLocation === "all" || locationSlug === selectedLocation;
 
-      const normalizedSearch = searchTerm.trim().toLowerCase();
+      const locationString = getLocationString(property.location as any);
       const matchesSearch =
         normalizedSearch.length === 0 ||
-        [
-          property.location?.name,
-          property.location?.city?.name,
-          property.location?.state?.name,
-          property.title,
-        ]
+        [locationString, property.title]
           .filter((value): value is string => Boolean(value))
           .some((value) => value.toLowerCase().includes(normalizedSearch));
 
@@ -92,9 +109,9 @@ export function useSanityPropertyFilter({
       const matchesBathrooms =
         selectedBathrooms === "all" || property.bathrooms === selectedBathrooms;
 
+      const structureSlug = getStructureSlug(property.structure as any);
       const matchesStructure =
-        selectedStructure === "all" ||
-        property.structure?.slug.current === selectedStructure;
+        selectedStructure === "all" || structureSlug === selectedStructure;
 
       const matchesFurnished =
         selectedFurnished === "all" ||
