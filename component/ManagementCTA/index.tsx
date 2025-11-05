@@ -13,6 +13,7 @@ interface FormData {
   propertyAddress: string;
   propertyState: string;
   propertyCountry: string;
+  phoneNumber: string;
 }
 
 const PROPERTY_TYPES = ["Land", "House", "Estate", "Apartment", "Commercial"];
@@ -24,6 +25,7 @@ export default function ManagementCTA({ companyInfo }: ManagementCTAProps) {
     propertyAddress: "",
     propertyState: "",
     propertyCountry: "",
+    phoneNumber: "",
   });
 
   const handleInputChange = (field: keyof FormData, value: string) => {
@@ -49,13 +51,19 @@ export default function ManagementCTA({ companyInfo }: ManagementCTAProps) {
     setShowContactModal(true);
   };
 
-  const { propertyType, propertyAddress, propertyState, propertyCountry } =
-    formData;
+  const {
+    propertyType,
+    propertyAddress,
+    propertyState,
+    propertyCountry,
+    phoneNumber,
+  } = formData;
 
   const detailsMessage = `Property Type: ${propertyType}
 Property Address: ${propertyAddress}
 Property State: ${propertyState}
-Property Country: ${propertyCountry}`;
+Property Country: ${propertyCountry}
+Phone Number: ${phoneNumber}`;
 
   const emailData = {
     subject: "Property Management Services Inquiry",
@@ -83,6 +91,7 @@ Property Country: ${propertyCountry}`;
         propertyAddress: "",
         propertyState: "",
         propertyCountry: "",
+        phoneNumber: "",
       });
     }
     // Email is now handled by ContactMethodModal via API
@@ -187,6 +196,24 @@ Property Country: ${propertyCountry}`;
               />
             </div>
           </div>
+          <div>
+            <label
+              htmlFor="management-phone-number"
+              className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+            >
+              Phone number*
+            </label>
+            <input
+              id="management-phone-number"
+              type="number"
+              value={formData.phoneNumber}
+              onChange={(event) =>
+                handleInputChange("phoneNumber", event.target.value)
+              }
+              placeholder="Enter phone number"
+              className="w-full rounded-lg border border-gray-300 bg-white py-2 sm:py-2.5 px-3 sm:px-4 text-xs sm:text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
+            />
+          </div>
 
           <div className="pt-2">
             <button
@@ -208,6 +235,7 @@ Property Country: ${propertyCountry}`;
             propertyAddress: "",
             propertyState: "",
             propertyCountry: "",
+            phoneNumber: "",
           });
         }}
         companyInfo={companyInfo}
