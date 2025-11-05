@@ -245,10 +245,10 @@ export default function FilterBar({
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.4, duration: 0.5 }}
-      className="max-w-5xl w-full mx-auto px-3 sm:px-4 lg:px-0"
+      className="max-w-5xl w-full mx-auto"
     >
       <div className="bg-white/95 backdrop-blur-md w-full rounded-2xl sm:rounded-3xl shadow-xl border border-white/40 p-4 sm:p-6 lg:p-8">
-        <div className="flex flex-col gap-4 sm:gap-6">
+        <div className="flex flex-col">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4 border-b border-gray-100 pb-3 sm:pb-4">
             <div className="flex items-center bg-gray-100 rounded-full p-0.5 sm:p-1 text-xs sm:text-sm font-medium w-full lg:w-auto">
               {purposeTabs.map((tab) => {

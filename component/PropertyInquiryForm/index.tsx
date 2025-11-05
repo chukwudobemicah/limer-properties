@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import ContactMethodModal from "@/component/ContactMethodModal";
 import { SanityCompanyInfo } from "@/types/sanity";
 import { DEFAULT_MAX_PRICE } from "@/hooks/useSanityPropertyFilter";
+import Select from "@/component/Select";
 
 interface PropertyInquiryFormProps {
   companyInfo: SanityCompanyInfo | null;
@@ -22,6 +23,14 @@ interface FormData {
 
 const PROPERTY_TYPES = ["Land", "House", "Estate", "Apartment", "Commercial"];
 
+const RENT_PROPERTY_TYPES = [
+  { value: "studio-apartment", label: "Studio Apartment" },
+  { value: "mini-flat", label: "Mini Flat" },
+  { value: "2-bedrooms-flat", label: "2 Bedrooms Flat" },
+  { value: "3-bedrooms-flat", label: "3 Bedrooms Flat" },
+  { value: "duplex", label: "Duplex" },
+];
+
 const formatPrice = (price: number): string => {
   return `₦${new Intl.NumberFormat("en-NG", {
     minimumFractionDigits: 0,
@@ -35,6 +44,8 @@ export default function PropertyInquiryForm({
   priceRange,
   heading,
 }: PropertyInquiryFormProps) {
+  const isForRent = heading?.toLowerCase().includes("rent");
+
   const headingText = useMemo(() => {
     if (heading) {
       return heading;
@@ -89,7 +100,23 @@ export default function PropertyInquiryForm({
 
   const { propertyType, location, bedrooms, bathrooms, budget } = formData;
 
-  const detailsMessage = `Property Type: ${propertyType || "Any"}
+  // Get the label for property type if it's from the rent dropdown
+  const getPropertyTypeLabel = () => {
+    if (!propertyType) return "Any";
+    if (isForRent) {
+      const selectedOption = RENT_PROPERTY_TYPES.find(
+        (option) => option.value === propertyType
+      );
+      return selectedOption?.label || propertyType;
+    }
+    return propertyType;
+  };
+
+  const detailsMessage = isForRent
+    ? `Property Type: ${getPropertyTypeLabel()}
+Location: ${location || "Any"}
+Budget: ${budget || "Any budget"}`
+    : `Property Type: ${propertyType || "Any"}
 Location: ${location || "Any"}
 Bedrooms: ${bedrooms || "Any"}
 Bathrooms: ${bathrooms || "Any"}
@@ -140,32 +167,47 @@ Budget: ${budget || "Any budget"}`;
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Property Type */}
             <div className="sm:col-span-2">
-              <label
-                htmlFor="property-type"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Property Type
-              </label>
-              <input
-                id="property-type"
-                type="text"
-                list="property-types-list"
-                value={formData.propertyType}
-                onChange={(event) =>
-                  handleInputChange("propertyType", event.target.value)
-                }
-                placeholder="Land, House, Estate, Apartment, Commercial"
-                className="w-full rounded-lg border border-gray-300 bg-white py-2.5 px-4 text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
-              />
-              <datalist id="property-types-list">
-                {PROPERTY_TYPES.map((type) => (
-                  <option key={type} value={type} />
-                ))}
-              </datalist>
+              {isForRent ? (
+                <Select
+                  label="Property Type"
+                  value={formData.propertyType}
+                  onChange={(value) =>
+                    handleInputChange("propertyType", String(value))
+                  }
+                  options={RENT_PROPERTY_TYPES}
+                  placeholder="Select property type"
+                  labelId="property-type"
+                />
+              ) : (
+                <>
+                  <label
+                    htmlFor="property-type"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Property Type
+                  </label>
+                  <input
+                    id="property-type"
+                    type="text"
+                    list="property-types-list"
+                    value={formData.propertyType}
+                    onChange={(event) =>
+                      handleInputChange("propertyType", event.target.value)
+                    }
+                    placeholder="Land, House, Estate, Apartment, Commercial"
+                    className="w-full rounded-lg border border-gray-300 bg-white py-2.5 px-4 text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
+                  />
+                  <datalist id="property-types-list">
+                    {PROPERTY_TYPES.map((type) => (
+                      <option key={type} value={type} />
+                    ))}
+                  </datalist>
+                </>
+              )}
             </div>
 
             {/* Location */}
-            <div>
+            <div className="sm:col-span-2">
               <label
                 htmlFor="location"
                 className="block text-sm font-medium text-gray-700 mb-2"
@@ -184,45 +226,49 @@ Budget: ${budget || "Any budget"}`;
               />
             </div>
 
-            {/* Bedrooms */}
-            <div>
-              <label
-                htmlFor="bedrooms"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Bedrooms
-              </label>
-              <input
-                id="bedrooms"
-                type="text"
-                value={formData.bedrooms}
-                onChange={(event) =>
-                  handleInputChange("bedrooms", event.target.value)
-                }
-                placeholder="Number of bedrooms"
-                className="w-full rounded-lg border border-gray-300 bg-white py-2.5 px-4 text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
-              />
-            </div>
+            {/* Bedrooms - Only show if not for rent */}
+            {!isForRent && (
+              <div>
+                <label
+                  htmlFor="bedrooms"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Bedrooms
+                </label>
+                <input
+                  id="bedrooms"
+                  type="text"
+                  value={formData.bedrooms}
+                  onChange={(event) =>
+                    handleInputChange("bedrooms", event.target.value)
+                  }
+                  placeholder="Number of bedrooms"
+                  className="w-full rounded-lg border border-gray-300 bg-white py-2.5 px-4 text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
+                />
+              </div>
+            )}
 
-            {/* Bathrooms */}
-            <div>
-              <label
-                htmlFor="bathrooms"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Bathrooms
-              </label>
-              <input
-                id="bathrooms"
-                type="text"
-                value={formData.bathrooms}
-                onChange={(event) =>
-                  handleInputChange("bathrooms", event.target.value)
-                }
-                placeholder="Number of bathrooms"
-                className="w-full rounded-lg border border-gray-300 bg-white py-2.5 px-4 text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
-              />
-            </div>
+            {/* Bathrooms - Only show if not for rent */}
+            {!isForRent && (
+              <div>
+                <label
+                  htmlFor="bathrooms"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Bathrooms
+                </label>
+                <input
+                  id="bathrooms"
+                  type="text"
+                  value={formData.bathrooms}
+                  onChange={(event) =>
+                    handleInputChange("bathrooms", event.target.value)
+                  }
+                  placeholder="Number of bathrooms"
+                  className="w-full rounded-lg border border-gray-300 bg-white py-2.5 px-4 text-sm text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none"
+                />
+              </div>
+            )}
 
             {/* Budget */}
             <div className="sm:col-span-2">
