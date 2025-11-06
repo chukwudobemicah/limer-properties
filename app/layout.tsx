@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Limer Estate And Facility Management LTD" }],
   openGraph: {
     title:
-      "Limer Estate & Facility Management - Find Your Dream Home in Nigeria",
+      "Limer Estate & Facility Management LTD - Find Your Dream Home in Nigeria",
     description:
       "Discover the perfect property with Limer Estate And Facility Management LTD. Browse houses for sale, rent, land, and shortlets across Nigeria.",
     type: "website",
