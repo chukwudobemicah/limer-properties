@@ -40,7 +40,7 @@ export const metadata: Metadata = {
       "Discover the perfect property with Limer Estate And Facility Management LTD. Browse houses for sale, rent, land, and shortlets across Nigeria.",
     type: "website",
     locale: "en_NG",
-    siteName: "Limer Estate & Facility Management",
+    siteName: "Limer Estate & Facility Management LTD",
   },
 };
 
