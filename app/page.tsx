@@ -24,7 +24,7 @@ type Option = {
 
 const buildOptions = <T extends { slug?: { current?: string }; _id: string }>(
   items: T[],
-  getLabel: (item: T) => string
+  getLabel: (item: T) => string,
 ): Option[] => {
   const seenValues = new Set<string>();
   const seenLabels = new Set<string>();
@@ -62,7 +62,6 @@ export default function Home() {
   const { companyInfo, loading: companyLoading } = useSanityCompanyInfo();
 
   const {
-    filteredProperties,
     selectedPurpose,
     setSelectedPurpose,
     searchTerm,
@@ -88,9 +87,9 @@ export default function Home() {
     () =>
       buildOptions(
         propertyTypes,
-        (type) => type.title ?? type.slug?.current ?? ""
+        (type) => type.title ?? type.slug?.current ?? "",
       ),
-    [propertyTypes]
+    [propertyTypes],
   );
 
   const locationOptions = React.useMemo(
@@ -98,18 +97,18 @@ export default function Home() {
       buildOptions(locations, (location) =>
         [location.name, location.city?.name, location.state?.name]
           .filter((segment): segment is string => Boolean(segment))
-          .join(", ")
+          .join(", "),
       ),
-    [locations]
+    [locations],
   );
 
   const structureOptions = React.useMemo(
     () => buildOptions(structures, (structure) => structure.title ?? ""),
-    [structures]
+    [structures],
   );
 
   const featuredProperties = properties.filter(
-    (property) => property.isFeatured
+    (property) => property.isFeatured,
   );
 
   const loading = propertiesLoading || filtersLoading || companyLoading;

@@ -20,7 +20,7 @@ function PropertiesContent() {
   const searchParams = useSearchParams();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"for-sale" | "for-rent">(
-    "for-sale"
+    "for-sale",
   );
   const { properties, loading: propertiesLoading } = useSanityProperties();
   const { loading: filtersLoading } = useSanityFilters();
@@ -28,7 +28,6 @@ function PropertiesContent() {
 
   const {
     filteredProperties,
-    selectedType,
     setSelectedType,
     selectedBedrooms,
     setSelectedBedrooms,
@@ -104,7 +103,7 @@ function PropertiesContent() {
       const normalizedFurnished = furnishedParam.toLowerCase();
       if (["all", "furnished", "unfurnished"].includes(normalizedFurnished)) {
         setSelectedFurnished(
-          normalizedFurnished as "all" | "furnished" | "unfurnished"
+          normalizedFurnished as "all" | "furnished" | "unfurnished",
         );
       }
     }
