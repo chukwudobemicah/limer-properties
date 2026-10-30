@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { COMPANY_DETAILS } from "@/constants/companydetails";
 import Wordmark from "@/component/Wordmark";
+import { Stagger, StaggerItem } from "@/component/Motion";
 
 const PROPERTY_LINKS = [
   { label: "Houses for sale", href: "/properties?type=sale" },
@@ -35,12 +36,17 @@ export default function Footer() {
           </div>
         </div>
 
-        <span
-          aria-hidden="true"
-          className="block select-none font-extrabold text-white text-[clamp(120px,31.7vw,456px)] leading-[0.79] tracking-[-0.035em]"
-        >
-          Limer
-        </span>
+        {/* The clipping wrapper is what's observed, so the slide-up always triggers. */}
+        <Stagger className="overflow-hidden">
+          <StaggerItem>
+            <span
+              aria-hidden="true"
+              className="block font-extrabold whitespace-nowrap text-white select-none text-[calc((100vw-40px)/7.2)] leading-[0.86] tracking-[-0.045em] md:text-[calc((100vw-80px)/7.2)] xl:text-[calc((100vw-128px)/7.2)] min-[1440px]:text-[182px]"
+            >
+              Limer Properties
+            </span>
+          </StaggerItem>
+        </Stagger>
 
         <div className="flex flex-col gap-3 border-t border-white/20 pt-6 font-mono text-[12px] tracking-[0.08em] text-white/60 uppercase md:flex-row md:justify-between">
           <span>

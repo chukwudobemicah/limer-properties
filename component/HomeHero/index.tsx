@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { motion, type TargetAndTransition } from "framer-motion";
 import { SanityCompanyInfo, SanityProperty } from "@/types/sanity";
-import { SearchIcon, WhatsAppIcon } from "@/component/Icons";
+import { ArrowRightIcon, WhatsAppIcon } from "@/component/Icons";
+import { EASE, useSiteLoaded } from "@/component/Motion";
 import { getWhatsAppUrl } from "@/lib/contact";
 import {
   PRICE_SUGGESTIONS,
@@ -19,56 +20,110 @@ import {
 import { formatPrice, cn } from "@/utils/functions";
 
 const SEARCH_TABS = [
-  { value: "sale", label: "For sale" },
-  { value: "rent", label: "Rent" },
-  { value: "land", label: "Land" },
-  { value: "shortlet", label: "Shortlet" },
+  { value: "sale", label: "For sale", phrase: "a property to buy" },
+  { value: "rent", label: "Rent", phrase: "a home to rent" },
+  { value: "land", label: "Land", phrase: "land to buy" },
+  { value: "shortlet", label: "Shortlet", phrase: "a shortlet" },
 ] as const;
+
+type TabValue = (typeof SEARCH_TABS)[number]["value"];
+
+const HEADLINE = "Verified land and homes across Lagos.";
 
 interface HomeHeroProps {
   featured?: SanityProperty;
   companyInfo: SanityCompanyInfo | null;
 }
 
+/** WhatsApp message built from what the visitor picked in the search box. */
+export function buildRequestMessage(tab: TabValue, where: string, budget: string): string {
+  const phrase = SEARCH_TABS.find((item) => item.value === tab)?.phrase ?? "a property";
+  const maxPrice = parsePrice(budget);
+  const parts = [`Hello Limer! I'm looking for ${phrase}`];
+  if (where.trim()) parts.push(` in ${where.trim()}`);
+  if (maxPrice) parts.push(`, with a budget of up to ${formatNaira(maxPrice)}`);
+  parts.push(". Please send me the options you have available.");
+  return parts.join("");
+}
+
 export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
-  const router = useRouter();
-  const [tab, setTab] = useState<(typeof SEARCH_TABS)[number]["value"]>("sale");
+  const loaded = useSiteLoaded();
+  const [tab, setTab] = useState<TabValue>("sale");
   const [where, setWhere] = useState("");
   const [budget, setBudget] = useState("");
 
-  const handleSearch = (event: React.FormEvent) => {
+  const handleMessage = (event: React.FormEvent) => {
     event.preventDefault();
-    const params = new URLSearchParams({ type: tab });
-    if (where.trim()) params.set("search", where.trim());
-    const maxPrice = parsePrice(budget);
-    if (maxPrice) params.set("maxPrice", String(maxPrice));
-    router.push(`/properties?${params.toString()}`);
+    window.open(
+      getWhatsAppUrl(buildRequestMessage(tab, where, budget), companyInfo),
+      "_blank",
+      "noopener,noreferrer",
+    );
   };
+
+  // Same filters, for people who'd rather browse than message.
+  const browseParams = new URLSearchParams({ type: tab });
+  if (where.trim()) browseParams.set("search", where.trim());
+  const maxPrice = parsePrice(budget);
+  if (maxPrice) browseParams.set("maxPrice", String(maxPrice));
+
+  /** Intro animation props: hidden until the page has fully loaded. */
+  const intro = (delay: number, from: TargetAndTransition = { opacity: 0, y: 24 }) => ({
+    initial: from,
+    animate: loaded ? { opacity: 1, y: 0, x: 0 } : from,
+    transition: { duration: 0.9, ease: EASE, delay },
+  });
 
   return (
     <section className="mx-auto flex w-full max-w-[1440px] flex-col gap-9 px-5 pb-16 sm:gap-12 md:px-10 lg:flex-row lg:items-stretch lg:gap-14 lg:pt-12 lg:pb-20 xl:px-16 xl:pt-[72px] xl:pb-28">
       {/* Copy — sits below the photo on phones, left of it on desktop */}
       <div className="order-2 flex flex-col gap-6 sm:gap-8 lg:order-1 lg:w-[56%] lg:shrink-0 xl:w-[700px] xl:pt-10">
-        <span className="label-mono text-cobalt max-sm:text-[10.5px] max-sm:tracking-[0.1em]">
+        <motion.span
+          {...intro(0.25)}
+          className="label-mono text-cobalt max-sm:text-[10.5px] max-sm:tracking-[0.1em]"
+        >
           <span
             className="mr-2 inline-block h-2 w-2 -translate-y-px rounded-full bg-cobalt align-middle"
             aria-hidden="true"
           />
           Lekki · Ibeju-Lekki · Ogun · Lagos Island
-        </span>
-        <h1 className="text-[clamp(2.25rem,10vw,4.5rem)] leading-[1.02] font-extrabold tracking-[-0.035em] text-balance text-ink lg:text-[min(6.1vw,88px)] lg:leading-none">
-          Verified land and homes across Lagos.
-        </h1>
-        <p className="max-w-[520px] text-[16px] leading-[26px] text-graphite sm:text-[19px] sm:leading-[30px]">
-          We check the title, walk the plot and stand behind every listing — then
-          manage the property for you once it&apos;s yours.
-        </p>
+        </motion.span>
 
-        {/* Search */}
-        <form
-          onSubmit={handleSearch}
+        <h1
+          aria-label={HEADLINE}
+          className="text-[clamp(2.25rem,10vw,4.5rem)] leading-[1.02] font-extrabold tracking-[-0.035em] text-balance text-ink lg:text-[min(6.1vw,88px)] lg:leading-none"
+        >
+          {HEADLINE.split(" ").map((word, index) => (
+            <React.Fragment key={index}>
+              <span aria-hidden="true" className="-mb-[0.12em] inline-block overflow-hidden pb-[0.12em] align-top">
+                <motion.span
+                  className="inline-block"
+                  initial={{ y: "110%" }}
+                  animate={loaded ? { y: "0%" } : { y: "110%" }}
+                  transition={{ duration: 0.9, ease: EASE, delay: 0.35 + index * 0.06 }}
+                >
+                  {word}
+                </motion.span>
+              </span>
+              {index < HEADLINE.split(" ").length - 1 && " "}
+            </React.Fragment>
+          ))}
+        </h1>
+
+        <motion.p
+          {...intro(0.75)}
+          className="max-w-[520px] text-[16px] leading-[26px] text-graphite sm:text-[19px] sm:leading-[30px]"
+        >
+          We check the title, walk the plot and stand behind every listing — then manage the
+          property for you once it&apos;s yours.
+        </motion.p>
+
+        {/* Request box → WhatsApp */}
+        <motion.form
+          {...intro(0.9)}
+          onSubmit={handleMessage}
           className="mt-2 flex w-full max-w-[640px] flex-col border-[1.5px] border-ink"
-          role="search"
+          aria-label="Tell us what you're looking for"
         >
           <div className="flex border-b border-rule" role="tablist">
             {SEARCH_TABS.map((item) => (
@@ -119,40 +174,61 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
             </label>
             <button
               type="submit"
-              className="flex items-center justify-center gap-2.5 bg-cobalt px-7 py-4 text-[16px] font-semibold text-white transition-colors hover:bg-[#1a32b8]"
+              className="flex items-center justify-center gap-2.5 bg-wa px-7 py-4 text-[16px] font-semibold text-white transition-opacity hover:opacity-90"
             >
-              <SearchIcon size={18} color="#FFFFFF" />
-              Search
+              <WhatsAppIcon size={18} color="#FFFFFF" />
+              Message
             </button>
           </div>
-        </form>
+        </motion.form>
 
-        <a
-          href={getWhatsAppUrl(undefined, companyInfo)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex flex-wrap items-center gap-3 text-[16px] text-graphite"
-        >
-          <WhatsAppIcon size={20} color="#1FAF55" />
-          Rather just ask?
-          <span className="font-semibold text-ink underline group-hover:text-cobalt">
-            Chat with an advisor on WhatsApp
-          </span>
-        </a>
+        <motion.div {...intro(1.05)}>
+          <Link
+            href={`/properties?${browseParams.toString()}`}
+            className="group inline-flex flex-wrap items-center gap-2 text-[16px] text-graphite"
+          >
+            Prefer to browse first?
+            <span className="inline-flex items-center gap-1.5 font-semibold text-ink underline group-hover:text-cobalt">
+              See matching listings
+              <ArrowRightIcon size={14} />
+            </span>
+          </Link>
+        </motion.div>
       </div>
 
-      {/* Image + plot tag */}
-      {/* Photo — full-bleed at the very top on phones */}
-      <div className="relative order-1 -mx-5 h-[300px] bg-mist sm:h-[420px] md:-mx-10 lg:order-2 lg:mx-0 lg:h-auto lg:flex-1">
-        <Image
-          src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80"
-          alt="Modern detached home with a pool"
-          fill
-          priority
-          sizes="(min-width: 1024px) 40vw, 100vw"
-          className="object-cover"
-        />
-        {featured && <PlotTag property={featured} />}
+      {/* Photo — full-bleed at the very top on phones; wipes in on load */}
+      <div className="relative order-1 -mx-5 h-[300px] sm:h-[420px] md:-mx-10 lg:order-2 lg:mx-0 lg:h-auto lg:flex-1">
+        <motion.div
+          className="absolute inset-0 overflow-hidden bg-mist"
+          initial={{ clipPath: "inset(0% 0% 100% 0%)" }}
+          animate={loaded ? { clipPath: "inset(0% 0% 0% 0%)" } : { clipPath: "inset(0% 0% 100% 0%)" }}
+          transition={{ duration: 1.2, ease: EASE, delay: 0.1 }}
+        >
+          <motion.div
+            className="absolute inset-0"
+            initial={{ scale: 1.12 }}
+            animate={loaded ? { scale: 1 } : { scale: 1.12 }}
+            transition={{ duration: 1.8, ease: EASE, delay: 0.1 }}
+          >
+            <Image
+              src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80"
+              alt="Modern detached home with a pool"
+              fill
+              priority
+              sizes="(min-width: 1024px) 40vw, 100vw"
+              className="object-cover"
+            />
+          </motion.div>
+        </motion.div>
+        {featured && (
+          // Positioned wrapper (not the link) so the slide-in transform can't move its anchor.
+          <motion.div
+            {...intro(1.15, { opacity: 0, x: -24 })}
+            className="absolute right-4 bottom-4 left-4 sm:right-auto sm:w-[280px] md:left-10 lg:-left-10 lg:bottom-10"
+          >
+            <PlotTag property={featured} />
+          </motion.div>
+        )}
       </div>
     </section>
   );
@@ -164,7 +240,7 @@ function PlotTag({ property }: { property: SanityProperty }) {
   return (
     <Link
       href={getPropertyPath(property)}
-      className="absolute right-4 bottom-4 left-4 border border-ink bg-white transition-transform hover:-translate-y-0.5 sm:right-auto sm:w-[280px] md:left-10 lg:-left-10 lg:bottom-10"
+      className="block border border-ink bg-white transition-transform hover:-translate-y-0.5"
     >
       {/* Phones: one slim strip so the photo stays visible */}
       <span className="flex items-center gap-3 px-4 py-3 sm:hidden">

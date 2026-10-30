@@ -7,6 +7,7 @@ import { ArrowRightIcon, PersonIcon, WhatsAppIcon } from "@/component/Icons";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 import { getPhoneDisplay, getWhatsAppUrl } from "@/lib/contact";
 import { CEO, MISSION, STATS, VALUES, VISION } from "@/constants/about";
+import { Reveal, Stagger, StaggerItem } from "@/component/Motion";
 
 const CONTAINER = "mx-auto w-full max-w-[1440px] px-5 md:px-10 xl:px-16";
 
@@ -16,17 +17,17 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
-      <section className={`${CONTAINER} flex flex-col gap-8 pt-20 pb-20 xl:pt-[104px] xl:pb-24`}>
+      <Reveal as="section" className={`${CONTAINER} flex flex-col gap-8 pt-20 pb-20 xl:pt-[104px] xl:pb-24`}>
         <span className="label-mono text-cobalt">About Limer</span>
         <h1 className="text-[clamp(2.5rem,8.5vw,6rem)] leading-none font-extrabold tracking-[-0.04em] text-ink">
           More than a transaction.
           <br />A place to build on.
         </h1>
-      </section>
+      </Reveal>
 
       {/* 01 Story */}
       <section className="border-t border-rule">
-        <div className={`${CONTAINER} flex flex-col gap-10 pt-[72px] pb-24 lg:flex-row lg:gap-16 xl:pb-[120px]`}>
+        <Reveal className={`${CONTAINER} flex flex-col gap-10 pt-[72px] pb-24 lg:flex-row lg:gap-16 xl:pb-[120px]`}>
           <SectionLabel number="01" title="Our story" />
           <div className="flex flex-1 flex-col gap-6">
             <p className="text-[22px] leading-8 font-medium tracking-[-0.015em] text-ink md:text-[28px] md:leading-10">
@@ -43,11 +44,11 @@ export default function AboutPage() {
               client — from the first inspection to years of managing the property after handover.
             </p>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* 02 Leadership */}
-      <section className={`${CONTAINER} flex flex-col gap-10 pb-24 lg:flex-row lg:items-stretch lg:gap-16 xl:pb-32`}>
+      <Reveal as="section" className={`${CONTAINER} flex flex-col gap-10 pb-24 lg:flex-row lg:items-stretch lg:gap-16 xl:pb-32`}>
         <div className="relative flex aspect-[4/5] w-full shrink-0 flex-col justify-end bg-mist p-6 lg:aspect-auto lg:h-[640px] lg:w-[520px]">
           {CEO.image ? (
             <Image
@@ -120,13 +121,13 @@ export default function AboutPage() {
             )}
           </div>
         </div>
-      </section>
+      </Reveal>
 
       {/* Stats */}
       <section className="bg-ink">
-        <div className={`${CONTAINER} grid grid-cols-2 gap-y-12 py-[88px] lg:grid-cols-4 lg:gap-y-0`}>
+        <Stagger className={`${CONTAINER} grid grid-cols-2 gap-y-12 py-[88px] lg:grid-cols-4 lg:gap-y-0`}>
           {STATS.map((stat, index) => (
-            <div
+            <StaggerItem
               key={stat.label}
               className={[
                 "flex flex-col gap-3",
@@ -142,13 +143,13 @@ export default function AboutPage() {
               <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-white/70">
                 {stat.label}
               </span>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </section>
 
       {/* 03 Mission + vision */}
-      <section className={`${CONTAINER} flex flex-col gap-10 pt-24 lg:flex-row lg:gap-16 xl:pt-[120px]`}>
+      <Reveal as="section" className={`${CONTAINER} flex flex-col gap-10 pt-24 lg:flex-row lg:gap-16 xl:pt-[120px]`}>
         <SectionLabel number="03" title="What drives us" />
         <div className="flex flex-1 flex-col gap-12 md:flex-row">
           {[
@@ -163,14 +164,14 @@ export default function AboutPage() {
             </div>
           ))}
         </div>
-      </section>
+      </Reveal>
 
       {/* 04 Values */}
       <section className={`${CONTAINER} flex flex-col gap-10 pt-24 pb-24 lg:flex-row lg:gap-16 xl:pt-[120px] xl:pb-32`}>
         <SectionLabel number="04" title="Our core values" />
-        <div className="flex flex-1 flex-col border-t-[1.5px] border-ink">
+        <Stagger className="flex flex-1 flex-col border-t-[1.5px] border-ink">
           {VALUES.map((value) => (
-            <div
+            <StaggerItem
               key={value.title}
               className="flex flex-col gap-2 border-b border-rule py-7 md:flex-row md:items-baseline md:gap-8"
             >
@@ -178,14 +179,14 @@ export default function AboutPage() {
                 {value.title}
               </span>
               <span className="text-[18px] leading-7 text-graphite">{value.body}</span>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </section>
 
       {/* CTA */}
       <section className="bg-cobalt">
-        <div className={`${CONTAINER} flex flex-col gap-12 py-24 lg:flex-row lg:items-end lg:justify-between lg:gap-16 xl:py-28`}>
+        <Reveal className={`${CONTAINER} flex flex-col gap-12 py-24 lg:flex-row lg:items-end lg:justify-between lg:gap-16 xl:py-28`}>
           <div className="flex flex-col gap-6">
             <span className="label-mono text-white">Ready when you are</span>
             <h2 className="max-w-[720px] text-[clamp(2.25rem,7vw,4rem)] leading-[1.03] font-extrabold tracking-[-0.035em] text-balance text-white">
@@ -219,7 +220,7 @@ export default function AboutPage() {
               <ArrowRightIcon size={20} />
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
     </div>
   );

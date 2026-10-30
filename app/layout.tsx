@@ -4,6 +4,7 @@ import Header from "@/component/Header";
 import Footer from "@/component/Footer";
 import FloatingWhatsApp from "@/component/FloatingWhatsApp";
 import { ToastProvider } from "@/component/Toast";
+import { MotionProvider } from "@/component/Motion";
 
 export const metadata: Metadata = {
   title:
@@ -51,12 +52,14 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <ToastProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <FloatingWhatsApp />
-        </ToastProvider>
+        <MotionProvider>
+          <ToastProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+            <FloatingWhatsApp />
+          </ToastProvider>
+        </MotionProvider>
       </body>
     </html>
   );

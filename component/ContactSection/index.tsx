@@ -5,6 +5,7 @@ import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 import { ArrowRightIcon, PhoneIcon, WhatsAppIcon } from "@/component/Icons";
 import { Field, SelectInput } from "@/component/PropertyManagementServices";
 import { useToast } from "@/component/Toast";
+import { Reveal } from "@/component/Motion";
 import { COMPANY_DETAILS } from "@/constants/companydetails";
 import {
   getCompanyEmail,
@@ -84,7 +85,7 @@ export default function ContactSection() {
     <section id="contact" className="scroll-mt-24">
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-16 px-5 py-24 md:px-10 lg:flex-row lg:items-start lg:gap-24 xl:px-16 xl:py-32">
         {/* Intro + channels */}
-        <div className="flex flex-col gap-6 lg:w-[520px] lg:shrink-0">
+        <Reveal className="flex flex-col gap-6 lg:w-[520px] lg:shrink-0">
           <span className="label-mono text-cobalt">Get in touch</span>
           <h2 className="text-[clamp(2rem,8vw,3.5rem)] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance text-ink">
             Come see it for yourself.
@@ -127,12 +128,13 @@ export default function ContactSection() {
               Office: {COMPANY_DETAILS.addressDisplay}
             </span>
           </div>
-        </div>
+        </Reveal>
 
         {/* Email form */}
+        <Reveal delay={0.15} className="flex flex-1">
         <form
           onSubmit={handleSubmit}
-          className="flex flex-1 flex-col gap-7 border-[1.5px] border-ink p-6 sm:p-11"
+          className="flex w-full flex-col gap-7 border-[1.5px] border-ink p-6 sm:p-11"
         >
           <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
             <h3 className="text-[28px] font-extrabold tracking-[-0.02em] text-ink">
@@ -216,6 +218,7 @@ export default function ContactSection() {
             </div>
           </div>
         </form>
+        </Reveal>
       </div>
     </section>
   );
