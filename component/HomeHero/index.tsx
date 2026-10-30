@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, type TargetAndTransition } from "framer-motion";
 import { SanityCompanyInfo, SanityProperty } from "@/types/sanity";
 import { ArrowRightIcon, WhatsAppIcon } from "@/component/Icons";
-import { EASE, useSiteLoaded } from "@/component/Motion";
+import { useSiteLoaded } from "@/component/Motion";
 import { getWhatsAppUrl } from "@/lib/contact";
 import {
   PRICE_SUGGESTIONS,
@@ -52,6 +51,11 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
   const [where, setWhere] = useState("");
   const [budget, setBudget] = useState("");
   const [photoReady, setPhotoReady] = useState(false);
+  // Safety net: never leave the photo hidden if the load event was missed (e.g. cached).
+  useEffect(() => {
+    const timer = window.setTimeout(() => setPhotoReady(true), 2500);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const handleMessage = (event: React.FormEvent) => {
     event.preventDefault();
@@ -68,27 +72,25 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
   const maxPrice = parsePrice(budget);
   if (maxPrice) browseParams.set("maxPrice", String(maxPrice));
 
-  /** Intro animation props: hidden until the page has fully loaded. */
-  const intro = (delay: number, from: TargetAndTransition = { opacity: 0, y: 24 }) => ({
-    initial: from,
-    animate: loaded ? { opacity: 1, y: 0, x: 0 } : from,
-    transition: { duration: 0.9, ease: EASE, delay },
-  });
+  /** Intro delay for an element (CSS keyframes in globals.css, started by data-ready). */
+  const delay = (seconds: number) => ({ "--d": `${seconds}s` }) as React.CSSProperties;
 
   return (
-    <section className="mx-auto flex w-full max-w-[1440px] flex-col gap-9 px-5 pb-16 sm:gap-12 md:px-10 lg:flex-row lg:items-stretch lg:gap-14 lg:pt-12 lg:pb-20 xl:px-16 xl:pt-[72px] xl:pb-28">
+    <section
+      data-ready={loaded || undefined}
+      className="mx-auto flex w-full max-w-[1440px] flex-col gap-9 px-5 pb-16 sm:gap-12 md:px-10 lg:flex-row lg:items-stretch lg:gap-14 lg:pt-12 lg:pb-20 xl:px-16 xl:pt-[72px] xl:pb-28">
       {/* Copy — sits below the photo on phones, left of it on desktop */}
       <div className="order-2 flex flex-col gap-6 sm:gap-8 lg:order-1 lg:w-[56%] lg:shrink-0 xl:w-[700px] xl:pt-10">
-        <motion.span
-          {...intro(0.25)}
-          className="label-mono text-cobalt max-sm:text-[10.5px] max-sm:tracking-[0.1em]"
+        <span
+          style={delay(0.15)}
+          className="intro label-mono text-cobalt max-sm:text-[10.5px] max-sm:tracking-[0.1em]"
         >
           <span
             className="mr-2 inline-block h-2 w-2 -translate-y-px rounded-full bg-cobalt align-middle"
             aria-hidden="true"
           />
           Lekki · Ibeju-Lekki · Ogun · Lagos Island
-        </motion.span>
+        </span>
 
         <h1
           aria-label={HEADLINE}
@@ -97,33 +99,31 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
           {HEADLINE.split(" ").map((word, index) => (
             <React.Fragment key={index}>
               <span aria-hidden="true" className="-mb-[0.12em] inline-block overflow-hidden pb-[0.12em] align-top">
-                <motion.span
-                  className={word === "Lagos." ? "inline-block italic" : "inline-block"}
-                  initial={{ y: "110%" }}
-                  animate={loaded ? { y: "0%" } : { y: "110%" }}
-                  transition={{ duration: 0.9, ease: EASE, delay: 0.35 + index * 0.06 }}
+                <span
+                  className={word === "Lagos." ? "intro-word italic" : "intro-word"}
+                  style={delay(0.25 + index * 0.06)}
                 >
                   {word}
-                </motion.span>
+                </span>
               </span>
               {index < HEADLINE.split(" ").length - 1 && " "}
             </React.Fragment>
           ))}
         </h1>
 
-        <motion.p
-          {...intro(0.75)}
-          className="max-w-[560px] text-[16px] leading-[26px] text-graphite sm:text-[18px] sm:leading-[30px]"
+        <p
+          style={delay(0.65)}
+          className="intro max-w-[560px] text-[16px] leading-[26px] text-graphite sm:text-[18px] sm:leading-[30px]"
         >
           We check the title, walk the plot and stand behind every listing — then manage the
           property for you once it&apos;s yours.
-        </motion.p>
+        </p>
 
         {/* Request box → WhatsApp */}
-        <motion.form
-          {...intro(0.9)}
+        <form
+          style={delay(0.8)}
           onSubmit={handleMessage}
-          className="mt-2 flex w-full max-w-[640px] flex-col border-[1.5px] border-ink"
+          className="intro mt-2 flex w-full max-w-[640px] flex-col border-[1.5px] border-ink"
           aria-label="Tell us what you're looking for"
         >
           <div className="flex border-b border-rule" role="tablist">
@@ -181,9 +181,9 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
               Message
             </button>
           </div>
-        </motion.form>
+        </form>
 
-        <motion.div {...intro(1.05)}>
+        <div className="intro" style={delay(0.95)}>
           <Link
             href={`/properties?${browseParams.toString()}`}
             className="group inline-flex flex-wrap items-center gap-2 text-[16px] text-graphite"
@@ -194,26 +194,13 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
               <ArrowRightIcon size={14} />
             </span>
           </Link>
-        </motion.div>
+        </div>
       </div>
 
-      {/* Photo — full-bleed at the very top on phones; wipes in on load */}
+      {/* Photo — full-bleed at the very top on phones; fades in once loaded */}
       <div className="relative order-1 -mx-5 h-[300px] sm:h-[420px] md:-mx-10 lg:order-2 lg:mx-0 lg:h-auto lg:flex-1">
-        <motion.div
-          className="absolute inset-0 overflow-hidden bg-mist"
-          initial={{ clipPath: "inset(0% 0% 100% 0%)" }}
-          animate={loaded ? { clipPath: "inset(0% 0% 0% 0%)" } : { clipPath: "inset(0% 0% 100% 0%)" }}
-          transition={{ duration: 1.2, ease: EASE, delay: 0.1 }}
-        >
-          <motion.div
-            className="absolute inset-0"
-            initial={{ scale: 1.12, opacity: 0 }}
-            animate={{ scale: loaded ? 1 : 1.12, opacity: photoReady ? 1 : 0 }}
-            transition={{
-              scale: { duration: 1.8, ease: EASE, delay: 0.1 },
-              opacity: { duration: 0.6, ease: "easeOut" },
-            }}
-          >
+        <div className="absolute inset-0 overflow-hidden bg-mist">
+          <div className="hero-photo absolute inset-0" data-shown={(loaded && photoReady) || undefined}>
             <Image
               onLoad={() => setPhotoReady(true)}
               src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80"
@@ -223,16 +210,16 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
               sizes="(min-width: 1024px) 40vw, 100vw"
               className="object-cover"
             />
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
         {featured && (
           // Positioned wrapper (not the link) so the slide-in transform can't move its anchor.
-          <motion.div
-            {...intro(1.15, { opacity: 0, x: -24 })}
-            className="absolute right-4 bottom-4 left-4 sm:right-auto sm:w-[280px] md:left-10 lg:-left-10 lg:bottom-10"
+          <div
+            style={delay(0.6)}
+            className="intro-slide absolute right-4 bottom-4 left-4 sm:right-auto sm:w-[280px] md:left-10 lg:-left-10 lg:bottom-10"
           >
             <PlotTag property={featured} />
-          </motion.div>
+          </div>
         )}
       </div>
     </section>
