@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -11,7 +12,7 @@ import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { SanityProperty } from "@/types/sanity";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
 import { useSanityProperties } from "@/hooks/useSanityProperties";
-import { ArrowRightIcon, PhoneIcon, WhatsAppIcon } from "@/component/Icons";
+import { ArrowRightIcon, CloseIcon, PhoneIcon, PlayIcon, WhatsAppIcon } from "@/component/Icons";
 import ListingCard from "@/component/ListingCard";
 import { EASE, Reveal, Stagger, StaggerItem } from "@/component/Motion";
 import { getPhoneDisplay, getTelUrl, getWhatsAppUrl } from "@/lib/contact";
@@ -309,23 +310,55 @@ export default function PropertyDetailsPage() {
   );
 }
 
+function useSwipe(onSwipe: (step: number) => void) {
+  const start = useRef<{ x: number; y: number } | null>(null);
+  const swiped = useRef(false);
+  return {
+    swiped,
+    handlers: {
+      onTouchStart: (event: React.TouchEvent) => {
+        const touch = event.touches[0];
+        start.current = { x: touch.clientX, y: touch.clientY };
+        swiped.current = false;
+      },
+      onTouchEnd: (event: React.TouchEvent) => {
+        if (!start.current) return;
+        const touch = event.changedTouches[0];
+        const dx = touch.clientX - start.current.x;
+        const dy = touch.clientY - start.current.y;
+        start.current = null;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+          swiped.current = true;
+          onSwipe(dx < 0 ? 1 : -1);
+        }
+      },
+    },
+  };
+}
+
+const croppedUrl = (item: MediaItem, width: number, height: number) =>
+  item.kind === "image" ? urlFor(item.asset).width(width).height(height).fit("crop").auto("format").url() : "";
+
 function Gallery({ media, title }: { media: MediaItem[]; title: string }) {
   const [index, setIndex] = useState(0);
+  const [open, setOpen] = useState(false);
   const count = media.length;
   const go = useCallback(
     (step: number) => setIndex((current) => (current + step + count) % count),
     [count],
   );
+  const { swiped, handlers } = useSwipe((step) => count > 1 && go(step));
 
   useEffect(() => {
-    if (count < 2) return;
     const onKey = (event: KeyboardEvent) => {
+      if (open && event.key === "Escape") setOpen(false);
+      if (count < 2) return;
       if (event.key === "ArrowRight") go(1);
       if (event.key === "ArrowLeft") go(-1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [count, go]);
+  }, [count, go, open]);
 
   if (count === 0) {
     return (
@@ -336,12 +369,20 @@ function Gallery({ media, title }: { media: MediaItem[]; title: string }) {
   }
 
   const current = media[index];
-  const imageUrl = (item: MediaItem, width: number, height: number) =>
-    item.kind === "image" ? urlFor(item.asset).width(width).height(height).fit("crop").auto("format").url() : null;
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-mist sm:aspect-[16/10] lg:aspect-[21/9]">
+      {/* The whole photo opens the full-screen viewer; no controls sit on it. */}
+      <button
+        type="button"
+        onClick={() => {
+          if (swiped.current) return;
+          setOpen(true);
+        }}
+        {...handlers}
+        aria-label={`View ${current.kind === "video" ? "video" : "photo"} ${index + 1} of ${count} full screen`}
+        className="group relative block aspect-[4/3] w-full cursor-zoom-in overflow-hidden bg-mist sm:aspect-[16/10] lg:aspect-[21/9]"
+      >
         <AnimatePresence initial={false}>
           <motion.div
             key={index}
@@ -353,47 +394,33 @@ function Gallery({ media, title }: { media: MediaItem[]; title: string }) {
           >
             {current.kind === "image" ? (
               <Image
-                src={imageUrl(current, 1800, 860) as string}
+                src={croppedUrl(current, 1800, 860)}
                 alt={current.alt || title}
                 fill
                 priority={index === 0}
                 sizes="(min-width: 1440px) 1312px, 100vw"
-                className="object-cover"
+                className="object-cover transition-transform duration-700 group-hover:scale-[1.015]"
               />
             ) : (
-              <video src={current.url} controls playsInline className="h-full w-full bg-ink object-contain">
-                <track kind="captions" />
-              </video>
+              <>
+                <video
+                  src={`${current.url}#t=0.1`}
+                  muted
+                  playsInline
+                  preload="metadata"
+                  tabIndex={-1}
+                  className="pointer-events-none h-full w-full bg-ink object-cover"
+                />
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <span className="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-white/95 text-ink transition-transform group-hover:scale-105">
+                    <PlayIcon size={30} className="ml-1" />
+                  </span>
+                </span>
+              </>
             )}
           </motion.div>
         </AnimatePresence>
-
-        {count > 1 && (
-          <>
-            <span className="absolute bottom-4 left-4 bg-white px-3 py-2 font-mono text-[12px] tracking-[0.1em] text-ink">
-              {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
-            </span>
-            <div className="absolute right-4 bottom-4 flex">
-              <button
-                type="button"
-                onClick={() => go(-1)}
-                aria-label="Previous photo"
-                className="flex h-11 w-11 items-center justify-center border border-ink bg-white text-ink transition-colors hover:bg-ink hover:text-white"
-              >
-                <ArrowRightIcon size={18} className="rotate-180" />
-              </button>
-              <button
-                type="button"
-                onClick={() => go(1)}
-                aria-label="Next photo"
-                className="-ml-px flex h-11 w-11 items-center justify-center border border-ink bg-white text-ink transition-colors hover:bg-ink hover:text-white"
-              >
-                <ArrowRightIcon size={18} />
-              </button>
-            </div>
-          </>
-        )}
-      </div>
+      </button>
 
       {count > 1 && (
         <div className="flex gap-2 overflow-x-auto pb-1">
@@ -409,17 +436,142 @@ function Gallery({ media, title }: { media: MediaItem[]; title: string }) {
               }`}
             >
               {item.kind === "image" ? (
-                <Image src={imageUrl(item, 200, 140) as string} alt="" fill sizes="96px" className="object-cover" />
+                <Image src={croppedUrl(item, 200, 140)} alt="" fill sizes="96px" className="object-cover" />
               ) : (
-                <span className="flex h-full w-full items-center justify-center bg-ink font-mono text-[11px] tracking-[0.1em] text-white uppercase">
-                  ▶ Video
+                <span className="flex h-full w-full items-center justify-center bg-ink text-white">
+                  <PlayIcon size={22} />
                 </span>
               )}
             </button>
           ))}
         </div>
       )}
+
+      {open && (
+        <Lightbox
+          media={media}
+          index={index}
+          title={title}
+          onStep={go}
+          onClose={() => setOpen(false)}
+        />
+      )}
     </div>
+  );
+}
+
+function Lightbox({
+  media,
+  index,
+  title,
+  onStep,
+  onClose,
+}: {
+  media: MediaItem[];
+  index: number;
+  title: string;
+  onStep: (step: number) => void;
+  onClose: () => void;
+}) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const count = media.length;
+  const current = media[index];
+  const { handlers } = useSwipe((step) => count > 1 && onStep(step));
+
+  // Lock the page behind, and hand focus back to where it was on close.
+  useEffect(() => {
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus?.({ preventScroll: true });
+    };
+  }, []);
+
+  const caption = current.kind === "image" ? current.caption : current.title;
+
+  return createPortal(
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${title} — media viewer`}
+      className="lightbox fixed inset-0 z-[200] flex flex-col bg-[#07090f] text-white"
+    >
+      <div className="flex shrink-0 items-center justify-between px-5 py-4 md:px-8">
+        <span className="font-mono text-[12px] tracking-[0.12em] text-white/70">
+          {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
+        </span>
+        <button
+          ref={closeRef}
+          type="button"
+          onClick={onClose}
+          aria-label="Close full screen"
+          className="-mr-2 flex h-11 w-11 items-center justify-center text-white/80 transition-colors hover:text-white"
+        >
+          <CloseIcon size={26} />
+        </button>
+      </div>
+
+      <div
+        className="relative min-h-0 flex-1"
+        {...handlers}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) onClose();
+        }}
+      >
+        {current.kind === "image" ? (
+          <Image
+            key={index}
+            src={urlFor(current.asset).width(2400).fit("max").auto("format").url()}
+            alt={current.alt || title}
+            fill
+            sizes="100vw"
+            className="lightbox object-contain"
+          />
+        ) : (
+          <div className="lightbox absolute inset-0 flex items-center justify-center px-0 sm:px-20">
+            <video
+              key={index}
+              src={current.url}
+              controls
+              autoPlay
+              playsInline
+              className="max-h-full max-w-full"
+            >
+              <track kind="captions" />
+            </video>
+          </div>
+        )}
+
+        {count > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={() => onStep(-1)}
+              aria-label="Previous"
+              className="absolute top-1/2 left-3 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:flex md:left-6"
+            >
+              <ArrowRightIcon size={20} className="rotate-180" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onStep(1)}
+              aria-label="Next"
+              className="absolute top-1/2 right-3 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:flex md:right-6"
+            >
+              <ArrowRightIcon size={20} />
+            </button>
+          </>
+        )}
+      </div>
+
+      <div className="flex min-h-14 shrink-0 items-center justify-center px-5 py-4 text-center text-[14px] leading-5 text-white/70">
+        {caption || (count > 1 ? <span className="sm:hidden">Swipe to see more</span> : null)}
+      </div>
+    </div>,
+    document.body,
   );
 }
 

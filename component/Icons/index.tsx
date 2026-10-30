@@ -122,3 +122,19 @@ export function MenuIcon({ size = 24, color = "currentColor", open = false }: Ic
     </svg>
   );
 }
+
+export function CloseIcon({ size = 24, color = "currentColor", className, strokeWidth = 2 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} className={className} aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  );
+}
+
+export function PlayIcon({ size = 28, color = "currentColor", className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <path fill={color} d="M8 5.5v13a.5.5 0 00.77.42l10-6.5a.5.5 0 000-.84l-10-6.5A.5.5 0 008 5.5z" />
+    </svg>
+  );
+}
