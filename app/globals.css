@@ -114,41 +114,44 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Small mono labels used across the design */
-.label-mono {
-  font-family: "Geist Mono", ui-monospace, monospace;
-  font-size: 13px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
+/* Shared text/field styles — in the components layer so utilities can override them */
+@layer components {
+  /* Small mono labels used across the design */
+  .label-mono {
+    font-family: "Geist Mono", ui-monospace, monospace;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
 
-.field-label {
-  font-family: "Geist Mono", ui-monospace, monospace;
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--graphite);
-}
+  .field-label {
+    font-family: "Geist Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--graphite);
+  }
 
-/* Underline-only form fields */
-.field-input {
-  width: 100%;
-  border: 0;
-  border-bottom: 1.5px solid var(--ink);
-  background: transparent;
-  padding: 14px 0;
-  font-size: 16px;
-  line-height: 20px;
-  color: var(--ink);
-  border-radius: 0;
-  outline: none;
-  appearance: none;
-}
-.field-input::placeholder {
-  color: var(--placeholder);
-}
-.field-input:focus {
-  border-bottom-color: var(--cobalt);
+  /* Underline-only form fields */
+  .field-input {
+    width: 100%;
+    border: 0;
+    border-bottom: 1.5px solid var(--ink);
+    background: transparent;
+    padding: 14px 0;
+    font-size: 16px;
+    line-height: 20px;
+    color: var(--ink);
+    border-radius: 0;
+    outline: none;
+    appearance: none;
+  }
+  .field-input::placeholder {
+    color: var(--placeholder);
+  }
+  .field-input:focus {
+    border-bottom-color: var(--cobalt);
+  }
 }
 
 a,

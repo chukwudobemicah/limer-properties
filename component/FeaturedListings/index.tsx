@@ -19,7 +19,7 @@ export default function FeaturedListings({
       <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
         <div className="flex flex-col gap-5">
           <span className="label-mono text-cobalt">Featured listings</span>
-          <h2 className="max-w-[640px] text-[40px] leading-[44px] font-extrabold tracking-[-0.03em] text-ink md:text-[56px] md:leading-[58px]">
+          <h2 className="max-w-[640px] text-[clamp(2rem,8vw,3.5rem)] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance text-ink">
             Plots and homes we&apos;d buy ourselves.
           </h2>
         </div>

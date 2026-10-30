@@ -74,9 +74,9 @@ export default function Header() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Chat on WhatsApp"
-            className="sm:hidden inline-flex h-11 w-11 items-center justify-center border-[1.5px] border-ink"
+            className="sm:hidden inline-flex h-11 w-11 items-center justify-center"
           >
-            <WhatsAppIcon size={20} color="#1FAF55" />
+            <WhatsAppIcon size={26} color="#1FAF55" />
           </a>
           <button
             type="button"

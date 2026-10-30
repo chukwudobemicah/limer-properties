@@ -7,7 +7,15 @@ import { useRouter } from "next/navigation";
 import { SanityCompanyInfo, SanityProperty } from "@/types/sanity";
 import { SearchIcon, WhatsAppIcon } from "@/component/Icons";
 import { getWhatsAppUrl } from "@/lib/contact";
-import { getAreaName, getLocation, getPropertyPath, getSizeLabel } from "@/lib/property";
+import {
+  PRICE_SUGGESTIONS,
+  formatNaira,
+  getAreaName,
+  getLocation,
+  getPropertyPath,
+  getSizeLabel,
+  parsePrice,
+} from "@/lib/property";
 import { formatPrice, cn } from "@/utils/functions";
 
 const SEARCH_TABS = [
@@ -16,16 +24,6 @@ const SEARCH_TABS = [
   { value: "land", label: "Land" },
   { value: "shortlet", label: "Shortlet" },
 ] as const;
-
-const BUDGETS = [
-  { value: "", label: "Any budget" },
-  { value: "10000000", label: "Up to ₦10M" },
-  { value: "25000000", label: "Up to ₦25M" },
-  { value: "50000000", label: "Up to ₦50M" },
-  { value: "100000000", label: "Up to ₦100M" },
-  { value: "250000000", label: "Up to ₦250M" },
-  { value: "500000000", label: "Up to ₦500M" },
-];
 
 interface HomeHeroProps {
   featured?: SanityProperty;
@@ -42,25 +40,26 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
     event.preventDefault();
     const params = new URLSearchParams({ type: tab });
     if (where.trim()) params.set("search", where.trim());
-    if (budget) params.set("maxPrice", budget);
+    const maxPrice = parsePrice(budget);
+    if (maxPrice) params.set("maxPrice", String(maxPrice));
     router.push(`/properties?${params.toString()}`);
   };
 
   return (
-    <section className="mx-auto flex w-full max-w-[1440px] flex-col gap-12 px-5 pt-12 pb-20 md:px-10 lg:flex-row lg:items-stretch lg:gap-14 xl:px-16 xl:pt-[72px] xl:pb-28">
-      {/* Copy */}
-      <div className="flex flex-col gap-8 lg:w-[56%] lg:shrink-0 xl:w-[700px] xl:pt-10">
-        <span className="label-mono text-cobalt">
+    <section className="mx-auto flex w-full max-w-[1440px] flex-col gap-9 px-5 pb-16 sm:gap-12 md:px-10 lg:flex-row lg:items-stretch lg:gap-14 lg:pt-12 lg:pb-20 xl:px-16 xl:pt-[72px] xl:pb-28">
+      {/* Copy — sits below the photo on phones, left of it on desktop */}
+      <div className="order-2 flex flex-col gap-6 sm:gap-8 lg:order-1 lg:w-[56%] lg:shrink-0 xl:w-[700px] xl:pt-10">
+        <span className="label-mono text-cobalt max-sm:text-[10.5px] max-sm:tracking-[0.1em]">
           <span
             className="mr-2 inline-block h-2 w-2 -translate-y-px rounded-full bg-cobalt align-middle"
             aria-hidden="true"
           />
           Lekki · Ibeju-Lekki · Ogun · Lagos Island
         </span>
-        <h1 className="text-[52px] leading-[52px] font-extrabold tracking-[-0.035em] text-ink sm:text-[72px] sm:leading-[72px] xl:text-[88px] xl:leading-[88px]">
+        <h1 className="text-[clamp(2.25rem,10vw,4.5rem)] leading-[1.02] font-extrabold tracking-[-0.035em] text-balance text-ink lg:text-[min(6.1vw,88px)] lg:leading-none">
           Verified land and homes across Lagos.
         </h1>
-        <p className="max-w-[520px] text-[17px] leading-[28px] text-graphite sm:text-[19px] sm:leading-[30px]">
+        <p className="max-w-[520px] text-[16px] leading-[26px] text-graphite sm:text-[19px] sm:leading-[30px]">
           We check the title, walk the plot and stand behind every listing — then
           manage the property for you once it&apos;s yours.
         </p>
@@ -71,7 +70,7 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
           className="mt-2 flex w-full max-w-[640px] flex-col border-[1.5px] border-ink"
           role="search"
         >
-          <div className="flex overflow-x-auto border-b border-rule" role="tablist">
+          <div className="flex border-b border-rule" role="tablist">
             {SEARCH_TABS.map((item) => (
               <button
                 key={item.value}
@@ -80,7 +79,7 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
                 aria-selected={tab === item.value}
                 onClick={() => setTab(item.value)}
                 className={cn(
-                  "shrink-0 px-[22px] py-3.5 font-mono text-[12px] tracking-[0.12em] uppercase transition-colors",
+                  "flex-1 px-2 py-3.5 font-mono text-[11px] tracking-[0.1em] uppercase transition-colors sm:flex-none sm:px-[22px] sm:text-[12px] sm:tracking-[0.12em]",
                   tab === item.value ? "bg-ink text-white" : "text-graphite hover:text-ink",
                 )}
               >
@@ -98,19 +97,25 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
                 className="bg-transparent text-[17px] text-ink outline-none placeholder:text-ink"
               />
             </label>
-            <label className="flex flex-col gap-1 border-b border-rule px-[22px] py-4 sm:w-[180px] sm:shrink-0 sm:border-b-0">
-              <span className="field-label">Budget</span>
-              <select
+            <label className="flex flex-col gap-1 border-b border-rule px-[22px] py-4 sm:w-[200px] sm:shrink-0 sm:border-b-0">
+              <span className="field-label">Max budget</span>
+              <input
                 value={budget}
                 onChange={(event) => setBudget(event.target.value)}
-                className="appearance-none bg-transparent text-[17px] text-ink outline-none"
-              >
-                {BUDGETS.map((option) => (
-                  <option key={option.label} value={option.value}>
-                    {option.label}
-                  </option>
+                onBlur={() => {
+                  const value = parsePrice(budget);
+                  if (value) setBudget(formatNaira(value));
+                }}
+                inputMode="decimal"
+                list="hero-budget-suggestions"
+                placeholder="Any, e.g. ₦50M"
+                className="w-full min-w-0 bg-transparent text-[17px] text-ink outline-none placeholder:text-graphite"
+              />
+              <datalist id="hero-budget-suggestions">
+                {PRICE_SUGGESTIONS.map((suggestion) => (
+                  <option key={suggestion} value={suggestion} />
                 ))}
-              </select>
+              </datalist>
             </label>
             <button
               type="submit"
@@ -137,7 +142,8 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
       </div>
 
       {/* Image + plot tag */}
-      <div className="relative min-h-[360px] flex-1 bg-mist sm:min-h-[480px] lg:min-h-0">
+      {/* Photo — full-bleed at the very top on phones */}
+      <div className="relative order-1 -mx-5 h-[300px] bg-mist sm:h-[420px] md:-mx-10 lg:order-2 lg:mx-0 lg:h-auto lg:flex-1">
         <Image
           src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80"
           alt="Modern detached home with a pool"
@@ -153,27 +159,43 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
 }
 
 function PlotTag({ property }: { property: SanityProperty }) {
+  const label = property.documentTitle ? `Verified · ${property.documentTitle}` : "Featured";
+
   return (
     <Link
       href={getPropertyPath(property)}
-      className="absolute right-4 bottom-4 left-4 flex flex-col gap-2.5 border border-ink bg-white px-[22px] py-5 transition-transform hover:-translate-y-0.5 sm:right-auto sm:w-[280px] lg:-left-10 lg:bottom-10"
+      className="absolute right-4 bottom-4 left-4 border border-ink bg-white transition-transform hover:-translate-y-0.5 sm:right-auto sm:w-[280px] md:left-10 lg:-left-10 lg:bottom-10"
     >
-      <div className="flex items-center justify-between gap-3">
-        <span className="truncate font-mono text-[11px] tracking-[0.12em] whitespace-nowrap uppercase text-cobalt">
-          {property.documentTitle ? `Verified · ${property.documentTitle}` : "Featured"}
+      {/* Phones: one slim strip so the photo stays visible */}
+      <span className="flex items-center gap-3 px-4 py-3 sm:hidden">
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-cobalt">
+            {label} · {getAreaName(property.location)}
+          </span>
+          <span className="truncate text-[15px] font-bold text-ink">{property.title}</span>
         </span>
-        <span className="truncate font-mono text-[11px] tracking-[0.08em] text-graphite">
-          {getAreaName(property.location)}
-        </span>
-      </div>
-      <span className="line-clamp-2 text-[20px] leading-6 font-bold tracking-[-0.01em] text-ink">
-        {property.title}
+        <span className="shrink-0 text-[15px] font-bold text-ink">{formatPrice(property.price)}</span>
       </span>
-      <span className="sr-only">{getLocation(property.location)}</span>
-      <div className="flex items-baseline justify-between border-t border-rule pt-2.5">
-        <span className="font-mono text-[12px] text-graphite">{getSizeLabel(property)}</span>
-        <span className="text-[18px] font-bold text-ink">{formatPrice(property.price)}</span>
-      </div>
+
+      {/* Tablet and up: the full plot sheet */}
+      <span className="hidden flex-col gap-2.5 px-[22px] py-5 sm:flex">
+        <span className="flex items-center justify-between gap-3">
+          <span className="truncate font-mono text-[11px] tracking-[0.12em] whitespace-nowrap uppercase text-cobalt">
+            {label}
+          </span>
+          <span className="truncate font-mono text-[11px] tracking-[0.08em] text-graphite">
+            {getAreaName(property.location)}
+          </span>
+        </span>
+        <span className="line-clamp-2 text-[20px] leading-6 font-bold tracking-[-0.01em] text-ink">
+          {property.title}
+        </span>
+        <span className="sr-only">{getLocation(property.location)}</span>
+        <span className="flex items-baseline justify-between border-t border-rule pt-2.5">
+          <span className="font-mono text-[12px] text-graphite">{getSizeLabel(property)}</span>
+          <span className="text-[18px] font-bold text-ink">{formatPrice(property.price)}</span>
+        </span>
+      </span>
     </Link>
   );
 }
