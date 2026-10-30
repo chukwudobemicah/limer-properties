@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
+import RollingPrice from "@/component/RollingPrice";
 import { client } from "@/lib/sanity.client";
 import { urlFor } from "@/lib/sanity.image";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
@@ -160,7 +161,7 @@ export default function PropertyDetailsPage() {
         <Reveal delay={0.1} className="flex flex-col gap-1 lg:items-end lg:pb-1">
           <span className="field-label">Price</span>
           <span className="text-[clamp(2rem,4vw,3rem)] leading-none font-extrabold tracking-[-0.03em] text-ink">
-            {formatPrice(property.price)}
+            <RollingPrice price={property.price} delay={0.25} />
             {suffix && <span className="ml-1.5 text-[17px] font-medium text-graphite">{suffix}</span>}
           </span>
         </Reveal>
@@ -225,7 +226,7 @@ export default function PropertyDetailsPage() {
             <div className="flex items-baseline justify-between border-y border-rule py-4">
               <span className="font-mono text-[12px] tracking-[0.06em] text-graphite">{getSizeLabel(property)}</span>
               <span className="text-[22px] font-extrabold text-ink">
-                {formatPrice(property.price)}
+                <RollingPrice price={property.price} />
                 {suffix && <span className="ml-1 text-[14px] font-medium text-graphite">{suffix}</span>}
               </span>
             </div>
@@ -294,7 +295,7 @@ export default function PropertyDetailsPage() {
       <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-rule bg-white px-5 py-3 lg:hidden">
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="field-label">Price</span>
-          <span className="truncate text-[18px] font-extrabold text-ink">{formatPrice(property.price)}</span>
+          <span className="truncate text-[18px] font-extrabold text-ink"><RollingPrice price={property.price} delay={0.4} /></span>
         </span>
         <a
           href={getWhatsAppUrl(askMessage, companyInfo)}

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import RollingPrice from "@/component/RollingPrice";
 import { SanityCompanyInfo, SanityProperty } from "@/types/sanity";
 import { WhatsAppIcon } from "@/component/Icons";
 import { getWhatsAppUrl } from "@/lib/contact";
@@ -16,7 +17,6 @@ import {
   getTypeLabel,
   getTypeSlug,
 } from "@/lib/property";
-import { formatPrice } from "@/utils/functions";
 
 interface ListingCardProps {
   property: SanityProperty;
@@ -62,7 +62,7 @@ export default function ListingCard({ property, companyInfo }: ListingCardProps)
           {getSizeLabel(property)}
         </span>
         <span className="text-[19px] font-bold text-ink">
-          {formatPrice(property.price)}
+          <RollingPrice price={property.price} />
           {suffix && <span className="ml-1 text-[13px] font-medium text-graphite">{suffix}</span>}
         </span>
       </div>
