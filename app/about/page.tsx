@@ -18,7 +18,7 @@ export default function AboutPage() {
       {/* Hero */}
       <section className={`${CONTAINER} flex flex-col gap-8 pt-20 pb-20 xl:pt-[104px] xl:pb-24`}>
         <span className="label-mono text-cobalt">About Limer</span>
-        <h1 className="text-[52px] leading-[52px] font-extrabold tracking-[-0.04em] text-ink sm:text-[72px] sm:leading-[72px] xl:text-[96px] xl:leading-[96px]">
+        <h1 className="text-[clamp(2.5rem,8.5vw,6rem)] leading-none font-extrabold tracking-[-0.04em] text-ink">
           More than a transaction.
           <br />A place to build on.
         </h1>
@@ -80,7 +80,7 @@ export default function AboutPage() {
               {CEO.role}
             </span>
           </div>
-          <h2 className="text-[44px] leading-[46px] font-extrabold tracking-[-0.035em] text-ink md:text-[72px] md:leading-[72px]">
+          <h2 className="text-[clamp(2.25rem,6vw,4.5rem)] leading-none font-extrabold tracking-[-0.035em] text-ink">
             {CEO.name}
           </h2>
           {CEO.quote && (
@@ -136,7 +136,7 @@ export default function AboutPage() {
                 index % 2 === 0 ? "max-lg:border-r max-lg:border-white/20" : "",
               ].join(" ")}
             >
-              <span className="text-[56px] leading-[56px] font-extrabold tracking-[-0.045em] text-white md:text-[88px] md:leading-[88px]">
+              <span className="text-[clamp(2.75rem,8vw,5.5rem)] leading-none font-extrabold tracking-[-0.045em] text-white">
                 {stat.value}
               </span>
               <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-white/70">
@@ -174,7 +174,7 @@ export default function AboutPage() {
               key={value.title}
               className="flex flex-col gap-2 border-b border-rule py-7 md:flex-row md:items-baseline md:gap-8"
             >
-              <span className="text-[32px] font-extrabold tracking-[-0.03em] text-ink md:w-[340px] md:shrink-0 md:text-[40px]">
+              <span className="text-[clamp(1.75rem,4vw,2.5rem)] font-extrabold tracking-[-0.03em] text-ink md:w-[340px] md:shrink-0">
                 {value.title}
               </span>
               <span className="text-[18px] leading-7 text-graphite">{value.body}</span>
@@ -188,7 +188,7 @@ export default function AboutPage() {
         <div className={`${CONTAINER} flex flex-col gap-12 py-24 lg:flex-row lg:items-end lg:justify-between lg:gap-16 xl:py-28`}>
           <div className="flex flex-col gap-6">
             <span className="label-mono text-white">Ready when you are</span>
-            <h2 className="max-w-[720px] text-[44px] leading-[46px] font-extrabold tracking-[-0.035em] text-white md:text-[64px] md:leading-[66px]">
+            <h2 className="max-w-[720px] text-[clamp(2.25rem,7vw,4rem)] leading-[1.03] font-extrabold tracking-[-0.035em] text-balance text-white">
               Let&apos;s find the right property for you.
             </h2>
             <p className="max-w-[560px] text-[19px] leading-[30px] text-white/85">

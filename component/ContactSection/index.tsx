@@ -86,7 +86,7 @@ export default function ContactSection() {
         {/* Intro + channels */}
         <div className="flex flex-col gap-6 lg:w-[520px] lg:shrink-0">
           <span className="label-mono text-cobalt">Get in touch</span>
-          <h2 className="text-[40px] leading-[44px] font-extrabold tracking-[-0.03em] text-ink md:text-[56px] md:leading-[58px]">
+          <h2 className="text-[clamp(2rem,8vw,3.5rem)] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance text-ink">
             Come see it for yourself.
           </h2>
           <p className="text-[17px] leading-[28px] text-graphite md:text-[19px] md:leading-[30px]">

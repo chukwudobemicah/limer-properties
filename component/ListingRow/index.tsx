@@ -62,7 +62,7 @@ export default function ListingRow({ property, companyInfo }: ListingRowProps) {
           {getTypeLabel(slug)}
         </span>
         <Link href={href}>
-          <h2 className="text-[26px] leading-[30px] font-extrabold tracking-[-0.025em] text-ink hover:text-cobalt md:text-[32px] md:leading-9">
+          <h2 className="text-[clamp(1.5rem,3.2vw,2rem)] leading-[1.12] font-extrabold tracking-[-0.025em] text-ink hover:text-cobalt">
             {property.title}
           </h2>
         </Link>

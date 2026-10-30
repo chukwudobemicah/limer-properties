@@ -187,3 +187,22 @@ export function tabFromParam(value: string | null): PropertyTab {
   if (["all", "sale", "rent", "land", "shortlet"].includes(v)) return v as PropertyTab;
   return "all";
 }
+
+/**
+ * Parses what people type into a price box: "40000000", "40,000,000",
+ * "₦40M", "40m", "1.5b", "500k". Returns null when empty or unreadable.
+ */
+export function parsePrice(input: string): number | null {
+  const cleaned = input.toLowerCase().replace(/[₦,\s]|ngn|naira/g, "");
+  if (!cleaned) return null;
+  const match = cleaned.match(/^(\d+(?:\.\d+)?)(k|m|b|bn|million|billion)?$/);
+  if (!match) return null;
+  const multiplier =
+    { k: 1e3, m: 1e6, million: 1e6, b: 1e9, bn: 1e9, billion: 1e9 }[match[2] ?? ""] ?? 1;
+  return Math.round(parseFloat(match[1]) * multiplier);
+}
+
+export const formatNaira = (value: number) => `₦${value.toLocaleString("en-NG")}`;
+
+/** Suggestions offered while typing a price (any amount can be typed). */
+export const PRICE_SUGGESTIONS = ["₦5M", "₦10M", "₦25M", "₦50M", "₦100M", "₦250M", "₦500M"];

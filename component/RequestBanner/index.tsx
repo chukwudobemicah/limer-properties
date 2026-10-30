@@ -18,7 +18,7 @@ export default function RequestBanner({
     <div className="flex flex-col gap-10 bg-mist p-8 sm:p-14 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
       <div className="flex flex-col gap-3.5">
         <span className="label-mono text-cobalt">Not seeing the right one?</span>
-        <h2 className="max-w-[680px] text-[34px] leading-[38px] font-extrabold tracking-[-0.03em] text-ink md:text-[44px] md:leading-12">
+        <h2 className="max-w-[680px] text-[clamp(1.875rem,5vw,2.75rem)] leading-[1.08] font-extrabold tracking-[-0.03em] text-ink">
           Tell us what you&apos;re after.
           <br />
           We&apos;ll find it.

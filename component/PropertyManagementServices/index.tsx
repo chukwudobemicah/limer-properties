@@ -85,7 +85,7 @@ export default function PropertyManagementServices({
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-16 px-5 py-24 md:px-10 lg:flex-row lg:items-end lg:gap-24 xl:px-16 xl:py-[120px]">
         <div className="flex flex-1 flex-col gap-7">
           <span className="label-mono text-white">For landlords</span>
-          <h2 className="text-[48px] leading-[50px] font-extrabold tracking-[-0.035em] text-white md:text-[64px] md:leading-[66px]">
+          <h2 className="text-[clamp(2.5rem,10vw,4rem)] leading-[1.03] font-extrabold tracking-[-0.035em] text-white">
             You own it.
             <br />
             We run it.
