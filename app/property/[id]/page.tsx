@@ -151,14 +151,14 @@ export default function PropertyDetailsPage() {
               </span>
             )}
           </nav>
-          <h1 className="text-[clamp(2rem,5.2vw,4rem)] leading-[1.04] font-extrabold tracking-[-0.035em] text-balance text-ink [overflow-wrap:anywhere]">
+          <h1 className="text-[clamp(2.25rem,5.8vw,4.5rem)] leading-[1.02] font-serif font-normal tracking-[-0.01em] text-balance text-ink [overflow-wrap:anywhere]">
             {property.title}
           </h1>
           <p className="text-[17px] leading-[26px] text-graphite sm:text-[19px] sm:leading-[30px]">{location}</p>
         </Reveal>
         <Reveal delay={0.1} className="flex flex-col gap-1 lg:items-end lg:pb-1">
           <span className="field-label">Price</span>
-          <span className="text-[clamp(2rem,4vw,3rem)] leading-none font-extrabold tracking-[-0.03em] text-ink">
+          <span className="text-[clamp(1.875rem,3.6vw,2.75rem)] leading-none font-bold tracking-[-0.025em] text-ink">
             {formatPrice(property.price)}
             {suffix && <span className="ml-1.5 text-[17px] font-medium text-graphite">{suffix}</span>}
           </span>
@@ -215,13 +215,13 @@ export default function PropertyDetailsPage() {
           <Reveal delay={0.1} className="flex flex-col gap-6 border-[1.5px] border-ink p-6 sm:p-8 lg:sticky lg:top-28">
             <div className="flex flex-col gap-1">
               <span className="field-label">Interested?</span>
-              <span className="text-[26px] leading-8 font-extrabold tracking-[-0.02em] text-ink">
+              <span className="text-[30px] leading-[1.05] font-serif font-normal tracking-[-0.01em] text-ink">
                 Talk to us about this {typeSlug === "land" ? "plot" : "property"}
               </span>
             </div>
             <div className="flex items-baseline justify-between border-y border-rule py-4">
               <span className="font-mono text-[12px] tracking-[0.06em] text-graphite">{getSizeLabel(property)}</span>
-              <span className="text-[22px] font-extrabold text-ink">
+              <span className="text-[22px] font-bold text-ink">
                 {formatPrice(property.price)}
                 {suffix && <span className="ml-1 text-[14px] font-medium text-graphite">{suffix}</span>}
               </span>
@@ -264,7 +264,7 @@ export default function PropertyDetailsPage() {
             <Reveal className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
               <div className="flex flex-col gap-4">
                 <span className="label-mono text-cobalt">More like this</span>
-                <h2 className="text-[clamp(1.875rem,4.5vw,3rem)] leading-[1.05] font-extrabold tracking-[-0.03em] text-ink">
+                <h2 className="text-[clamp(2.25rem,5vw,3.5rem)] leading-[1] font-serif font-normal tracking-[-0.01em] text-ink">
                   Similar listings
                 </h2>
               </div>
@@ -291,7 +291,7 @@ export default function PropertyDetailsPage() {
       <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-rule bg-white px-5 py-3 lg:hidden">
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="field-label">Price</span>
-          <span className="truncate text-[18px] font-extrabold text-ink">{formatPrice(property.price)}</span>
+          <span className="truncate text-[18px] font-bold text-ink">{formatPrice(property.price)}</span>
         </span>
         <a
           href={getWhatsAppUrl(askMessage, companyInfo)}
@@ -441,7 +441,7 @@ function NotFound() {
   return (
     <section className={`${CONTAINER} flex min-h-[60vh] flex-col items-start justify-center gap-6 py-24`}>
       <span className="label-mono text-cobalt">404 · Listing not found</span>
-      <h1 className="max-w-[720px] text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.03] font-extrabold tracking-[-0.035em] text-ink">
+      <h1 className="max-w-[720px] text-[clamp(2.5rem,6.5vw,5rem)] leading-[1] font-serif font-normal tracking-[-0.01em] text-ink">
         This property isn&apos;t available any more.
       </h1>
       <p className="max-w-[520px] text-[18px] leading-[30px] text-graphite">

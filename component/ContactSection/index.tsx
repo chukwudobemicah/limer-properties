@@ -87,7 +87,7 @@ export default function ContactSection() {
         {/* Intro + channels */}
         <Reveal className="flex flex-col gap-6 lg:w-[520px] lg:shrink-0">
           <span className="label-mono text-cobalt">Get in touch</span>
-          <h2 className="text-[clamp(2rem,8vw,3.5rem)] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance text-ink">
+          <h2 className="text-[clamp(2.375rem,9vw,4rem)] leading-[1] font-serif font-normal tracking-[-0.01em] text-balance text-ink">
             Come see it for yourself.
           </h2>
           <p className="text-[17px] leading-[28px] text-graphite md:text-[19px] md:leading-[30px]">
@@ -137,7 +137,7 @@ export default function ContactSection() {
           className="flex w-full flex-col gap-7 border-[1.5px] border-ink p-6 sm:p-11"
         >
           <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-            <h3 className="text-[28px] font-extrabold tracking-[-0.02em] text-ink">
+            <h3 className="text-[34px] leading-[1.05] font-serif font-normal tracking-[-0.01em] text-ink">
               Send us an email
             </h3>
             <span className="flex items-center gap-1.5 font-mono text-[12px] tracking-[0.04em] text-graphite">
