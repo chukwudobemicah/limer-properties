@@ -1,214 +1,222 @@
 "use client";
 
 import React, { useState } from "react";
-import { Mail, Phone, MapPin } from "lucide-react";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
-import Button from "@/component/Button";
-import ContactMethodModal from "@/component/ContactMethodModal";
+import { ArrowRightIcon, PhoneIcon, WhatsAppIcon } from "@/component/Icons";
+import { Field, SelectInput } from "@/component/PropertyManagementServices";
+import { useToast } from "@/component/Toast";
+import { COMPANY_DETAILS } from "@/constants/companydetails";
+import {
+  getCompanyEmail,
+  getPhoneDisplay,
+  getTelUrl,
+  getWhatsAppUrl,
+  sendEmail,
+} from "@/lib/contact";
+
+const INTERESTS = [
+  "Buying land",
+  "Buying a home",
+  "Renting a home",
+  "Shortlet stay",
+  "Property management",
+  "Something else",
+];
+
+const EMPTY_FORM = {
+  name: "",
+  email: "",
+  phone: "",
+  interest: INTERESTS[0],
+  message: "",
+};
 
 export default function ContactSection() {
   const { companyInfo } = useSanityCompanyInfo();
-  const [showContactModal, setShowContactModal] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    message: "",
-  });
+  const { showToast } = useToast();
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [sending, setSending] = useState(false);
 
-  const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = event.target;
-    setFormData((previous) => ({
-      ...previous,
-      [name]: value,
-    }));
-  };
+  const companyEmail = getCompanyEmail(companyInfo);
 
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const update = (field: keyof typeof EMPTY_FORM) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+      setForm((previous) => ({ ...previous, [field]: event.target.value }));
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setShowContactModal(true);
-  };
-
-  const { name, phone, message } = formData;
-
-  const detailsMessage = `Name: ${name}
-Phone: ${phone}
-
-Message:
-${message}`;
-
-  const emailData = {
-    subject: `Contact Form Submission from ${name}`,
-    message: detailsMessage,
-    fromEmail: phone, // Using phone as identifier since no email field
-    fromName: name,
-  };
-
-  const handleContact = (method: "whatsapp" | "email" | "call") => {
-    if (!companyInfo) return;
-
-    if (method === "call" && companyInfo.phone) {
-      window.location.href = `tel:${companyInfo.phone.replace(/\s+/g, "")}`;
-      setShowContactModal(false);
-    } else if (method === "whatsapp" && companyInfo.phone) {
-      const whatsappMessage = encodeURIComponent(detailsMessage);
-      const whatsappUrl = `https://wa.me/${companyInfo.phone.replace(
-        /\D/g,
-        ""
-      )}?text=${whatsappMessage}`;
-      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-      setShowContactModal(false);
-      setFormData({ name: "", phone: "", message: "" });
+    setSending(true);
+    try {
+      await sendEmail({
+        to: companyEmail,
+        subject: `Website enquiry — ${form.interest} — ${form.name}`,
+        fromName: form.name,
+        fromEmail: form.email,
+        message: [
+          `Name: ${form.name}`,
+          `Email: ${form.email}`,
+          form.phone ? `Phone: ${form.phone}` : null,
+          `Interested in: ${form.interest}`,
+          "",
+          form.message,
+        ]
+          .filter((line) => line !== null)
+          .join("\n"),
+      });
+      showToast({
+        type: "success",
+        title: "Email sent",
+        message: "Thanks — we'll reply to your inbox shortly.",
+      });
+      setForm(EMPTY_FORM);
+    } catch {
+      showToast({
+        type: "error",
+        title: "Couldn't send your email",
+        message: "Please try again, or message us on WhatsApp.",
+      });
+    } finally {
+      setSending(false);
     }
-    // Email is now handled by ContactMethodModal via API
   };
 
   return (
-    <section id="contact" className="py-16 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Get In Touch
+    <section id="contact" className="scroll-mt-24">
+      <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-16 px-5 py-24 md:px-10 lg:flex-row lg:items-start lg:gap-24 xl:px-16 xl:py-32">
+        {/* Intro + channels */}
+        <div className="flex flex-col gap-6 lg:w-[520px] lg:shrink-0">
+          <span className="label-mono text-cobalt">Get in touch</span>
+          <h2 className="text-[40px] leading-[44px] font-extrabold tracking-[-0.03em] text-ink md:text-[56px] md:leading-[58px]">
+            Come see it for yourself.
           </h2>
-          <p className="text-lg text-gray-600">
-            Have questions? We&apos;d love to hear from you.
+          <p className="text-[17px] leading-[28px] text-graphite md:text-[19px] md:leading-[30px]">
+            Book an inspection, ask about a plot, or talk through what you need. Message us on
+            WhatsApp, call, or send an email.
           </p>
+
+          <div className="flex flex-col gap-3 pt-3">
+            <a
+              href={getWhatsAppUrl(undefined, companyInfo)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-[18px] bg-wa px-6 py-5 text-white transition-opacity hover:opacity-90"
+            >
+              <WhatsAppIcon size={32} color="#FFFFFF" />
+              <span className="flex flex-1 flex-col gap-0.5">
+                <span className="text-[20px] font-bold">Chat on WhatsApp</span>
+                <span className="font-mono text-[13px] tracking-[0.04em] text-white/85">
+                  {getPhoneDisplay(companyInfo)} · tap to start a chat
+                </span>
+              </span>
+              <ArrowRightIcon size={20} />
+            </a>
+            <a
+              href={getTelUrl(companyInfo)}
+              className="flex items-center gap-[18px] border-[1.5px] border-ink px-6 py-5 text-ink transition-colors hover:bg-mist"
+            >
+              <PhoneIcon size={32} />
+              <span className="flex flex-1 flex-col gap-0.5">
+                <span className="text-[20px] font-bold">Call the office</span>
+                <span className="font-mono text-[13px] tracking-[0.04em] text-graphite">
+                  {COMPANY_DETAILS.hours.short}
+                </span>
+              </span>
+              <ArrowRightIcon size={20} />
+            </a>
+            <span className="pt-2 text-[15px] leading-[22px] text-graphite">
+              Office: {COMPANY_DETAILS.addressDisplay}
+            </span>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Information */}
-          <div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              Contact Information
+        {/* Email form */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-1 flex-col gap-7 border-[1.5px] border-ink p-6 sm:p-11"
+        >
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+            <h3 className="text-[28px] font-extrabold tracking-[-0.02em] text-ink">
+              Send us an email
             </h3>
-            <div className="space-y-6">
-              {companyInfo?.address && (
-                <div className="flex items-start">
-                  <div className="bg-primary-lighter p-3 rounded-lg">
-                    <MapPin className="text-primary" size={24} />
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="font-semibold text-gray-900">Address</h4>
-                    <p className="text-gray-600 mt-1">{companyInfo.address}</p>
-                  </div>
-                </div>
-              )}
-
-              {companyInfo?.phone && (
-                <div className="flex items-start">
-                  <div className="bg-primary-lighter p-3 rounded-lg">
-                    <Phone className="text-primary" size={24} />
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="font-semibold text-gray-900">Phone</h4>
-                    <p className="text-gray-600 mt-1">{companyInfo.phone}</p>
-                  </div>
-                </div>
-              )}
-
-              {companyInfo?.email && (
-                <div className="flex items-start">
-                  <div className="bg-primary-lighter p-3 rounded-lg">
-                    <Mail className="text-primary" size={24} />
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="font-semibold text-gray-900">Email</h4>
-                    <p className="text-gray-600 mt-1">{companyInfo.email}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="mt-8">
-              <h4 className="font-semibold text-gray-900 mb-4">
-                Business Hours
-              </h4>
-              <div className="space-y-2 text-gray-600">
-                <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
-                <p>Saturday: 10:00 AM - 4:00 PM</p>
-                <p>Sunday: Closed</p>
-              </div>
-            </div>
+            <span className="flex items-center gap-1.5 font-mono text-[12px] tracking-[0.04em] text-graphite">
+              <ArrowRightIcon size={11} />
+              {companyEmail}
+            </span>
           </div>
 
-          {/* Contact Form */}
-          <div className="bg-white p-8 rounded-lg shadow-md">
-            <form onSubmit={handleFormSubmit}>
-              <div className="mb-4">
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Name
-                </label>
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6 sm:flex-row sm:gap-5">
+              <Field label="Your name" htmlFor="contact-name">
                 <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
+                  id="contact-name"
                   required
-                  className="w-full px-4 py-3 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="Your name"
+                  value={form.name}
+                  onChange={update("name")}
+                  placeholder="Tunde Bakare"
+                  className="field-input"
+                  autoComplete="name"
                 />
-              </div>
-
-              <div className="mb-4">
-                <label
-                  htmlFor="phone"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Phone
-                </label>
+              </Field>
+              <Field label="Email" htmlFor="contact-email">
                 <input
+                  id="contact-email"
+                  required
+                  type="email"
+                  value={form.email}
+                  onChange={update("email")}
+                  placeholder="you@example.com"
+                  className="field-input"
+                  autoComplete="email"
+                />
+              </Field>
+            </div>
+            <div className="flex flex-col gap-6 sm:flex-row sm:gap-5">
+              <Field label="Phone (optional)" htmlFor="contact-phone">
+                <input
+                  id="contact-phone"
                   type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="+234 800 000 0000"
+                  value={form.phone}
+                  onChange={update("phone")}
+                  placeholder="+234 …"
+                  className="field-input"
+                  autoComplete="tel"
                 />
-              </div>
-
-              <div className="mb-6">
-                <label
-                  htmlFor="message"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  rows={5}
-                  className="w-full px-4 py-3 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
-                  placeholder="Your message..."
+              </Field>
+              <Field label="I'm interested in" htmlFor="contact-interest">
+                <SelectInput
+                  id="contact-interest"
+                  value={form.interest}
+                  onChange={update("interest")}
+                  options={INTERESTS}
                 />
-              </div>
-
-              <Button type="submit" variant="primary" className="w-full">
-                Submit
-              </Button>
-            </form>
+              </Field>
+            </div>
+            <Field label="Message" htmlFor="contact-message">
+              <textarea
+                id="contact-message"
+                required
+                value={form.message}
+                onChange={update("message")}
+                placeholder="I'd like to inspect the plot at Amity Estate this Saturday…"
+                className="field-input h-28 resize-none leading-6"
+              />
+            </Field>
+            <div className="flex flex-col gap-4 pt-1 sm:flex-row sm:items-center sm:gap-5">
+              <button
+                type="submit"
+                disabled={sending}
+                className="flex w-fit items-center gap-2.5 bg-ink px-7 py-[18px] text-[16px] font-semibold text-white transition-colors hover:bg-cobalt disabled:opacity-60"
+              >
+                {sending ? "Sending…" : "Send email"}
+                {!sending && <ArrowRightIcon size={16} />}
+              </button>
+              <span className="text-[14px] leading-5 text-graphite">
+                We&apos;ll reply to your inbox. Prefer chat? Use WhatsApp.
+              </span>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
-
-      <ContactMethodModal
-        isOpen={showContactModal}
-        onClose={() => {
-          setShowContactModal(false);
-          setFormData({ name: "", phone: "", message: "" });
-        }}
-        companyInfo={companyInfo}
-        onSubmit={handleContact}
-        emailData={emailData}
-      />
     </section>
   );
 }

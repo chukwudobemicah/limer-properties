@@ -1,120 +1,154 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------
+   Fonts — bundled locally (SIL OFL) so builds never depend on
+   Google Fonts. latin-ext carries the Naira sign (₦).
+---------------------------------------------------------------- */
+@font-face {
+  font-family: "Inter Tight";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("/fonts/inter-tight-latin-ext-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Inter Tight";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("/fonts/inter-tight-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("/fonts/geist-mono-latin-ext-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("/fonts/geist-mono-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ---------------------------------------------------------------
+   "Surveyor's plan" palette — mirrors the Paper design file.
+---------------------------------------------------------------- */
 :root {
+  --ink: #0e1325;
+  --cobalt: #2340e0;
+  --graphite: #5a6072;
+  --rule: #e3e5eb;
+  --mist: #f3f4f7;
+  --placeholder: #9aa0ae;
+  --wa: #0f7b45;
+  --wa-bright: #1faf55;
+
+  /* Legacy tokens kept so older screens (property detail) still render */
   --background: #ffffff;
-  --foreground: #171717;
-  --text: #000000;
-  /* Primary Blue Theme */
-  --primary: #2563eb;
-  --primary-dark: #1e40af;
-  --primary-light: #3b82f6;
-  --primary-lighter: #dbeafe;
-
-  /* Secondary Colors */
-  --secondary: #64748b;
-  --secondary-dark: #475569;
-
-  /* Accent Colors */
+  --foreground: var(--ink);
+  --primary: var(--cobalt);
+  --primary-dark: #1a32b8;
+  --primary-light: #4a63ea;
+  --primary-lighter: #e6eafc;
+  --secondary: var(--graphite);
+  --secondary-dark: #474c5c;
   --accent: #f59e0b;
   --success: #10b981;
   --warning: #f59e0b;
   --error: #ef4444;
-
-  /* Neutral Colors */
-  --gray-50: #f9fafb;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-300: #d1d5db;
-  --gray-400: #9ca3af;
-  --gray-500: #6b7280;
-  --gray-600: #4b5563;
-  --gray-700: #374151;
-  --gray-800: #1f2937;
-  --gray-900: #111827;
 }
 
 @theme inline {
+  --font-sans: "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-ink: var(--ink);
+  --color-cobalt: var(--cobalt);
+  --color-graphite: var(--graphite);
+  --color-rule: var(--rule);
+  --color-mist: var(--mist);
+  --color-placeholder: var(--placeholder);
+  --color-wa: var(--wa);
+  --color-wa-bright: var(--wa-bright);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-text: #000000;
-
-  /* Primary Theme Colors */
+  --color-text: var(--ink);
   --color-primary: var(--primary);
   --color-primary-dark: var(--primary-dark);
   --color-primary-light: var(--primary-light);
   --color-primary-lighter: var(--primary-lighter);
-
-  /* Secondary Colors */
   --color-secondary: var(--secondary);
   --color-secondary-dark: var(--secondary-dark);
-
-  /* Accent Colors */
   --color-accent: var(--accent);
   --color-success: var(--success);
   --color-positive: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
   --color-negative: var(--error);
-
-  /* Neutral Shades */
-  --color-gray-50: var(--gray-50);
-  --color-gray-100: var(--gray-100);
-  --color-gray-200: var(--gray-200);
-  --color-gray-300: var(--gray-300);
-  --color-gray-400: var(--gray-400);
-  --color-gray-500: var(--gray-500);
-  --color-gray-600: var(--gray-600);
-  --color-gray-700: var(--gray-700);
-  --color-gray-800: var(--gray-800);
-  --color-gray-900: var(--gray-900);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: var(--ink);
+  font-family: "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Button Styles */
-.button_primary {
-  background: var(--primary);
-  color: white;
+/* Small mono labels used across the design */
+.label-mono {
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
-.button_primary:hover {
-  background: var(--primary-dark);
+.field-label {
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--graphite);
 }
 
-.button_secondary {
-  background: white;
-  color: #000;
+/* Underline-only form fields */
+.field-input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1.5px solid var(--ink);
+  background: transparent;
+  padding: 14px 0;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--ink);
+  border-radius: 0;
+  outline: none;
+  appearance: none;
 }
-
-.button_secondary:hover {
-  border-color: var(--primary);
-  color: var(--primary);
+.field-input::placeholder {
+  color: var(--placeholder);
 }
-
-/* Utility Classes */
-.text-primary {
-  color: var(--primary);
-}
-
-.bg-primary {
-  background-color: var(--primary);
-}
-
-.border-primary {
-  border-color: var(--primary);
+.field-input:focus {
+  border-bottom-color: var(--cobalt);
 }
 
 a,
@@ -122,14 +156,12 @@ button {
   cursor: pointer;
 }
 
-/* Hide number input arrows for Chrome, Safari, Edge, and Opera */
+/* Hide number input arrows */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
-/* Hide number input arrows for Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
 }

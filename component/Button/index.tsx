@@ -24,9 +24,9 @@ export default function Button({
   const baseStyles =
     "inline-flex w-fit text-center disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none disabled:bg-gray-200 items-center cursor-pointer justify-center px-6 py-2 rounded-full font-medium transition-all duration-200 ease-in-out hover:-translate-y-1";
   const variants = {
-    primary: "button_primary hover:bg-primary-dark disabled:opacity-50",
+    primary: "bg-primary text-white hover:bg-primary-dark disabled:opacity-50",
     secondary:
-      "button_secondary border border-[#0D0E0E40] hover:border-primary disabled:opacity-50",
+      "bg-white text-ink border border-[#0D0E0E40] hover:border-primary hover:text-primary disabled:opacity-50",
   };
 
   const buttonStyles = `${baseStyles} ${variants[variant]} ${className}`;

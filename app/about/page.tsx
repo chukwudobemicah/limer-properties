@@ -1,334 +1,235 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
-import { Target, Eye, Award, Users, CheckCircle } from "lucide-react";
-import Button from "@/component/Button";
-import ContactMethodModal from "@/component/ContactMethodModal";
+import Link from "next/link";
+import { ArrowRightIcon, PersonIcon, WhatsAppIcon } from "@/component/Icons";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
+import { getPhoneDisplay, getWhatsAppUrl } from "@/lib/contact";
+import { CEO, MISSION, STATS, VALUES, VISION } from "@/constants/about";
+
+const CONTAINER = "mx-auto w-full max-w-[1440px] px-5 md:px-10 xl:px-16";
 
 export default function AboutPage() {
-  const [showContactModal, setShowContactModal] = useState(false);
   const { companyInfo } = useSanityCompanyInfo();
 
-  const emailData = {
-    subject: "Inquiry - Limer Properties",
-    message:
-      "Hello! I'd like to get in touch with Limer Properties. Please provide more information.\n\nThank you!",
-  };
-
-  const handleContact = (method: "whatsapp" | "email" | "call") => {
-    if (!companyInfo) return;
-
-    if (method === "call" && companyInfo.phone) {
-      window.location.href = `tel:${companyInfo.phone.replace(/\s+/g, "")}`;
-    } else if (method === "whatsapp" && companyInfo.phone) {
-      const whatsappMessage = encodeURIComponent(
-        "Hello! I'd like to get in touch with Limer Properties. Please provide more information."
-      );
-      const whatsappUrl = `https://wa.me/${companyInfo.phone.replace(
-        /\D/g,
-        ""
-      )}?text=${whatsappMessage}`;
-      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    }
-    // Email is now handled by ContactMethodModal via API
-  };
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="bg-primary text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              About Limer Estate And Facility Management LTD
-            </h1>
-            <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto">
-              Your trusted partner in finding the perfect property across
-              Nigeria
+    <div className="min-h-screen bg-white">
+      {/* Hero */}
+      <section className={`${CONTAINER} flex flex-col gap-8 pt-20 pb-20 xl:pt-[104px] xl:pb-24`}>
+        <span className="label-mono text-cobalt">About Limer</span>
+        <h1 className="text-[52px] leading-[52px] font-extrabold tracking-[-0.04em] text-ink sm:text-[72px] sm:leading-[72px] xl:text-[96px] xl:leading-[96px]">
+          More than a transaction.
+          <br />A place to build on.
+        </h1>
+      </section>
+
+      {/* 01 Story */}
+      <section className="border-t border-rule">
+        <div className={`${CONTAINER} flex flex-col gap-10 pt-[72px] pb-24 lg:flex-row lg:gap-16 xl:pb-[120px]`}>
+          <SectionLabel number="01" title="Our story" />
+          <div className="flex flex-1 flex-col gap-6">
+            <p className="text-[22px] leading-8 font-medium tracking-[-0.015em] text-ink md:text-[28px] md:leading-10">
+              Limer Estate &amp; Facility Management was founded to make buying and owning property
+              in Nigeria feel safe, simple and transparent.
+            </p>
+            <p className="text-[18px] leading-[30px] text-graphite">
+              Finding the right property is more than a transaction. It&apos;s a place to call
+              home, a plot to build your plans on, or an investment that secures your family&apos;s
+              future.
+            </p>
+            <p className="text-[18px] leading-[30px] text-graphite">
+              With deep knowledge of the Lagos and Ogun markets, we bring the same care to every
+              client — from the first inspection to years of managing the property after handover.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Our Story Section */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Our Story
-              </h2>
-              <div className="space-y-4 text-gray-600 leading-relaxed">
-                <p>
-                  Founded with a vision to revolutionize the real estate
-                  industry in Nigeria, Limer Estate And Facility Management LTD
-                  has grown to become one of the most trusted names in property
-                  acquisition and management.
-                </p>
-                <p>
-                  We understand that finding the perfect property is more than
-                  just a transaction—it&apos;s about finding a place to call
-                  home, a space to build your dreams, or an investment that
-                  secures your future.
-                </p>
-                <p>
-                  With years of experience and a deep understanding of the
-                  Nigerian real estate market, we are committed to providing
-                  exceptional service, transparency, and value to all our
-                  clients.
-                </p>
-              </div>
-              <div className="mt-8">
-                <Button
-                  variant="primary"
-                  onClick={() => setShowContactModal(true)}
-                >
-                  Get in Touch
-                </Button>
-              </div>
-            </div>
-            <div className="relative h-96 lg:h-full min-h-[400px] rounded-lg overflow-hidden shadow-xl">
-              <Image
-                src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80"
-                alt="Modern office building"
-                fill
-                className="object-cover"
+      {/* 02 Leadership */}
+      <section className={`${CONTAINER} flex flex-col gap-10 pb-24 lg:flex-row lg:items-stretch lg:gap-16 xl:pb-32`}>
+        <div className="relative flex aspect-[4/5] w-full shrink-0 flex-col justify-end bg-mist p-6 lg:aspect-auto lg:h-[640px] lg:w-[520px]">
+          {CEO.image ? (
+            <Image
+              src={CEO.image}
+              alt={`${CEO.name}, ${CEO.role}`}
+              fill
+              sizes="(min-width: 1024px) 520px, 100vw"
+              className="object-cover"
+            />
+          ) : (
+            <>
+              <PersonIcon
+                size={96}
+                color="#C5C9D3"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%]"
               />
-            </div>
-          </div>
+              <span className="font-mono text-[11px] tracking-[0.14em] uppercase text-graphite">
+                Portrait coming soon
+              </span>
+            </>
+          )}
         </div>
-      </section>
 
-      {/* Mission & Vision Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div className="text-center p-8 bg-primary-lighter rounded-lg">
-              <div className="bg-primary text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Target size={32} />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Our Mission
-              </h3>
-              <p className="text-gray-700 leading-relaxed">
-                To provide exceptional real estate services that exceed client
-                expectations through integrity, professionalism, and innovation.
-                We strive to make property transactions seamless, transparent,
-                and rewarding for everyone involved.
-              </p>
-            </div>
-
-            <div className="text-center p-8 bg-primary-lighter rounded-lg">
-              <div className="bg-primary text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Eye size={32} />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Our Vision
-              </h3>
-              <p className="text-gray-700 leading-relaxed">
-                To be the leading real estate company in Nigeria, recognized for
-                our commitment to excellence, customer satisfaction, and
-                contribution to the development of sustainable communities
-                across the nation.
-              </p>
-            </div>
+        <div className="flex flex-1 flex-col gap-7 border-t-[1.5px] border-ink pt-7">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <span className="font-mono text-[12px] tracking-[0.12em] text-cobalt">
+              02 · LEADERSHIP
+            </span>
+            <span className="font-mono text-[12px] tracking-[0.12em] uppercase text-graphite">
+              {CEO.role}
+            </span>
           </div>
-        </div>
-      </section>
-
-      {/* Core Values Section */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Our Core Values
-            </h2>
-            <p className="text-lg text-gray-600">
-              The principles that guide everything we do
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center p-6">
-              <div className="bg-primary-lighter rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="text-primary" size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                Integrity
-              </h3>
-              <p className="text-gray-600">
-                We conduct our business with honesty, transparency, and ethical
-                practices
-              </p>
-            </div>
-
-            <div className="text-center p-6">
-              <div className="bg-primary-lighter rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Award className="text-primary" size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                Excellence
-              </h3>
-              <p className="text-gray-600">
-                We strive for the highest standards in everything we do
-              </p>
-            </div>
-
-            <div className="text-center p-6">
-              <div className="bg-primary-lighter rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Users className="text-primary" size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                Customer Focus
-              </h3>
-              <p className="text-gray-600">
-                Our clients&apos; satisfaction and success are our top
-                priorities
-              </p>
-            </div>
-
-            <div className="text-center p-6">
-              <div className="bg-primary-lighter rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="text-primary" size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                Innovation
-              </h3>
-              <p className="text-gray-600">
-                We embrace new technologies and methods to serve you better
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-16 bg-primary text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <p className="text-5xl font-bold mb-2">500+</p>
-              <p className="text-white/90">Properties Sold</p>
-            </div>
-            <div>
-              <p className="text-5xl font-bold mb-2">1000+</p>
-              <p className="text-white/90">Happy Clients</p>
-            </div>
-            <div>
-              <p className="text-5xl font-bold mb-2">150+</p>
-              <p className="text-white/90">Locations</p>
-            </div>
-            <div>
-              <p className="text-5xl font-bold mb-2">40+</p>
-              <p className="text-white/90">Years Experience</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Team Section */}
-      {/* <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Meet Our Team
-            </h2>
-            <p className="text-lg text-gray-600">
-              Dedicated professionals committed to your success
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="relative h-64 mb-4 rounded-lg overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80"
-                  alt="Team member"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-1">
-                John Adebayo
-              </h3>
-              <p className="text-primary font-medium mb-2">CEO & Founder</p>
-              <p className="text-gray-600 text-sm">
-                Leading the company with vision and dedication to excellence
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="relative h-64 mb-4 rounded-lg overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80"
-                  alt="Team member"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-1">
-                Sarah Okonkwo
-              </h3>
-              <p className="text-primary font-medium mb-2">Head of Sales</p>
-              <p className="text-gray-600 text-sm">
-                Expert in connecting clients with their dream properties
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="relative h-64 mb-4 rounded-lg overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1556157382-97eda2d62296?w=400&q=80"
-                  alt="Team member"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-1">
-                Michael Obi
-              </h3>
-              <p className="text-primary font-medium mb-2">Property Manager</p>
-              <p className="text-gray-600 text-sm">
-                Ensuring seamless property management and client satisfaction
-              </p>
-            </div>
-          </div>
-        </div>
-      </section> */}
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gray-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Ready to Find Your Dream Property?
+          <h2 className="text-[44px] leading-[46px] font-extrabold tracking-[-0.035em] text-ink md:text-[72px] md:leading-[72px]">
+            {CEO.name}
           </h2>
-          <p className="text-lg text-gray-600 mb-8">
-            Let our experienced team help you navigate the real estate market
-            and find the perfect property for your needs.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="primary" href="/properties">
-              Browse Properties
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => setShowContactModal(true)}
+          {CEO.quote && (
+            <blockquote className="border-l-[3px] border-cobalt pl-6 text-[21px] leading-8 font-medium tracking-[-0.01em] text-cobalt md:text-[26px] md:leading-[38px]">
+              “{CEO.quote}”
+            </blockquote>
+          )}
+          <div className="flex flex-col gap-4">
+            {CEO.bio.map((paragraph) => (
+              <p key={paragraph} className="text-[18px] leading-[30px] text-graphite">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+          <div className="mt-auto flex flex-wrap gap-3 pt-4">
+            <a
+              href={getWhatsAppUrl(
+                `Hello! I'd like to arrange a conversation with ${CEO.name}.`,
+                companyInfo,
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-wa px-[22px] py-3.5 text-[15px] font-semibold text-white transition-opacity hover:opacity-90"
             >
-              Contact Us
-            </Button>
+              <WhatsAppIcon size={16} color="#FFFFFF" />
+              Message on WhatsApp
+            </a>
+            {CEO.linkedin && (
+              <a
+                href={CEO.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center border-[1.5px] border-ink px-[22px] py-3.5 text-[15px] font-semibold text-ink transition-colors hover:bg-ink hover:text-white"
+              >
+                LinkedIn
+              </a>
+            )}
           </div>
         </div>
       </section>
-      <ContactMethodModal
-        isOpen={showContactModal}
-        onClose={() => setShowContactModal(false)}
-        companyInfo={companyInfo}
-        onSubmit={handleContact}
-        emailData={emailData}
-        title="Contact Us"
-        description="How would you like to get in touch with us?"
-      />
+
+      {/* Stats */}
+      <section className="bg-ink">
+        <div className={`${CONTAINER} grid grid-cols-2 gap-y-12 py-[88px] lg:grid-cols-4 lg:gap-y-0`}>
+          {STATS.map((stat, index) => (
+            <div
+              key={stat.label}
+              className={[
+                "flex flex-col gap-3",
+                index % 2 === 0 ? "pr-4" : "pl-4 lg:pl-8",
+                "lg:px-8 lg:first:pl-0 lg:last:pr-0",
+                index < STATS.length - 1 ? "lg:border-r lg:border-white/20" : "",
+                index % 2 === 0 ? "max-lg:border-r max-lg:border-white/20" : "",
+              ].join(" ")}
+            >
+              <span className="text-[56px] leading-[56px] font-extrabold tracking-[-0.045em] text-white md:text-[88px] md:leading-[88px]">
+                {stat.value}
+              </span>
+              <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-white/70">
+                {stat.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 03 Mission + vision */}
+      <section className={`${CONTAINER} flex flex-col gap-10 pt-24 lg:flex-row lg:gap-16 xl:pt-[120px]`}>
+        <SectionLabel number="03" title="What drives us" />
+        <div className="flex flex-1 flex-col gap-12 md:flex-row">
+          {[
+            { label: "Mission", body: MISSION },
+            { label: "Vision", body: VISION },
+          ].map((item) => (
+            <div key={item.label} className="flex flex-1 flex-col gap-4 border-t-[1.5px] border-ink pt-6">
+              <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-graphite">
+                {item.label}
+              </span>
+              <p className="text-[20px] leading-[31px] text-ink">{item.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 04 Values */}
+      <section className={`${CONTAINER} flex flex-col gap-10 pt-24 pb-24 lg:flex-row lg:gap-16 xl:pt-[120px] xl:pb-32`}>
+        <SectionLabel number="04" title="Our core values" />
+        <div className="flex flex-1 flex-col border-t-[1.5px] border-ink">
+          {VALUES.map((value) => (
+            <div
+              key={value.title}
+              className="flex flex-col gap-2 border-b border-rule py-7 md:flex-row md:items-baseline md:gap-8"
+            >
+              <span className="text-[32px] font-extrabold tracking-[-0.03em] text-ink md:w-[340px] md:shrink-0 md:text-[40px]">
+                {value.title}
+              </span>
+              <span className="text-[18px] leading-7 text-graphite">{value.body}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-cobalt">
+        <div className={`${CONTAINER} flex flex-col gap-12 py-24 lg:flex-row lg:items-end lg:justify-between lg:gap-16 xl:py-28`}>
+          <div className="flex flex-col gap-6">
+            <span className="label-mono text-white">Ready when you are</span>
+            <h2 className="max-w-[720px] text-[44px] leading-[46px] font-extrabold tracking-[-0.035em] text-white md:text-[64px] md:leading-[66px]">
+              Let&apos;s find the right property for you.
+            </h2>
+            <p className="max-w-[560px] text-[19px] leading-[30px] text-white/85">
+              Talk to our team on WhatsApp, or browse what&apos;s available right now.
+            </p>
+          </div>
+          <div className="flex w-full flex-col gap-3 lg:w-[380px] lg:shrink-0">
+            <a
+              href={getWhatsAppUrl(undefined, companyInfo)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-[18px] bg-wa px-6 py-5 text-white transition-opacity hover:opacity-90"
+            >
+              <WhatsAppIcon size={32} color="#FFFFFF" />
+              <span className="flex flex-1 flex-col gap-0.5">
+                <span className="text-[20px] font-bold">Chat on WhatsApp</span>
+                <span className="font-mono text-[13px] tracking-[0.04em] text-white/85">
+                  {getPhoneDisplay(companyInfo)}
+                </span>
+              </span>
+              <ArrowRightIcon size={20} />
+            </a>
+            <Link
+              href="/properties"
+              className="flex items-center justify-between border-[1.5px] border-white px-6 py-5 text-[20px] font-bold text-white transition-colors hover:bg-white hover:text-cobalt"
+            >
+              Browse properties
+              <ArrowRightIcon size={20} />
+            </Link>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function SectionLabel({ number, title }: { number: string; title: string }) {
+  return (
+    <div className="flex flex-col gap-3 lg:w-[400px] lg:shrink-0">
+      <span className="font-mono text-[12px] tracking-[0.12em] text-cobalt">{number}</span>
+      <span className="text-[24px] font-bold tracking-[-0.01em] text-ink">{title}</span>
     </div>
   );
 }

@@ -1,387 +1,280 @@
 "use client";
 
-import React, { Suspense, useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { Filter, X } from "lucide-react";
-import PropertyCard from "@/component/PropertyCard";
-import AdvancedPropertyFilter from "@/component/AdvancedPropertyFilter";
-import PropertyInquiryForm from "@/component/PropertyInquiryForm";
+import ListingRow, { ListingRowSkeleton } from "@/component/ListingRow";
+import RequestBanner from "@/component/RequestBanner";
+import { ChevronDownIcon } from "@/component/Icons";
 import { useSanityProperties } from "@/hooks/useSanityProperties";
-import { useSanityFilters } from "@/hooks/useSanityFilters";
-import {
-  DEFAULT_MAX_PRICE,
-  useSanityPropertyFilter,
-} from "@/hooks/useSanityPropertyFilter";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
-import PropertyCardSkeleton from "@/component/PropertyCardSkeleton";
+import {
+  PROPERTY_TABS,
+  PropertyTab,
+  getAreaName,
+  getLocation,
+  getTypeSlug,
+  matchesTab,
+  tabFromParam,
+} from "@/lib/property";
+import { cn } from "@/utils/functions";
+
+const PRICE_OPTIONS = [
+  { value: "any", label: "Any price", min: 0, max: Infinity },
+  { value: "0-10", label: "Under ₦10M", min: 0, max: 10_000_000 },
+  { value: "10-50", label: "₦10M – ₦50M", min: 10_000_000, max: 50_000_000 },
+  { value: "50-100", label: "₦50M – ₦100M", min: 50_000_000, max: 100_000_000 },
+  { value: "100+", label: "Over ₦100M", min: 100_000_000, max: Infinity },
+];
+
+const SIZE_OPTIONS = [
+  { value: "any", label: "Any size", min: 0, max: Infinity },
+  { value: "0-500", label: "Under 500 m²", min: 0, max: 500 },
+  { value: "500-1000", label: "500 – 1,000 m²", min: 500, max: 1000 },
+  { value: "1000+", label: "Over 1,000 m²", min: 1000, max: Infinity },
+];
+
+const SORT_OPTIONS = [
+  { value: "newest", label: "Newest first" },
+  { value: "price-asc", label: "Price: low to high" },
+  { value: "price-desc", label: "Price: high to low" },
+];
+
+const formatMillions = (value: number) =>
+  `₦${(value / 1_000_000).toLocaleString("en-NG", { maximumFractionDigits: 1 })}M`;
 
 function PropertiesContent() {
   const searchParams = useSearchParams();
-  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"for-sale" | "for-rent">(
-    "for-sale",
-  );
-  const { properties, loading: propertiesLoading } = useSanityProperties();
-  const { loading: filtersLoading } = useSanityFilters();
-  const { companyInfo, loading: companyLoading } = useSanityCompanyInfo();
+  const { properties, loading } = useSanityProperties();
+  const { companyInfo } = useSanityCompanyInfo();
 
-  const {
-    filteredProperties,
-    setSelectedType,
-    selectedBedrooms,
-    setSelectedBedrooms,
-    selectedBathrooms,
-    setSelectedBathrooms,
-    selectedStructure,
-    setSelectedStructure,
-    selectedFurnished,
-    setSelectedFurnished,
-    priceRange,
-    setPriceRange,
-    searchTerm,
-    setSearchTerm,
-    resetFilters,
-  } = useSanityPropertyFilter({ properties, initialPurpose: "all" });
+  const [tab, setTab] = useState<PropertyTab>("all");
+  const [location, setLocation] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [price, setPrice] = useState("any");
+  const [maxPriceParam, setMaxPriceParam] = useState<number | null>(null);
+  const [size, setSize] = useState("any");
+  const [sort, setSort] = useState("newest");
 
-  const hasAppliedQueryParams = useRef(false);
-
-  const loading = propertiesLoading || filtersLoading || companyLoading;
-
-  // Handle URL query parameters
+  // Apply ?type=, ?search= (or legacy ?location=) and ?maxPrice= from links/search.
   useEffect(() => {
-    if (hasAppliedQueryParams.current) {
-      return;
+    setTab(tabFromParam(searchParams.get("type")));
+    const term = searchParams.get("search") || searchParams.get("location") || "";
+    setSearchTerm(term);
+    setLocation(term ? "search" : "all");
+    const max = Number(searchParams.get("maxPrice"));
+    if (max > 0) {
+      setMaxPriceParam(max);
+      setPrice("custom");
+    } else {
+      setMaxPriceParam(null);
+      setPrice("any");
     }
+  }, [searchParams]);
 
-    const typeParam = searchParams.get("type");
-    if (typeParam) {
-      setSelectedType(typeParam);
+  const areaOptions = useMemo(() => {
+    const areas = new Set(
+      properties.map((property) => getAreaName(property.location)).filter((area) => area !== "—"),
+    );
+    return Array.from(areas).sort();
+  }, [properties]);
+
+  const tabCounts = useMemo(() => {
+    const counts = Object.fromEntries(PROPERTY_TABS.map((item) => [item.value, 0])) as Record<
+      PropertyTab,
+      number
+    >;
+    for (const property of properties) {
+      const slug = getTypeSlug(property.propertyType);
+      for (const item of PROPERTY_TABS) if (matchesTab(slug, item.value)) counts[item.value] += 1;
     }
+    return counts;
+  }, [properties]);
 
-    const locationParam = searchParams.get("location");
-    const searchParam = searchParams.get("search");
+  const results = useMemo(() => {
+    const priceRange =
+      price === "custom" && maxPriceParam
+        ? { min: 0, max: maxPriceParam }
+        : PRICE_OPTIONS.find((option) => option.value === price) ?? PRICE_OPTIONS[0];
+    const sizeRange = SIZE_OPTIONS.find((option) => option.value === size) ?? SIZE_OPTIONS[0];
+    const term = searchTerm.trim().toLowerCase();
 
-    // Support both "location" and "search" params for backward compatibility
-    if (searchParam) {
-      setSearchTerm(searchParam);
-    } else if (locationParam) {
-      setSearchTerm(locationParam);
-    }
+    const filtered = properties.filter((property) => {
+      if (!matchesTab(getTypeSlug(property.propertyType), tab)) return false;
 
-    const bedroomsParam = searchParams.get("bedrooms");
-    if (bedroomsParam) {
-      if (bedroomsParam === "all") {
-        setSelectedBedrooms("all");
-      } else {
-        const parsedBedrooms = Number(bedroomsParam);
-        if (!Number.isNaN(parsedBedrooms)) {
-          setSelectedBedrooms(parsedBedrooms);
-        }
+      if (location === "search" && term) {
+        const haystack = `${property.title} ${getLocation(property.location)}`.toLowerCase();
+        if (!haystack.includes(term)) return false;
+      } else if (location !== "all" && location !== "search") {
+        if (getAreaName(property.location) !== location) return false;
       }
-    }
 
-    const bathroomsParam = searchParams.get("bathrooms");
-    if (bathroomsParam) {
-      if (bathroomsParam === "all") {
-        setSelectedBathrooms("all");
-      } else {
-        const parsedBathrooms = Number(bathroomsParam);
-        if (!Number.isNaN(parsedBathrooms)) {
-          setSelectedBathrooms(parsedBathrooms);
-        }
+      if (property.price < priceRange.min || property.price > priceRange.max) return false;
+
+      if (size !== "any") {
+        if (!property.area) return false;
+        if (property.area < sizeRange.min || property.area > sizeRange.max) return false;
       }
-    }
+      return true;
+    });
 
-    const structureParam = searchParams.get("structure");
-    if (structureParam) {
-      setSelectedStructure(structureParam);
-    }
+    return filtered.sort((a, b) => {
+      if (sort === "price-asc") return a.price - b.price;
+      if (sort === "price-desc") return b.price - a.price;
+      return (
+        new Date(b.publishedAt || b._createdAt).getTime() -
+        new Date(a.publishedAt || a._createdAt).getTime()
+      );
+    });
+  }, [properties, tab, location, searchTerm, price, maxPriceParam, size, sort]);
 
-    const furnishedParam = searchParams.get("furnished");
-    if (furnishedParam) {
-      const normalizedFurnished = furnishedParam.toLowerCase();
-      if (["all", "furnished", "unfurnished"].includes(normalizedFurnished)) {
-        setSelectedFurnished(
-          normalizedFurnished as "all" | "furnished" | "unfurnished",
-        );
-      }
-    }
+  const resetFilters = () => {
+    setTab("all");
+    setLocation("all");
+    setSearchTerm("");
+    setPrice("any");
+    setMaxPriceParam(null);
+    setSize("any");
+    setSort("newest");
+  };
 
-    const minPriceParam = searchParams.get("minPrice");
-    const maxPriceParam = searchParams.get("maxPrice");
+  const locationSelectOptions = [
+    { value: "all", label: "All of Lagos & Ogun" },
+    ...(searchTerm ? [{ value: "search", label: `“${searchTerm}”` }] : []),
+    ...areaOptions.map((area) => ({ value: area, label: area })),
+  ];
 
-    let minPrice = 0;
-    let maxPrice = DEFAULT_MAX_PRICE;
-    let shouldUpdatePrice = false;
-
-    if (minPriceParam) {
-      const parsedMin = Number(minPriceParam);
-      if (!Number.isNaN(parsedMin)) {
-        minPrice = parsedMin;
-        shouldUpdatePrice = true;
-      }
-    }
-
-    if (maxPriceParam) {
-      const parsedMax = Number(maxPriceParam);
-      if (!Number.isNaN(parsedMax)) {
-        maxPrice = parsedMax;
-        shouldUpdatePrice = true;
-      }
-    }
-
-    if (shouldUpdatePrice) {
-      setPriceRange([minPrice, maxPrice]);
-    }
-
-    hasAppliedQueryParams.current = true;
-  }, [
-    searchParams,
-    setSelectedType,
-    setSearchTerm,
-    setSelectedBedrooms,
-    setSelectedBathrooms,
-    setSelectedStructure,
-    setSelectedFurnished,
-    setPriceRange,
-  ]);
-
-  const filterComponent = (
-    <AdvancedPropertyFilter
-      searchTerm={searchTerm}
-      selectedBedrooms={selectedBedrooms}
-      selectedBathrooms={selectedBathrooms}
-      selectedStructure={selectedStructure}
-      selectedFurnished={selectedFurnished}
-      priceRange={priceRange}
-      onSearchTermChange={setSearchTerm}
-      onBedroomsChange={setSelectedBedrooms}
-      onBathroomsChange={setSelectedBathrooms}
-      onStructureChange={setSelectedStructure}
-      onFurnishedChange={setSelectedFurnished}
-      onPriceRangeChange={setPriceRange}
-      onResetFilters={resetFilters}
-      resultsCount={filteredProperties.length}
-    />
-  );
+  const priceSelectOptions = [
+    ...PRICE_OPTIONS.map(({ value, label }) => ({ value, label })),
+    ...(maxPriceParam ? [{ value: "custom", label: `Up to ${formatMillions(maxPriceParam)}` }] : []),
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Page Header */}
-      <section className="bg-primary text-white py-12">
-        <div className="max-w-[95%] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-4xl md:text-5xl font-bold">Properties</h1>
-            {activeTab === "for-sale" && (
-              <button
-                onClick={() => setIsFilterDrawerOpen(true)}
-                className="lg:hidden inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-              >
-                <Filter size={20} />
-                Filters
-              </button>
-            )}
-          </div>
-          <div className="flex items-center gap-4 mb-4">
-            <div className="flex items-center bg-white/20 backdrop-blur-sm rounded-full p-1 text-sm font-medium">
-              <button
-                type="button"
-                onClick={() => setActiveTab("for-sale")}
-                className={`px-4 md:px-6 py-2 rounded-full transition-colors text-sm ${
-                  activeTab === "for-sale"
-                    ? "bg-white shadow text-gray-900"
-                    : "text-white/80 hover:text-white"
-                }`}
-              >
-                For Sale
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab("for-rent")}
-                className={`px-4 md:px-6 py-2 rounded-full transition-colors text-sm ${
-                  activeTab === "for-rent"
-                    ? "bg-white shadow text-gray-900"
-                    : "text-white/80 hover:text-white"
-                }`}
-              >
-                For Rent
-              </button>
-            </div>
-          </div>
-          <p className="text-xl text-white/90">
-            {activeTab === "for-sale"
-              ? "Find your property from our extensive collection of properties for sale"
-              : "Looking for a property to rent? Contact us and we'll help you find the perfect place"}
-          </p>
+    <div className="min-h-screen bg-white">
+      {/* Page header */}
+      <section className="mx-auto flex w-full max-w-[1440px] flex-col gap-6 px-5 pt-16 pb-12 md:px-10 lg:flex-row lg:items-end lg:justify-between xl:px-16 xl:pt-[88px]">
+        <div className="flex flex-col gap-5">
+          <span className="label-mono text-cobalt">
+            Properties · {loading ? "…" : properties.length} available
+          </span>
+          <h1 className="text-[48px] leading-[50px] font-extrabold tracking-[-0.035em] text-ink sm:text-[64px] sm:leading-[64px] xl:text-[80px] xl:leading-[80px]">
+            Every listing, checked.
+          </h1>
         </div>
+        <p className="max-w-[400px] pb-1.5 text-[18px] leading-7 text-graphite">
+          Land, homes and shortlets across Lagos and Ogun — each one inspected by our team before
+          it&apos;s listed.
+        </p>
       </section>
 
-      {/* Main Content */}
-      <section className="py-12">
-        <div className="sm:w-[95%] mx-auto max-sm:px-4">
-          {activeTab === "for-sale" ? (
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-              {/* Filter Sidebar - Hidden on mobile */}
-              <aside className="hidden lg:block lg:col-span-1 min-w-[318px]">
-                {loading ? (
-                  <div className="bg-white rounded-lg shadow-md p-6 animate-pulse">
-                    <div className="space-y-6">
-                      <div>
-                        <div className="h-5 bg-gray-200 rounded w-32 mb-3" />
-                        <div className="h-10 bg-gray-200 rounded" />
-                      </div>
-                      <div>
-                        <div className="h-5 bg-gray-200 rounded w-24 mb-3" />
-                        <div className="h-10 bg-gray-200 rounded" />
-                      </div>
-                      <div>
-                        <div className="h-5 bg-gray-200 rounded w-28 mb-3" />
-                        <div className="h-10 bg-gray-200 rounded" />
-                      </div>
-                      <div>
-                        <div className="h-5 bg-gray-200 rounded w-32 mb-3" />
-                        <div className="h-10 bg-gray-200 rounded" />
-                      </div>
-                      <div>
-                        <div className="h-5 bg-gray-200 rounded w-24 mb-3" />
-                        <div className="h-10 bg-gray-200 rounded" />
-                      </div>
-                      <div>
-                        <div className="h-5 bg-gray-200 rounded w-28 mb-3" />
-                        <div className="h-10 bg-gray-200 rounded" />
-                      </div>
-                      <div className="pt-4">
-                        <div className="h-12 bg-gray-200 rounded-lg" />
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  filterComponent
-                )}
-              </aside>
-
-              {/* Properties Grid */}
-              <main className="lg:col-span-3">
-                {loading ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {[...Array(9)].map((_, index) => (
-                      <PropertyCardSkeleton key={index} />
-                    ))}
-                  </div>
-                ) : filteredProperties.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {filteredProperties.map((property) => (
-                      <PropertyCard
-                        key={property._id}
-                        property={property}
-                        companyInfo={companyInfo}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <PropertyInquiryForm
-                    companyInfo={companyInfo}
-                    locationQuery={searchTerm}
-                    priceRange={priceRange}
-                  />
-                )}
-              </main>
-            </div>
-          ) : (
-            <div className="max-w-4xl mx-auto">
-              <PropertyInquiryForm
-                companyInfo={companyInfo}
-                locationQuery={searchTerm}
-                priceRange={priceRange}
-                heading="Looking for a Property to Rent?"
-              />
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Mobile Filter Drawer */}
-      <AnimatePresence>
-        {isFilterDrawerOpen && activeTab === "for-sale" && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => setIsFilterDrawerOpen(false)}
-              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-            />
-
-            {/* Drawer */}
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.3 }}
-              className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-white shadow-xl z-50 lg:hidden overflow-y-auto"
+      {/* Filters */}
+      <section className="mx-auto w-full max-w-[1440px] px-5 md:px-10 xl:px-16">
+        <div className="flex gap-8 overflow-x-auto border-b border-rule" role="tablist">
+          {PROPERTY_TABS.map((item) => (
+            <button
+              key={item.value}
+              type="button"
+              role="tab"
+              aria-selected={tab === item.value}
+              onClick={() => setTab(item.value)}
+              className={cn(
+                "-mb-px flex shrink-0 items-baseline border-b-2 pb-4 text-[16px] transition-colors",
+                tab === item.value
+                  ? "border-ink font-semibold text-ink"
+                  : "border-transparent text-graphite hover:text-ink",
+              )}
             >
-              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
-                <h2 className="text-xl font-bold text-gray-900">Filters</h2>
-                <button
-                  onClick={() => setIsFilterDrawerOpen(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  aria-label="Close filters"
-                >
-                  <X size={24} className="text-gray-600" />
-                </button>
-              </div>
+              {item.label}
+              <span className="pl-1.5 font-mono text-[12px] font-normal text-graphite">
+                {loading ? "" : tabCounts[item.value]}
+              </span>
+            </button>
+          ))}
+        </div>
 
-              <div className="p-6">
-                {loading ? (
-                  <div className="space-y-6">
-                    <div>
-                      <div className="h-5 bg-gray-200 rounded w-32 mb-3" />
-                      <div className="h-10 bg-gray-200 rounded" />
-                    </div>
-                    <div>
-                      <div className="h-5 bg-gray-200 rounded w-24 mb-3" />
-                      <div className="h-10 bg-gray-200 rounded" />
-                    </div>
-                    <div>
-                      <div className="h-5 bg-gray-200 rounded w-28 mb-3" />
-                      <div className="h-10 bg-gray-200 rounded" />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="bg-white rounded-lg shadow-none p-0">
-                    {filterComponent}
-                    <button
-                      onClick={() => setIsFilterDrawerOpen(false)}
-                      className="w-full mt-6 bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors"
-                    >
-                      Apply Filters
-                    </button>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </>
+        <div className="grid grid-cols-2 border-b-[1.5px] border-ink lg:grid-cols-4">
+          <FilterSelect label="Location" value={location} onChange={setLocation} options={locationSelectOptions} className="pl-0 max-lg:border-b" />
+          <FilterSelect label="Price" value={price} onChange={(value) => { setPrice(value); if (value !== "custom") setMaxPriceParam(null); }} options={priceSelectOptions} className="max-lg:border-b max-lg:border-r-0" />
+          <FilterSelect label="Plot size" value={size} onChange={setSize} options={SIZE_OPTIONS} className="max-lg:pl-0" />
+          <FilterSelect label="Sort by" value={sort} onChange={setSort} options={SORT_OPTIONS} className="border-r-0" />
+        </div>
+      </section>
+
+      {/* Results */}
+      <section className="mx-auto w-full max-w-[1440px] px-5 md:px-10 xl:px-16">
+        {loading ? (
+          Array.from({ length: 3 }).map((_, index) => <ListingRowSkeleton key={index} />)
+        ) : results.length > 0 ? (
+          results.map((property) => (
+            <ListingRow key={property._id} property={property} companyInfo={companyInfo} />
+          ))
+        ) : (
+          <div className="flex flex-col items-start gap-4 border-b border-rule py-16">
+            <p className="text-[24px] font-bold tracking-[-0.01em] text-ink">
+              No listings match these filters yet.
+            </p>
+            <p className="max-w-[520px] text-[17px] leading-[26px] text-graphite">
+              Try a wider search — or tell us what you need below and we&apos;ll find it for you.
+            </p>
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="border-b-[1.5px] border-ink pb-1 text-[16px] font-semibold text-ink hover:text-cobalt"
+            >
+              Clear all filters
+            </button>
+          </div>
         )}
-      </AnimatePresence>
+      </section>
+
+      <section className="mx-auto w-full max-w-[1440px] px-5 pt-24 pb-28 md:px-10 xl:px-16 xl:pb-32">
+        <RequestBanner companyInfo={companyInfo} />
+      </section>
+    </div>
+  );
+}
+
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  options,
+  className,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: { value: string; label: string }[];
+  className?: string;
+}) {
+  const id = `filter-${label.toLowerCase().replace(/\s+/g, "-")}`;
+  return (
+    <div className={cn("relative flex flex-col gap-1 border-r border-rule px-6 py-[18px]", className)}>
+      <label htmlFor={id} className="field-label">
+        {label}
+      </label>
+      <select
+        id={id}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="w-full appearance-none bg-transparent pr-6 text-[16px] text-ink outline-none"
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <ChevronDownIcon
+        size={12}
+        className="pointer-events-none absolute right-6 bottom-[22px] text-graphite"
+      />
     </div>
   );
 }
 
 export default function PropertiesPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-            <p className="mt-4 text-gray-600">Loading properties...</p>
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
       <PropertiesContent />
     </Suspense>
   );
