@@ -62,7 +62,7 @@ export default function ListingRow({ property, companyInfo }: ListingRowProps) {
           {getTypeLabel(slug)}
         </span>
         <Link href={href}>
-          <h2 className="text-[clamp(1.375rem,2.8vw,1.75rem)] leading-[1.18] font-bold tracking-[-0.02em] text-ink hover:text-cobalt">
+          <h2 className="text-[clamp(1.5rem,3.2vw,2rem)] leading-[1.12] font-extrabold tracking-[-0.025em] text-ink hover:text-cobalt">
             {property.title}
           </h2>
         </Link>
@@ -80,7 +80,7 @@ export default function ListingRow({ property, companyInfo }: ListingRowProps) {
       <div className="flex flex-col gap-6 lg:w-[280px] lg:shrink-0 lg:items-end lg:justify-between lg:pt-1">
         <div className="flex flex-col gap-1 lg:items-end">
           <span className="field-label">Price</span>
-          <span className="text-[28px] font-bold tracking-[-0.02em] text-ink md:text-[30px]">
+          <span className="text-[28px] font-extrabold tracking-[-0.02em] text-ink md:text-[32px]">
             {formatPrice(property.price)}
             {suffix && <span className="ml-1 text-[15px] font-medium text-graphite">{suffix}</span>}
           </span>

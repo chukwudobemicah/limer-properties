@@ -153,7 +153,7 @@ function PropertiesContent() {
           <span className="label-mono text-cobalt">
             Properties · {loading ? "…" : properties.length} available
           </span>
-          <h1 className="text-[clamp(2.875rem,10.5vw,5.75rem)] leading-[0.95] font-serif font-normal tracking-[-0.015em] text-balance text-ink">
+          <h1 className="text-[clamp(2.5rem,9vw,5rem)] leading-none font-extrabold tracking-[-0.035em] text-balance text-ink">
             Every listing, checked.
           </h1>
         </Reveal>

@@ -39,12 +39,31 @@ export default function Footer() {
         {/* The clipping wrapper is what's observed, so the slide-up always triggers. */}
         <Stagger className="overflow-hidden">
           <StaggerItem>
-            <span
+            {/*
+              Drawn as SVG text stretched to the container (textLength), so it fills
+              the width exactly on every screen and can never be cut off, whatever
+              font metrics the visitor's computer uses.
+            */}
+            <svg
               aria-hidden="true"
-              className="block font-serif font-normal whitespace-nowrap text-white select-none text-[calc((100vw-40px)/5.4)] leading-[0.9] tracking-[-0.02em] md:text-[calc((100vw-80px)/5.4)] xl:text-[calc((100vw-128px)/5.4)] min-[1440px]:text-[243px]"
+              viewBox="0 0 1000 146"
+              className="block h-auto w-full overflow-visible select-none"
+              preserveAspectRatio="xMinYMin meet"
             >
-              Limer Properties
-            </span>
+              <text
+                x="2"
+                y="114"
+                textLength="988"
+                lengthAdjust="spacingAndGlyphs"
+                fill="#FFFFFF"
+                fontFamily="'Inter Tight', ui-sans-serif, system-ui, sans-serif"
+                fontWeight={800}
+                fontSize="141"
+                letterSpacing="-6"
+              >
+                Limer Properties
+              </text>
+            </svg>
           </StaggerItem>
         </Stagger>
 

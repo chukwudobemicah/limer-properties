@@ -94,13 +94,13 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
 
         <h1
           aria-label={HEADLINE}
-          className="text-[clamp(2.75rem,12vw,5.25rem)] leading-[0.98] font-serif font-normal tracking-[-0.015em] text-balance text-ink lg:text-[min(7vw,104px)] lg:leading-[0.95]"
+          className="text-[clamp(2.25rem,10vw,4.5rem)] leading-[1.02] font-extrabold tracking-[-0.035em] text-balance text-ink lg:text-[min(6.1vw,88px)] lg:leading-none"
         >
           {HEADLINE.split(" ").map((word, index) => (
             <React.Fragment key={index}>
               <span aria-hidden="true" className="-mb-[0.12em] inline-block overflow-hidden pb-[0.12em] align-top">
                 <span
-                  className={word === "Lagos." ? "intro-word italic" : "intro-word"}
+                  className="intro-word"
                   style={delay(0.25 + index * 0.06)}
                 >
                   {word}
