@@ -32,7 +32,7 @@ export default function ListingCard({ property, companyInfo }: ListingCardProps)
   const suffix = getPriceSuffix(slug);
 
   return (
-    <article className="flex flex-col gap-5">
+    <article className="flex h-full flex-col gap-5">
       <Link href={href} className="relative block h-[260px] w-full overflow-hidden bg-mist">
         {image && (
           <Image

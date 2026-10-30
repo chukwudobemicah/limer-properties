@@ -4,6 +4,7 @@ import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ListingRow, { ListingRowSkeleton } from "@/component/ListingRow";
 import RequestBanner from "@/component/RequestBanner";
+import { Reveal } from "@/component/Motion";
 import { ChevronDownIcon } from "@/component/Icons";
 import { useSanityProperties } from "@/hooks/useSanityProperties";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
@@ -141,18 +142,20 @@ function PropertiesContent() {
     <div className="min-h-screen bg-white">
       {/* Page header */}
       <section className="mx-auto flex w-full max-w-[1440px] flex-col gap-6 px-5 pt-16 pb-12 md:px-10 lg:flex-row lg:items-end lg:justify-between xl:px-16 xl:pt-[88px]">
-        <div className="flex flex-col gap-5">
+        <Reveal className="flex flex-col gap-5">
           <span className="label-mono text-cobalt">
             Properties · {loading ? "…" : properties.length} available
           </span>
           <h1 className="text-[clamp(2.5rem,9vw,5rem)] leading-none font-extrabold tracking-[-0.035em] text-balance text-ink">
             Every listing, checked.
           </h1>
-        </div>
-        <p className="max-w-[400px] pb-1.5 text-[18px] leading-7 text-graphite">
-          Land, homes and shortlets across Lagos and Ogun — each one inspected by our team before
-          it&apos;s listed.
-        </p>
+        </Reveal>
+        <Reveal delay={0.12}>
+          <p className="max-w-[400px] pb-1.5 text-[18px] leading-7 text-graphite">
+            Land, homes and shortlets across Lagos and Ogun — each one inspected by our team
+            before it&apos;s listed.
+          </p>
+        </Reveal>
       </section>
 
       {/* Filters */}
@@ -207,7 +210,9 @@ function PropertiesContent() {
           Array.from({ length: 3 }).map((_, index) => <ListingRowSkeleton key={index} />)
         ) : results.length > 0 ? (
           results.map((property) => (
-            <ListingRow key={property._id} property={property} companyInfo={companyInfo} />
+            <Reveal key={property._id} y={32}>
+              <ListingRow property={property} companyInfo={companyInfo} />
+            </Reveal>
           ))
         ) : (
           <div className="flex flex-col items-start gap-4 border-b border-rule py-16">
@@ -229,7 +234,9 @@ function PropertiesContent() {
       </section>
 
       <section className="mx-auto w-full max-w-[1440px] px-5 pt-24 pb-28 md:px-10 xl:px-16 xl:pb-32">
-        <RequestBanner companyInfo={companyInfo} />
+        <Reveal>
+          <RequestBanner companyInfo={companyInfo} />
+        </Reveal>
       </section>
     </div>
   );

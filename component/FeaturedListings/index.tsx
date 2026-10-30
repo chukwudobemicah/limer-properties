@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SanityCompanyInfo, SanityProperty } from "@/types/sanity";
 import ListingCard, { ListingCardSkeleton } from "@/component/ListingCard";
 import { ArrowRightIcon } from "@/component/Icons";
+import { Reveal, Stagger, StaggerItem } from "@/component/Motion";
 
 interface FeaturedListingsProps {
   properties: SanityProperty[];
@@ -16,7 +17,7 @@ export default function FeaturedListings({
 }: FeaturedListingsProps) {
   return (
     <section className="mx-auto flex w-full max-w-[1440px] flex-col gap-12 px-5 py-24 md:px-10 xl:px-16 xl:py-32">
-      <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+      <Reveal className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
         <div className="flex flex-col gap-5">
           <span className="label-mono text-cobalt">Featured listings</span>
           <h2 className="max-w-[640px] text-[clamp(2rem,8vw,3.5rem)] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance text-ink">
@@ -30,15 +31,23 @@ export default function FeaturedListings({
           View all listings
           <ArrowRightIcon size={16} />
         </Link>
-      </div>
+      </Reveal>
 
-      <div className="grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 xl:grid-cols-4">
-        {loading
-          ? Array.from({ length: 4 }).map((_, index) => <ListingCardSkeleton key={index} />)
-          : properties.map((property) => (
-              <ListingCard key={property._id} property={property} companyInfo={companyInfo} />
-            ))}
-      </div>
+      {loading ? (
+        <div className="grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 xl:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <ListingCardSkeleton key={index} />
+          ))}
+        </div>
+      ) : (
+        <Stagger className="grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 xl:grid-cols-4" stagger={0.12}>
+          {properties.map((property) => (
+            <StaggerItem key={property._id} className="h-full">
+              <ListingCard property={property} companyInfo={companyInfo} />
+            </StaggerItem>
+          ))}
+        </Stagger>
+      )}
 
       {!loading && properties.length === 0 && (
         <p className="text-[17px] text-graphite">
