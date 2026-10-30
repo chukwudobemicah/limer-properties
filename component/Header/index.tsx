@@ -2,161 +2,118 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
-import Button from "@/component/Button";
-import Image from "next/image";
-import ContactMethodModal from "@/component/ContactMethodModal";
+import { usePathname } from "next/navigation";
+import Wordmark from "@/component/Wordmark";
+import { MenuIcon, WhatsAppIcon } from "@/component/Icons";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
+import { getWhatsAppUrl } from "@/lib/contact";
+import { cn } from "@/utils/functions";
+
+export const NAV_LINKS = [
+  { label: "Buy", href: "/properties?type=sale" },
+  { label: "Rent", href: "/properties?type=rent" },
+  { label: "Land", href: "/properties?type=land" },
+  { label: "Shortlets", href: "/properties?type=shortlet" },
+  { label: "Property management", href: "/#property-management" },
+  { label: "About", href: "/about" },
+];
+
+const INSPECTION_MESSAGE =
+  "Hello Limer! I'd like to book a property inspection. When are you available?";
 
 export default function Header() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showContactModal, setShowContactModal] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
   const { companyInfo } = useSanityCompanyInfo();
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  const whatsappUrl = getWhatsAppUrl(undefined, companyInfo);
+  const inspectionUrl = getWhatsAppUrl(INSPECTION_MESSAGE, companyInfo);
 
-  const emailData = {
-    subject: "Inquiry - Limer Properties",
-    message:
-      "Hello! I'd like to get in touch with Limer Properties. Please provide more information.\n\nThank you!",
-  };
-
-  const handleContact = (method: "whatsapp" | "email" | "call") => {
-    if (!companyInfo) return;
-
-    if (method === "call" && companyInfo.phone) {
-      window.location.href = `tel:${companyInfo.phone.replace(/\s+/g, "")}`;
-    } else if (method === "whatsapp" && companyInfo.phone) {
-      const whatsappMessage = encodeURIComponent(
-        "Hello! I'd like to get in touch with Limer Properties. Please provide more information."
-      );
-      const whatsappUrl = `https://wa.me/${companyInfo.phone.replace(
-        /\D/g,
-        ""
-      )}?text=${whatsappMessage}`;
-      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    }
-    // Email is now handled by ContactMethodModal via API
-  };
+  const isActive = (href: string) => href === "/about" && pathname === "/about";
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50 md:py-2">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center">
-            {/* <span className="text-2xl font-bold text-primary">
-              Limer Estate And Facility Management LTD
-            </span> */}
-            <Image
-              src="/images/logo.png"
-              alt="Limer Estate And Facility Management LTD"
-              width={100}
-              height={100}
-              priority
-              quality={100}
-              className="w-48 md:w-68"
-            />
-          </Link>
+    <header className="sticky top-0 z-40 bg-white border-b border-rule">
+      <nav className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-5 py-5 md:px-10 xl:px-16 xl:py-7">
+        <Wordmark />
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden xl:flex items-center gap-10 text-[15px] font-medium text-ink">
+          {NAV_LINKS.map((link) => (
             <Link
-              href="/"
-              className="text-gray-700 hover:text-primary transition-colors duration-200"
+              key={link.label}
+              href={link.href}
+              className={cn(
+                "transition-colors hover:text-cobalt",
+                isActive(link.href) && "text-cobalt underline underline-offset-4",
+              )}
             >
-              Home
+              {link.label}
             </Link>
-            <Link
-              href="/properties"
-              className="text-gray-700 hover:text-primary transition-colors duration-200"
-            >
-              Properties
-            </Link>
-            <Link
-              href="/about"
-              className="text-gray-700 hover:text-primary transition-colors duration-200"
-            >
-              About
-            </Link>
-            {/* <Link
-              href="/studio"
-              className="text-gray-700 hover:text-primary transition-colors duration-200"
-            >
-              Studio
-            </Link> */}
-            <Button variant="primary" onClick={() => setShowContactModal(true)}>
-              Contact Us
-            </Button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMobileMenu}
-            className="md:hidden text-gray-700 hover:text-primary transition-colors"
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          ))}
         </div>
 
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <div className="flex flex-col space-y-4">
-              <Link
-                href="/"
-                onClick={toggleMobileMenu}
-                className="text-gray-700 hover:text-primary transition-colors duration-200"
-              >
-                Home
-              </Link>
-              <Link
-                href="/properties"
-                onClick={toggleMobileMenu}
-                className="text-gray-700 hover:text-primary transition-colors duration-200"
-              >
-                Properties
-              </Link>
-              <Link
-                href="/about"
-                onClick={toggleMobileMenu}
-                className="text-gray-700 hover:text-primary transition-colors duration-200"
-              >
-                About
-              </Link>
-              {/* <Link
-                href="/studio"
-                onClick={toggleMobileMenu}
-                className="text-gray-700 hover:text-primary transition-colors duration-200"
-              >
-                Studio
-              </Link> */}
-              <Button
-                variant="primary"
-                onClick={() => {
-                  setShowContactModal(true);
-                  toggleMobileMenu();
-                }}
-                className="w-full"
-              >
-                Contact Us
-              </Button>
-            </div>
-          </div>
-        )}
+        <div className="flex items-center gap-3 xl:gap-6">
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:inline-flex items-center gap-2.5 border-[1.5px] border-ink px-[18px] py-[11px] text-[15px] font-semibold text-ink transition-colors hover:bg-ink hover:text-white"
+          >
+            <WhatsAppIcon size={18} color="#1FAF55" />
+            WhatsApp us
+          </a>
+          <a
+            href={inspectionUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden md:inline-flex bg-ink px-5 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-cobalt"
+          >
+            Book an inspection
+          </a>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Chat on WhatsApp"
+            className="sm:hidden inline-flex h-11 w-11 items-center justify-center border-[1.5px] border-ink"
+          >
+            <WhatsAppIcon size={20} color="#1FAF55" />
+          </a>
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((open) => !open)}
+            className="xl:hidden inline-flex h-11 w-11 items-center justify-center text-ink"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMenuOpen}
+          >
+            <MenuIcon open={isMenuOpen} />
+          </button>
+        </div>
       </nav>
-      <ContactMethodModal
-        isOpen={showContactModal}
-        onClose={() => setShowContactModal(false)}
-        companyInfo={companyInfo}
-        onSubmit={handleContact}
-        emailData={emailData}
-        title="Contact Us"
-        description="How would you like to get in touch with us?"
-      />
+
+      {isMenuOpen && (
+        <div className="xl:hidden border-t border-rule bg-white">
+          <div className="mx-auto flex max-w-[1440px] flex-col px-5 pb-6 md:px-10">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setIsMenuOpen(false)}
+                className="border-b border-rule py-4 text-[17px] font-medium text-ink"
+              >
+                {link.label}
+              </Link>
+            ))}
+            <a
+              href={inspectionUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex justify-center bg-ink px-5 py-4 text-[16px] font-semibold text-white"
+            >
+              Book an inspection
+            </a>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

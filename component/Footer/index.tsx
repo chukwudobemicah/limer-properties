@@ -1,218 +1,71 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Facebook,
-  Instagram,
-  Twitter,
-  Linkedin,
-} from "lucide-react";
-import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
-import Image from "next/image";
+import { COMPANY_DETAILS } from "@/constants/companydetails";
+
+const PROPERTY_LINKS = [
+  { label: "Houses for sale", href: "/properties?type=sale" },
+  { label: "Houses for rent", href: "/properties?type=rent" },
+  { label: "Land", href: "/properties?type=land" },
+  { label: "Shortlets", href: "/properties?type=shortlet" },
+];
+
+const COMPANY_LINKS = [
+  { label: "About us", href: "/about" },
+  { label: "Property management", href: "/#property-management" },
+  { label: "Contact", href: "/#contact" },
+];
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-  const { companyInfo } = useSanityCompanyInfo();
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-gray-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Company Info */}
-          <div>
-            <h3 className="text-white text-xl font-bold mb-4">
-              <Link href="/" className="flex items-center">
-                <Image
-                  src="/images/logo.png"
-                  alt="Limer Estate And Facility Management LTD"
-                  width={100}
-                  height={100}
-                  priority
-                  quality={100}
-                  className="w-68"
-                />
-              </Link>
-            </h3>
-            {/* <p>Awoyaya lagos, nigeria</p> */}
-            <p className="text-sm mb-4">
-              {companyInfo?.description ||
-                "Your trusted partner in finding the perfect property. We offer a wide range of houses, lands, and shortlets across Nigeria."}
-            </p>
-            <div className="flex space-x-4">
-              {companyInfo?.socials?.facebook && (
-                <a
-                  href={companyInfo.socials.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors"
-                  aria-label="Facebook"
-                >
-                  <Facebook size={20} />
-                </a>
-              )}
-              {companyInfo?.socials?.instagram && (
-                <a
-                  href={companyInfo.socials.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors"
-                  aria-label="Instagram"
-                >
-                  <Instagram size={20} />
-                </a>
-              )}
-              {companyInfo?.socials?.twitter && (
-                <a
-                  href={companyInfo.socials.twitter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors"
-                  aria-label="Twitter"
-                >
-                  <Twitter size={20} />
-                </a>
-              )}
-              {companyInfo?.socials?.linkedin && (
-                <a
-                  href={companyInfo.socials.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors"
-                  aria-label="LinkedIn"
-                >
-                  <Linkedin size={20} />
-                </a>
-              )}
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-white font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/"
-                  className="hover:text-primary transition-colors text-sm"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/properties"
-                  className="hover:text-primary transition-colors text-sm"
-                >
-                  Properties
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/about"
-                  className="hover:text-primary transition-colors text-sm"
-                >
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/#contact"
-                  className="hover:text-primary transition-colors text-sm"
-                >
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Property Types */}
-          <div>
-            <h4 className="text-white font-semibold mb-4">Property Types</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/?type=house-sale"
-                  className="hover:text-primary transition-colors text-sm"
-                >
-                  Houses for Sale
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/?type=house-rent"
-                  className="hover:text-primary transition-colors text-sm"
-                >
-                  Houses for Rent
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/?type=land"
-                  className="hover:text-primary transition-colors text-sm"
-                >
-                  Land
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/?type=shortlet"
-                  className="hover:text-primary transition-colors text-sm"
-                >
-                  Shortlets
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div>
-            <h4 className="text-white font-semibold mb-4">Contact Us</h4>
-            <ul className="space-y-3">
-              {companyInfo?.address && (
-                <li className="flex items-start">
-                  <MapPin size={18} className="mr-2 mt-1 flex-shrink-0" />
-                  <span className="text-sm">{companyInfo.address}</span>
-                </li>
-              )}
-              {companyInfo?.phone && (
-                <li className="flex items-center">
-                  <Phone size={18} className="mr-2 flex-shrink-0" />
-                  <a
-                    href={`tel:+${companyInfo.phone}`}
-                    className="text-sm hover:text-primary transition-colors"
-                  >
-                    {companyInfo.phone}
-                  </a>
-                </li>
-              )}
-              {companyInfo?.email && (
-                <li className="flex items-center">
-                  <Mail size={18} className="mr-2 flex-shrink-0" />
-                  <a
-                    href={`mailto:${companyInfo.email}`}
-                    className="text-sm hover:text-primary transition-colors"
-                  >
-                    {companyInfo.email}
-                  </a>
-                </li>
-              )}
-            </ul>
+    <footer className="bg-ink text-white">
+      <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-14 px-5 pt-20 pb-10 md:px-10 xl:gap-[72px] xl:px-16">
+        <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
+          <p className="max-w-[380px] text-[19px] leading-[30px] text-white/80">
+            {COMPANY_DETAILS.description}
+          </p>
+          <div className="flex gap-16 xl:gap-24">
+            <FooterColumn title="Properties" links={PROPERTY_LINKS} />
+            <FooterColumn title="Company" links={COMPANY_LINKS} />
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-          <p className="text-sm">
-            &copy; {currentYear}{" "}
-            {companyInfo?.companyName ||
-              "Limer Estate And Facility Management LTD"}
-            . All rights reserved.
-          </p>
+        <span
+          aria-hidden="true"
+          className="block select-none font-extrabold text-white text-[clamp(120px,31.7vw,456px)] leading-[0.79] tracking-[-0.035em]"
+        >
+          Limer
+        </span>
+
+        <div className="flex flex-col gap-3 border-t border-white/20 pt-6 font-mono text-[12px] tracking-[0.08em] text-white/60 uppercase md:flex-row md:justify-between">
+          <span>
+            {`© ${year} Limer Estate & Facility Management Ltd`}
+          </span>
+          <span>RC {COMPANY_DETAILS.rcNumber} · Lagos, Nigeria</span>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterColumn({
+  title,
+  links,
+}: {
+  title: string;
+  links: { label: string; href: string }[];
+}) {
+  return (
+    <div className="flex flex-col gap-3.5 text-[16px]">
+      <span className="font-mono text-[11px] tracking-[0.14em] uppercase text-white/60">
+        {title}
+      </span>
+      {links.map((link) => (
+        <Link key={link.label} href={link.href} className="text-white hover:text-white/70">
+          {link.label}
+        </Link>
+      ))}
+    </div>
   );
 }

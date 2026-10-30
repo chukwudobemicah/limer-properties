@@ -1,19 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/component/Header";
 import Footer from "@/component/Footer";
+import FloatingWhatsApp from "@/component/FloatingWhatsApp";
 import { ToastProvider } from "@/component/Toast";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title:
@@ -51,13 +41,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <head>
+        <link
+          rel="preload"
+          href="/fonts/inter-tight-latin-wght-normal.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
+      <body className="antialiased">
         <ToastProvider>
           <Header />
           <main>{children}</main>
           <Footer />
+          <FloatingWhatsApp />
         </ToastProvider>
       </body>
     </html>
