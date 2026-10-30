@@ -210,3 +210,89 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+/* ---------------------------------------------------------------
+   Motion — compositor-only (opacity + transform). Triggered once by a
+   data attribute, so React re-renders can never restart or flicker it.
+---------------------------------------------------------------- */
+:root {
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Scroll reveals (see component/Motion). */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-y, 20px), 0);
+  transition:
+    opacity 0.7s var(--ease-out-soft) var(--reveal-delay, 0s),
+    transform 0.7s var(--ease-out-soft) var(--reveal-delay, 0s);
+}
+.reveal[data-shown] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hero intro: hidden until the hero sets data-ready (fonts loaded). */
+.intro,
+.intro-word,
+.intro-slide {
+  opacity: 0;
+}
+.intro-word {
+  display: inline-block;
+  transform: translate3d(0, 110%, 0);
+}
+[data-ready] .intro {
+  animation: intro-rise 0.9s var(--ease-out-soft) var(--d, 0s) both;
+}
+[data-ready] .intro-word {
+  animation: intro-word 0.9s var(--ease-out-soft) var(--d, 0s) both;
+}
+[data-ready] .intro-slide {
+  animation: intro-slide 0.9s var(--ease-out-soft) var(--d, 0s) both;
+}
+@keyframes intro-rise {
+  from { opacity: 0; transform: translate3d(0, 24px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes intro-word {
+  from { opacity: 1; transform: translate3d(0, 110%, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes intro-slide {
+  from { opacity: 0; transform: translate3d(-24px, 0, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Hero photo: grey placeholder, then one clean fade + settle once loaded. */
+.hero-photo {
+  opacity: 0;
+  transform: scale(1.06);
+  transition:
+    opacity 0.8s ease-out,
+    transform 1.6s var(--ease-out-soft);
+}
+.hero-photo[data-shown] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .hero-photo {
+    transform: none;
+    transition: opacity 0.3s ease-out;
+  }
+  [data-ready] .intro,
+  [data-ready] .intro-word,
+  [data-ready] .intro-slide {
+    animation: intro-fade 0.3s ease-out both;
+  }
+  .intro-word {
+    transform: none;
+  }
+}
+@keyframes intro-fade {
+  from { opacity: 0; }
+  to { opacity: 1; transform: none; }
+}

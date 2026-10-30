@@ -64,6 +64,10 @@ export default function RootLayout({
           type="font/woff2"
           crossOrigin="anonymous"
         />
+        {/* Without JavaScript, show everything (no entrance animations). */}
+        <noscript>
+          <style>{`.reveal,.intro,.intro-word,.intro-slide,.hero-photo{opacity:1!important;transform:none!important;animation:none!important}`}</style>
+        </noscript>
       </head>
       <body className="antialiased">
         <MotionProvider>
