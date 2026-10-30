@@ -48,6 +48,12 @@ function PropertiesContent() {
   const [maxPriceText, setMaxPriceText] = useState("");
   const [size, setSize] = useState("any");
   const [sort, setSort] = useState("newest");
+  // Once someone starts filtering, results update instantly instead of re-animating.
+  const [filtering, setFiltering] = useState(false);
+  const touch = <T,>(setter: (value: T) => void) => (value: T) => {
+    setFiltering(true);
+    setter(value);
+  };
 
   // Apply ?type=, ?search= (or legacy ?location=) and ?maxPrice= from links/search.
   useEffect(() => {
@@ -122,6 +128,7 @@ function PropertiesContent() {
   }, [properties, tab, location, searchTerm, minPrice, maxPrice, priceInvalid, size, sort]);
 
   const resetFilters = () => {
+    setFiltering(true);
     setTab("all");
     setLocation("all");
     setSearchTerm("");
@@ -167,7 +174,7 @@ function PropertiesContent() {
               type="button"
               role="tab"
               aria-selected={tab === item.value}
-              onClick={() => setTab(item.value)}
+              onClick={() => touch(setTab)(item.value)}
               className={cn(
                 "-mb-px flex shrink-0 items-baseline border-b-2 pb-4 text-[15px] transition-colors sm:text-[16px]",
                 tab === item.value
@@ -187,20 +194,20 @@ function PropertiesContent() {
           <FilterSelect
             label="Location"
             value={location}
-            onChange={setLocation}
+            onChange={touch(setLocation)}
             options={locationSelectOptions}
             className="pl-0 max-lg:col-span-2 max-lg:border-r-0 max-lg:border-b"
           />
           <PriceField
             minText={minPriceText}
             maxText={maxPriceText}
-            onMinChange={setMinPriceText}
-            onMaxChange={setMaxPriceText}
+            onMinChange={touch(setMinPriceText)}
+            onMaxChange={touch(setMaxPriceText)}
             swapped={priceInvalid}
             className="max-lg:col-span-2 max-lg:border-r-0 max-lg:border-b max-lg:pl-0"
           />
-          <FilterSelect label="Plot size" value={size} onChange={setSize} options={SIZE_OPTIONS} className="max-lg:pl-0" />
-          <FilterSelect label="Sort by" value={sort} onChange={setSort} options={SORT_OPTIONS} className="border-r-0" />
+          <FilterSelect label="Plot size" value={size} onChange={touch(setSize)} options={SIZE_OPTIONS} className="max-lg:pl-0" />
+          <FilterSelect label="Sort by" value={sort} onChange={touch(setSort)} options={SORT_OPTIONS} className="border-r-0" />
         </div>
       </section>
 
@@ -210,7 +217,7 @@ function PropertiesContent() {
           Array.from({ length: 3 }).map((_, index) => <ListingRowSkeleton key={index} />)
         ) : results.length > 0 ? (
           results.map((property) => (
-            <Reveal key={property._id} y={32}>
+            <Reveal key={property._id} disabled={filtering}>
               <ListingRow property={property} companyInfo={companyInfo} />
             </Reveal>
           ))

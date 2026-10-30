@@ -63,7 +63,8 @@ export default function PropertyManagementServices({
   return (
     <section id="property-management" className="scroll-mt-24 bg-cobalt text-white">
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-16 px-5 py-24 md:px-10 lg:flex-row lg:items-end lg:gap-24 xl:px-16 xl:py-[120px]">
-        <Reveal className="flex flex-1 flex-col gap-7">
+        <div className="flex flex-1 flex-col gap-7">
+          <Reveal className="flex flex-col gap-7">
           <span className="label-mono text-white">For landlords</span>
           <h2 className="text-[clamp(2.875rem,11vw,4.75rem)] leading-[0.98] font-serif font-normal tracking-[-0.01em] text-white">
             You own it.
@@ -74,6 +75,7 @@ export default function PropertyManagementServices({
             Hand us the keys and we&apos;ll find the tenants, collect the rent and keep the
             building in shape — with a clear report every month.
           </p>
+          </Reveal>
 
           <Stagger as="ul" className="flex w-full max-w-[560px] flex-col border-t border-white/35 pt-1">
             {SERVICES.map((service) => (
@@ -89,7 +91,7 @@ export default function PropertyManagementServices({
               </StaggerItem>
             ))}
           </Stagger>
-        </Reveal>
+        </div>
 
         <Reveal delay={0.15} className="w-full lg:w-[520px] lg:shrink-0">
         <form

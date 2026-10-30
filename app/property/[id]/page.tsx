@@ -174,8 +174,10 @@ export default function PropertyDetailsPage() {
       <section className={`${CONTAINER} grid grid-cols-1 gap-14 pt-14 pb-24 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-16 xl:pb-32`}>
         <div className="flex min-w-0 flex-col gap-16">
           {/* Plot sheet */}
-          <Reveal className="flex flex-col gap-6">
-            <h2 className="label-mono text-cobalt">Property details</h2>
+          <div className="flex flex-col gap-6">
+            <Reveal>
+              <h2 className="label-mono text-cobalt">Property details</h2>
+            </Reveal>
             <Stagger as="dl" stagger={0.05} className="grid grid-cols-2 border-t-[1.5px] border-ink sm:grid-cols-3">
               {specs.map((spec) => (
                 <StaggerItem key={spec.label} className="flex flex-col gap-1.5 border-b border-rule py-5 pr-4">
@@ -184,7 +186,7 @@ export default function PropertyDetailsPage() {
                 </StaggerItem>
               ))}
             </Stagger>
-          </Reveal>
+          </div>
 
           {property.description && (
             <Reveal className="flex flex-col gap-5">
@@ -340,7 +342,7 @@ function Gallery({ media, title }: { media: MediaItem[]; title: string }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-mist sm:aspect-[16/10] lg:aspect-[21/9]">
-        <AnimatePresence initial={false} mode="popLayout">
+        <AnimatePresence initial={false}>
           <motion.div
             key={index}
             className="absolute inset-0"

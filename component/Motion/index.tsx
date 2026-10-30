@@ -19,19 +19,29 @@ type RevealProps = {
   y?: number;
   as?: "div" | "section" | "li" | "article" | "span";
   id?: string;
+  disabled?: boolean;
 };
 
 /** Fades + lifts its content into place the first time it scrolls into view. */
-export function Reveal({ children, className, delay = 0, y = 28, as = "div", id }: RevealProps) {
+export function Reveal({
+  children,
+  className,
+  delay = 0,
+  y = 20,
+  as = "div",
+  id,
+  disabled = false,
+}: RevealProps) {
   const Component = motion[as];
   return (
     <Component
       id={id}
       className={className}
-      initial={{ opacity: 0, y }}
+      // `disabled` renders in place with no entrance (e.g. results re-rendering while filtering).
+      initial={disabled ? false : { opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2, margin: "0px 0px -60px 0px" }}
-      transition={{ duration: 0.8, ease: EASE, delay }}
+      viewport={{ once: true, amount: 0.15, margin: "0px 0px -40px 0px" }}
+      transition={{ duration: 0.7, ease: EASE, delay }}
     >
       {children}
     </Component>
@@ -44,8 +54,8 @@ const staggerParent: Variants = {
 };
 
 export const staggerChild: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.75, ease: EASE } },
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
 };
 
 /** Parent that reveals its <StaggerItem> children one after another. */
@@ -68,7 +78,7 @@ export function Stagger({
       custom={stagger}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, amount: 0.15, margin: "0px 0px -60px 0px" }}
+      viewport={{ once: true, amount: 0.1, margin: "0px 0px -40px 0px" }}
     >
       {children}
     </Component>
@@ -93,24 +103,30 @@ export function StaggerItem({
 }
 
 /**
- * True once the page has fully loaded (window "load"), so intro animations
- * start after fonts and the hero photo are in. Falls back after `maxWait` ms
- * so content can never stay hidden on a slow connection.
+ * True once the page's fonts are ready, so intro animations never play in a
+ * fallback font and then reshape. Doesn't wait for images (that's what made the
+ * hero sit blank). Falls back after `maxWait` ms so nothing can stay hidden.
  */
-export function useSiteLoaded(maxWait = 2500) {
+export function useSiteLoaded(maxWait = 900) {
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
-    if (document.readyState === "complete") {
+    let done = false;
+    let frame = 0;
+    const go = () => {
+      if (done) return;
+      done = true;
       // Next frame, so the hidden state paints before animating.
-      const frame = requestAnimationFrame(() => setLoaded(true));
-      return () => cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => setLoaded(true));
+    };
+    if (typeof document !== "undefined" && "fonts" in document) {
+      document.fonts.ready.then(go);
+    } else {
+      go();
     }
-    const done = () => setLoaded(true);
-    window.addEventListener("load", done, { once: true });
-    const timer = window.setTimeout(done, maxWait);
+    const timer = window.setTimeout(go, maxWait);
     return () => {
-      window.removeEventListener("load", done);
       window.clearTimeout(timer);
+      cancelAnimationFrame(frame);
     };
   }, [maxWait]);
   return loaded;
