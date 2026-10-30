@@ -51,6 +51,7 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
   const [tab, setTab] = useState<TabValue>("sale");
   const [where, setWhere] = useState("");
   const [budget, setBudget] = useState("");
+  const [photoReady, setPhotoReady] = useState(false);
 
   const handleMessage = (event: React.FormEvent) => {
     event.preventDefault();
@@ -206,11 +207,15 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
         >
           <motion.div
             className="absolute inset-0"
-            initial={{ scale: 1.12 }}
-            animate={loaded ? { scale: 1 } : { scale: 1.12 }}
-            transition={{ duration: 1.8, ease: EASE, delay: 0.1 }}
+            initial={{ scale: 1.12, opacity: 0 }}
+            animate={{ scale: loaded ? 1 : 1.12, opacity: photoReady ? 1 : 0 }}
+            transition={{
+              scale: { duration: 1.8, ease: EASE, delay: 0.1 },
+              opacity: { duration: 0.6, ease: "easeOut" },
+            }}
           >
             <Image
+              onLoad={() => setPhotoReady(true)}
               src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80"
               alt="Modern detached home with a pool"
               fill
