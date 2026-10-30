@@ -91,13 +91,13 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
 
         <h1
           aria-label={HEADLINE}
-          className="text-[clamp(2.25rem,10vw,4.5rem)] leading-[1.02] font-extrabold tracking-[-0.035em] text-balance text-ink lg:text-[min(6.1vw,88px)] lg:leading-none"
+          className="text-[clamp(2.75rem,12vw,5.25rem)] leading-[0.98] font-serif font-normal tracking-[-0.015em] text-balance text-ink lg:text-[min(7vw,104px)] lg:leading-[0.95]"
         >
           {HEADLINE.split(" ").map((word, index) => (
             <React.Fragment key={index}>
               <span aria-hidden="true" className="-mb-[0.12em] inline-block overflow-hidden pb-[0.12em] align-top">
                 <motion.span
-                  className="inline-block"
+                  className={word === "Lagos." ? "inline-block italic" : "inline-block"}
                   initial={{ y: "110%" }}
                   animate={loaded ? { y: "0%" } : { y: "110%" }}
                   transition={{ duration: 0.9, ease: EASE, delay: 0.35 + index * 0.06 }}
@@ -112,7 +112,7 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
 
         <motion.p
           {...intro(0.75)}
-          className="max-w-[520px] text-[16px] leading-[26px] text-graphite sm:text-[19px] sm:leading-[30px]"
+          className="max-w-[560px] text-[16px] leading-[26px] text-graphite sm:text-[18px] sm:leading-[30px]"
         >
           We check the title, walk the plot and stand behind every listing — then manage the
           property for you once it&apos;s yours.

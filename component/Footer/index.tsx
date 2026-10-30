@@ -41,7 +41,7 @@ export default function Footer() {
           <StaggerItem>
             <span
               aria-hidden="true"
-              className="block font-extrabold whitespace-nowrap text-white select-none text-[calc((100vw-40px)/7.2)] leading-[0.86] tracking-[-0.045em] md:text-[calc((100vw-80px)/7.2)] xl:text-[calc((100vw-128px)/7.2)] min-[1440px]:text-[182px]"
+              className="block font-serif font-normal whitespace-nowrap text-white select-none text-[calc((100vw-40px)/5.4)] leading-[0.9] tracking-[-0.02em] md:text-[calc((100vw-80px)/5.4)] xl:text-[calc((100vw-128px)/5.4)] min-[1440px]:text-[243px]"
             >
               Limer Properties
             </span>

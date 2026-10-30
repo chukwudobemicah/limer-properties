@@ -65,7 +65,7 @@ export default function PropertyManagementServices({
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-16 px-5 py-24 md:px-10 lg:flex-row lg:items-end lg:gap-24 xl:px-16 xl:py-[120px]">
         <Reveal className="flex flex-1 flex-col gap-7">
           <span className="label-mono text-white">For landlords</span>
-          <h2 className="text-[clamp(2.5rem,10vw,4rem)] leading-[1.03] font-extrabold tracking-[-0.035em] text-white">
+          <h2 className="text-[clamp(2.875rem,11vw,4.75rem)] leading-[0.98] font-serif font-normal tracking-[-0.01em] text-white">
             You own it.
             <br />
             We run it.
@@ -97,7 +97,7 @@ export default function PropertyManagementServices({
           className="flex w-full flex-col gap-7 bg-white p-6 text-ink sm:p-10"
         >
           <div className="flex flex-col gap-2">
-            <h3 className="text-[28px] leading-8 font-extrabold tracking-[-0.02em] text-ink">
+            <h3 className="text-[34px] leading-[1.05] font-serif font-normal tracking-[-0.01em] text-ink">
               Let&apos;s manage your property
             </h3>
             <p className="text-[16px] leading-6 text-graphite">
