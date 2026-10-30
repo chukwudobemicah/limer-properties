@@ -19,10 +19,9 @@ export default function AboutPage() {
       {/* Hero */}
       <Reveal as="section" className={`${CONTAINER} flex flex-col gap-8 pt-20 pb-20 xl:pt-[104px] xl:pb-24`}>
         <span className="label-mono text-cobalt">About Limer</span>
-        <h1 className="text-[clamp(2.875rem,10vw,6.75rem)] leading-[0.95] font-serif font-normal tracking-[-0.015em] text-ink">
+        <h1 className="text-[clamp(2.5rem,8.5vw,6rem)] leading-none font-extrabold tracking-[-0.04em] text-ink">
           More than a transaction.
-          <br />
-          <em className="italic">A place to build on.</em>
+          <br />A place to build on.
         </h1>
       </Reveal>
 
@@ -31,7 +30,7 @@ export default function AboutPage() {
         <Reveal className={`${CONTAINER} flex flex-col gap-10 pt-[72px] pb-24 lg:flex-row lg:gap-16 xl:pb-[120px]`}>
           <SectionLabel number="01" title="Our story" />
           <div className="flex flex-1 flex-col gap-6">
-            <p className="text-[26px] leading-[1.25] font-serif font-normal text-ink md:text-[34px] md:leading-[1.2]">
+            <p className="text-[22px] leading-8 font-medium tracking-[-0.015em] text-ink md:text-[28px] md:leading-10">
               Limer Estate &amp; Facility Management was founded to make buying and owning property
               in Nigeria feel safe, simple and transparent.
             </p>
@@ -82,11 +81,11 @@ export default function AboutPage() {
               {CEO.role}
             </span>
           </div>
-          <h2 className="text-[clamp(2.5rem,6.5vw,5rem)] leading-[0.98] font-serif font-normal tracking-[-0.01em] text-ink">
+          <h2 className="text-[clamp(2.25rem,6vw,4.5rem)] leading-none font-extrabold tracking-[-0.035em] text-ink">
             {CEO.name}
           </h2>
           {CEO.quote && (
-            <blockquote className="border-l-[3px] border-cobalt pl-6 font-serif text-[26px] leading-[1.25] italic text-cobalt md:text-[32px] md:leading-[1.25]">
+            <blockquote className="border-l-[3px] border-cobalt pl-6 text-[21px] leading-8 font-medium tracking-[-0.01em] text-cobalt md:text-[26px] md:leading-[38px]">
               “{CEO.quote}”
             </blockquote>
           )}
@@ -138,7 +137,7 @@ export default function AboutPage() {
                 index % 2 === 0 ? "max-lg:border-r max-lg:border-white/20" : "",
               ].join(" ")}
             >
-              <span className="text-[clamp(3rem,9vw,6rem)] leading-none font-serif font-normal tracking-[-0.02em] text-white">
+              <span className="text-[clamp(2.75rem,8vw,5.5rem)] leading-none font-extrabold tracking-[-0.045em] text-white">
                 {stat.value}
               </span>
               <span className="font-mono text-[12px] tracking-[0.14em] uppercase text-white/70">
@@ -176,7 +175,7 @@ export default function AboutPage() {
               key={value.title}
               className="flex flex-col gap-2 border-b border-rule py-7 md:flex-row md:items-baseline md:gap-8"
             >
-              <span className="text-[clamp(2rem,4.5vw,2.875rem)] leading-[1.05] font-serif font-normal tracking-[-0.01em] text-ink md:w-[340px] md:shrink-0">
+              <span className="text-[clamp(1.75rem,4vw,2.5rem)] font-extrabold tracking-[-0.03em] text-ink md:w-[340px] md:shrink-0">
                 {value.title}
               </span>
               <span className="text-[18px] leading-7 text-graphite">{value.body}</span>
@@ -190,7 +189,7 @@ export default function AboutPage() {
         <Reveal className={`${CONTAINER} flex flex-col gap-12 py-24 lg:flex-row lg:items-end lg:justify-between lg:gap-16 xl:py-28`}>
           <div className="flex flex-col gap-6">
             <span className="label-mono text-white">Ready when you are</span>
-            <h2 className="max-w-[720px] text-[clamp(2.5rem,7.5vw,4.5rem)] leading-[1] font-serif font-normal tracking-[-0.01em] text-balance text-white">
+            <h2 className="max-w-[720px] text-[clamp(2.25rem,7vw,4rem)] leading-[1.03] font-extrabold tracking-[-0.035em] text-balance text-white">
               Let&apos;s find the right property for you.
             </h2>
             <p className="max-w-[560px] text-[19px] leading-[30px] text-white/85">

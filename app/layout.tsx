@@ -45,21 +45,7 @@ export default function RootLayout({
       <head>
         <link
           rel="preload"
-          href="/fonts/inter-latin-wght-normal.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="/fonts/instrument-serif-latin-400-normal.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="/fonts/instrument-serif-latin-400-italic.woff2"
+          href="/fonts/inter-tight-latin-wght-normal.woff2"
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"
