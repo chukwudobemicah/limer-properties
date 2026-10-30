@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { COMPANY_DETAILS } from "@/constants/companydetails";
+import Wordmark from "@/component/Wordmark";
 
 const PROPERTY_LINKS = [
   { label: "Houses for sale", href: "/properties?type=sale" },
@@ -22,9 +23,12 @@ export default function Footer() {
     <footer className="bg-ink text-white">
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-14 px-5 pt-20 pb-10 md:px-10 xl:gap-[72px] xl:px-16">
         <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
-          <p className="max-w-[380px] text-[19px] leading-[30px] text-white/80">
-            {COMPANY_DETAILS.description}
-          </p>
+          <div className="flex flex-col gap-6">
+            <Wordmark variant="white" />
+            <p className="max-w-[380px] text-[19px] leading-[30px] text-white/80">
+              {COMPANY_DETAILS.description}
+            </p>
+          </div>
           <div className="flex gap-16 xl:gap-24">
             <FooterColumn title="Properties" links={PROPERTY_LINKS} />
             <FooterColumn title="Company" links={COMPANY_LINKS} />

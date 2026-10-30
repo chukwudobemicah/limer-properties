@@ -33,7 +33,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-rule">
-      <nav className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-5 py-5 md:px-10 xl:px-16 xl:py-7">
+      <nav className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-5 py-4 md:px-10 xl:px-16 xl:py-[18px]">
         <Wordmark />
 
         <div className="hidden xl:flex items-center gap-10 text-[15px] font-medium text-ink">
