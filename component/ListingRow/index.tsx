@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import RollingPrice from "@/component/RollingPrice";
 import { SanityCompanyInfo, SanityProperty } from "@/types/sanity";
 import { WhatsAppIcon } from "@/component/Icons";
 import { useOrigin } from "@/component/ListingCard";
@@ -17,7 +18,6 @@ import {
   getTypeLabel,
   getTypeSlug,
 } from "@/lib/property";
-import { formatPrice } from "@/utils/functions";
 
 interface ListingRowProps {
   property: SanityProperty;
@@ -81,7 +81,7 @@ export default function ListingRow({ property, companyInfo }: ListingRowProps) {
         <div className="flex flex-col gap-1 lg:items-end">
           <span className="field-label">Price</span>
           <span className="text-[28px] font-extrabold tracking-[-0.02em] text-ink md:text-[32px]">
-            {formatPrice(property.price)}
+            <RollingPrice price={property.price} />
             {suffix && <span className="ml-1 text-[15px] font-medium text-graphite">{suffix}</span>}
           </span>
         </div>

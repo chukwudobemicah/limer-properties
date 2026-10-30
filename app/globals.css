@@ -103,10 +103,6 @@
   --color-negative: var(--error);
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 body {
   background: #ffffff;
   color: var(--ink);
@@ -259,3 +255,16 @@ input[type="number"] {
 .lightbox { animation: lightbox-in 0.25s ease-out both; }
 @keyframes lightbox-in { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .lightbox { animation: none; } }
+
+/* Rolling prices: each digit is a reel of 0-9 twice, spun up to its digit. */
+.roll { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.roll-digit { position: relative; display: inline-block; overflow: hidden; vertical-align: top; }
+.roll-ghost { visibility: hidden; }
+.roll-col {
+  position: absolute; inset: 0 0 auto 0; display: flex; flex-direction: column; text-align: center;
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) var(--roll-delay, 0s);
+  will-change: transform;
+}
+.roll[data-rolled] .roll-col { transform: translate3d(0, var(--to), 0); }
+@media (prefers-reduced-motion: reduce) { .roll-col { transition: none; } }

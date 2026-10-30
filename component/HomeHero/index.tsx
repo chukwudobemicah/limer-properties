@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import RollingPrice from "@/component/RollingPrice";
 import { SanityCompanyInfo, SanityProperty } from "@/types/sanity";
 import { ArrowRightIcon, WhatsAppIcon } from "@/component/Icons";
 import { useSiteLoaded } from "@/component/Motion";
@@ -16,7 +17,7 @@ import {
   getSizeLabel,
   parsePrice,
 } from "@/lib/property";
-import { formatPrice, cn } from "@/utils/functions";
+import { cn } from "@/utils/functions";
 
 const SEARCH_TABS = [
   { value: "sale", label: "For sale", phrase: "a property to buy" },
@@ -218,7 +219,7 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
             style={delay(0.6)}
             className="intro-slide absolute right-4 bottom-4 left-4 sm:right-auto sm:w-[280px] md:left-10 lg:-left-10 lg:bottom-10"
           >
-            <PlotTag property={featured} />
+            <PlotTag property={featured} play={loaded} />
           </div>
         )}
       </div>
@@ -226,7 +227,7 @@ export default function HomeHero({ featured, companyInfo }: HomeHeroProps) {
   );
 }
 
-function PlotTag({ property }: { property: SanityProperty }) {
+function PlotTag({ property, play }: { property: SanityProperty; play: boolean }) {
   const label = property.documentTitle ? `Verified · ${property.documentTitle}` : "Featured";
 
   return (
@@ -242,7 +243,7 @@ function PlotTag({ property }: { property: SanityProperty }) {
           </span>
           <span className="truncate text-[15px] font-bold text-ink">{property.title}</span>
         </span>
-        <span className="shrink-0 text-[15px] font-bold text-ink">{formatPrice(property.price)}</span>
+        <span className="shrink-0 text-[15px] font-bold text-ink"><RollingPrice price={property.price} play={play} delay={0.75} /></span>
       </span>
 
       {/* Tablet and up: the full plot sheet */}
@@ -261,7 +262,7 @@ function PlotTag({ property }: { property: SanityProperty }) {
         <span className="sr-only">{getLocation(property.location)}</span>
         <span className="flex items-baseline justify-between border-t border-rule pt-2.5">
           <span className="font-mono text-[12px] text-graphite">{getSizeLabel(property)}</span>
-          <span className="text-[18px] font-bold text-ink">{formatPrice(property.price)}</span>
+          <span className="text-[18px] font-bold text-ink"><RollingPrice price={property.price} play={play} delay={0.75} /></span>
         </span>
       </span>
     </Link>

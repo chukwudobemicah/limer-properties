@@ -41,9 +41,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // data-scroll-behavior lets Next turn smooth scrolling off while changing
-    // pages, so a new page opens at the top instead of gliding up to it.
-    <html lang="en" data-scroll-behavior="smooth">
+    <html lang="en">
       <head>
         <link
           rel="preload"
@@ -54,7 +52,7 @@ export default function RootLayout({
         />
         {/* Without JavaScript, show everything (no entrance animations). */}
         <noscript>
-          <style>{`.reveal,.intro,.intro-word,.intro-slide,.hero-photo{opacity:1!important;transform:none!important;animation:none!important}`}</style>
+          <style>{`.reveal,.intro,.intro-word,.intro-slide,.hero-photo{opacity:1!important;transform:none!important;animation:none!important}.roll-col{transform:translate3d(0,var(--to),0)!important;transition:none!important}`}</style>
         </noscript>
       </head>
       <body className="antialiased">
