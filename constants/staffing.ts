@@ -52,7 +52,23 @@ export const WORKER_TYPES = [
   "Cleaner",
   "Caregiver",
   "Gardener",
-  "Other",
+  "Laundry staff",
+  "House manager / steward",
+  "Other (please specify)",
+];
+
+/** The "anything else" option; picking it asks the person to type the role. */
+export const OTHER_ROLE = "Other (please specify)";
+
+/** Shown under the role cards so it's clear the list isn't exhaustive. */
+export const MORE_ROLES = [
+  "Cleaners",
+  "Gardeners",
+  "Caregivers",
+  "Laundry staff",
+  "House managers",
+  "Stewards",
+  "Messengers",
 ];
 
 export const ROLE_TO_WORKER_TYPE: Record<string, string> = {

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRightIcon } from "@/component/Icons";
 import { Reveal, Stagger, StaggerItem } from "@/component/Motion";
 
-const ROLES = ["Housemaids", "Nannies", "Cooks & chefs", "Drivers", "Security", "Office staff", "Cleaners"];
+const ROLES = ["Housemaids", "Nannies", "Cooks & chefs", "Drivers", "Security", "Office staff", "Cleaners", "+ many more"];
 
 /** Home-page pointer to the Staffing page: hire staff, or apply for work. */
 export default function StaffingBand() {

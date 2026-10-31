@@ -134,25 +134,33 @@ export function StaggerItem({ children, className, as = "div", delay = 0 }: Stag
  * fallback font and then reshape. Doesn't wait for images. Falls back after
  * `maxWait` ms so nothing can stay hidden.
  */
-export function useSiteLoaded(maxWait = 900) {
+/**
+ * True once the page is on show: after the loading screen lifts (first visit),
+ * or once fonts are ready (later visits). Capped so nothing waits forever.
+ */
+export function useSiteLoaded(maxWait = 3500) {
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     let done = false;
     let frame = 0;
+    const timers: number[] = [];
     const go = () => {
       if (done) return;
       done = true;
       // Next frame, so the hidden state paints before animating.
       frame = requestAnimationFrame(() => setLoaded(true));
     };
-    if (typeof document !== "undefined" && "fonts" in document) {
-      document.fonts.ready.then(go);
-    } else {
-      go();
-    }
-    const timer = window.setTimeout(go, maxWait);
+    const onReady = () => {
+      if ("fonts" in document) document.fonts.ready.then(go);
+      else go();
+      timers.push(window.setTimeout(go, 900));
+    };
+    if ((window as unknown as { __limerReady?: boolean }).__limerReady) onReady();
+    else window.addEventListener("limer:ready", onReady, { once: true });
+    timers.push(window.setTimeout(go, maxWait));
     return () => {
-      window.clearTimeout(timer);
+      window.removeEventListener("limer:ready", onReady);
+      timers.forEach(window.clearTimeout);
       cancelAnimationFrame(frame);
     };
   }, [maxWait]);
