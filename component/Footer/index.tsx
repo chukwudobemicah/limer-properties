@@ -14,6 +14,8 @@ const PROPERTY_LINKS = [
 const COMPANY_LINKS = [
   { label: "About us", href: "/about" },
   { label: "Property management", href: "/#property-management" },
+  { label: "Hire staff", href: "/staffing#hire" },
+  { label: "Job openings", href: "/staffing#jobs" },
   { label: "Contact", href: "/#contact" },
 ];
 
