@@ -13,6 +13,8 @@ import {
   APPLY_STEPS,
   HIRE_STEPS,
   HOME_SERVICES,
+  MORE_ROLES,
+  OTHER_ROLE,
   ROLE_TO_WORKER_TYPE,
   STAFF_ROLES,
   WORKER_TYPES,
@@ -46,8 +48,12 @@ export default function StaffingPage() {
   const hireRef = useRef<HTMLElement>(null);
 
   const requestRole = (roleKey: string) => {
-    setHireType(ROLE_TO_WORKER_TYPE[roleKey] ?? WORKER_TYPES[0]);
+    setHireType(ROLE_TO_WORKER_TYPE[roleKey] ?? OTHER_ROLE);
     hireRef.current?.scrollIntoView({ block: "start" });
+    // "Other": put the cursor straight in the "Which role?" box.
+    if (!ROLE_TO_WORKER_TYPE[roleKey]) {
+      window.setTimeout(() => document.getElementById("hire-other")?.focus({ preventScroll: true }), 60);
+    }
   };
 
   return (
@@ -60,8 +66,8 @@ export default function StaffingPage() {
             Trusted hands for your home and office.
           </h1>
           <p className="max-w-[640px] text-[17px] leading-[28px] text-graphite md:text-[19px] md:leading-[30px]">
-            We place screened housemaids, nannies, cooks, drivers, security and office staff — and
-            we help good workers find good employers.
+            We place screened housemaids, nannies, cooks, drivers, security, office staff and more —
+            and we help good workers find good employers.
           </p>
         </Reveal>
 
@@ -118,6 +124,27 @@ export default function StaffingPage() {
               </StaggerItem>
             ))}
           </Stagger>
+
+          {/* The list above isn't everything: any other role, just ask. */}
+          <Reveal className="-mt-12 flex flex-col gap-6 border-b border-rule py-8 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-3">
+              <h3 className="text-[24px] leading-[30px] font-extrabold tracking-[-0.02em] text-ink">
+                Need someone else?
+              </h3>
+              <p className="max-w-[720px] text-[16px] leading-6 text-graphite">
+                {`${MORE_ROLES.join(" · ")} and more.`} If it&apos;s a role in a home or office,
+                tell us and we&apos;ll find the right person.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => requestRole("other")}
+              className="flex w-fit shrink-0 items-center gap-2.5 bg-ink px-6 py-4 text-[15px] font-semibold text-white transition-colors hover:bg-cobalt"
+            >
+              Tell us who you need
+              <ArrowRightIcon size={16} />
+            </button>
+          </Reveal>
         </div>
       </section>
 
@@ -161,6 +188,20 @@ export default function StaffingPage() {
                 </a>
               </StaggerItem>
             ))}
+            <StaggerItem as="li" className="border-b border-rule sm:col-span-2">
+              <a
+                href={getWhatsAppUrl("Hello Limer! I need help with: ", companyInfo)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center justify-between gap-4 py-5 text-[19px] font-bold tracking-[-0.01em] text-cobalt"
+              >
+                Something else? Tell us what needs doing
+                <span className="flex shrink-0 items-center gap-1.5 font-mono text-[11px] font-normal tracking-[0.12em] uppercase transition-colors group-hover:text-wa">
+                  <WhatsAppIcon size={14} />
+                  Ask
+                </span>
+              </a>
+            </StaggerItem>
           </Stagger>
         </div>
       </section>
@@ -188,8 +229,8 @@ export default function StaffingPage() {
           <Reveal className="flex flex-col gap-8 lg:w-[440px] lg:shrink-0">
             <SectionHeading number="04" label="For job seekers" title="Looking for work?" dark />
             <p className="text-[17px] leading-[28px] text-white/85">
-              We place drivers, housemaids, nannies, cooks, security guards, cleaners and office
-              staff with employers we know. Send your details and documents on WhatsApp to apply.
+              We place drivers, housemaids, nannies, cooks, security guards, cleaners, office staff
+              and many other roles with employers we know. Send your details and documents on WhatsApp to apply.
             </p>
             <Steps steps={APPLY_STEPS} dark />
           </Reveal>
@@ -306,6 +347,8 @@ function HireForm({
   onWorkerTypeChange: (value: string) => void;
 }) {
   const [form, setForm] = useState(EMPTY_HIRE);
+  const [otherRole, setOtherRole] = useState("");
+  const roleNeeded = workerType === OTHER_ROLE ? otherRole.trim() || "Other" : workerType;
   const update =
     (field: keyof typeof EMPTY_HIRE) =>
     (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
@@ -319,7 +362,7 @@ function HireForm({
       `Employer's full name: ${form.name}`,
       `Contact phone number: ${form.phone}`,
       `Residential or work address: ${form.address}`,
-      `Type of worker needed: ${workerType}`,
+      `Type of worker needed: ${roleNeeded}`,
       `Number of workers required: ${form.count || "1"}`,
       `Monthly salary offered: ${form.salary || "To discuss"}`,
       `Working location: ${form.location || form.address}`,
@@ -356,6 +399,18 @@ function HireForm({
             <input id="hire-count" type="number" min={1} max={50} inputMode="numeric" value={form.count} onChange={update("count")} className="field-input" />
           </Field>
         </Row>
+        {workerType === OTHER_ROLE && (
+          <Field label="Which role?" htmlFor="hire-other">
+            <input
+              id="hire-other"
+              required
+              value={otherRole}
+              onChange={(event) => setOtherRole(event.target.value)}
+              placeholder="e.g. Gardener, caregiver, laundry staff, steward"
+              className="field-input"
+            />
+          </Field>
+        )}
         <Row>
           <Field label="Monthly salary offered" htmlFor="hire-salary">
             <input
@@ -414,6 +469,8 @@ const EMPTY_APPLY = {
 
 function ApplyForm({ companyInfo }: { companyInfo: SanityCompanyInfo | null }) {
   const [form, setForm] = useState(EMPTY_APPLY);
+  const [otherJob, setOtherJob] = useState("");
+  const jobName = form.job === OTHER_ROLE ? otherJob.trim() || "Other" : form.job;
   const update =
     (field: keyof typeof EMPTY_APPLY) =>
     (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
@@ -433,7 +490,7 @@ function ApplyForm({ companyInfo }: { companyInfo: SanityCompanyInfo | null }) {
       `Full name: ${form.name}`,
       `Phone number: ${form.phone}`,
       `Residential address: ${form.address}`,
-      `Job applying for: ${form.job}`,
+      `Job applying for: ${jobName}`,
       `Expected monthly salary: ${form.salary || "Open to discuss"}`,
       `Preferred working location: ${form.location || "Anywhere"}`,
       `Need accommodation (live-in): ${form.accommodation}`,
@@ -478,6 +535,19 @@ function ApplyForm({ companyInfo }: { companyInfo: SanityCompanyInfo | null }) {
             />
           </Field>
         </Row>
+        {form.job === OTHER_ROLE && (
+          <Field label="Which job?" htmlFor="apply-other">
+            <input
+              id="apply-other"
+              required
+              autoFocus
+              value={otherJob}
+              onChange={(event) => setOtherJob(event.target.value)}
+              placeholder="e.g. Gardener, caregiver, laundry staff, steward"
+              className="field-input"
+            />
+          </Field>
+        )}
         <Row>
           <Field label="Preferred working location" htmlFor="apply-location">
             <input id="apply-location" value={form.location} onChange={update("location")} placeholder="e.g. Ikeja, Lagos" className="field-input" />
