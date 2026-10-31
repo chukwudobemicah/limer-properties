@@ -5,6 +5,7 @@ import Footer from "@/component/Footer";
 import FloatingWhatsApp from "@/component/FloatingWhatsApp";
 import { ToastProvider } from "@/component/Toast";
 import { MotionProvider } from "@/component/Motion";
+import SiteLoader, { LOADER_SCRIPT } from "@/component/SiteLoader";
 
 export const metadata: Metadata = {
   title:
@@ -41,8 +42,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: LOADER_SCRIPT }} />
+        <link rel="preload" href="/images/limer-logo-white.svg" as="image" />
         <link
           rel="preload"
           href="/fonts/inter-tight-latin-wght-normal.woff2"
@@ -52,10 +55,11 @@ export default function RootLayout({
         />
         {/* Without JavaScript, show everything (no entrance animations). */}
         <noscript>
-          <style>{`.reveal,.intro,.intro-word,.intro-slide,.hero-photo{opacity:1!important;transform:none!important;animation:none!important}.roll-col{transform:translate3d(0,var(--to),0)!important;transition:none!important}`}</style>
+          <style>{`.reveal,.intro,.intro-word,.intro-slide,.hero-photo{opacity:1!important;transform:none!important;animation:none!important}#site-loader{display:none!important}.roll-col{transform:translate3d(0,var(--to),0)!important;transition:none!important}`}</style>
         </noscript>
       </head>
       <body className="antialiased">
+        <SiteLoader />
         <MotionProvider>
           <ToastProvider>
             <Header />

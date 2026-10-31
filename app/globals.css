@@ -268,3 +268,43 @@ input[type="number"] {
 }
 .roll[data-rolled] .roll-col { transform: translate3d(0, var(--to), 0); }
 @media (prefers-reduced-motion: reduce) { .roll-col { transition: none; } }
+
+/* Loading screen (first visit of a session) */
+#site-loader {
+  position: fixed; inset: 0; z-index: 300;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--ink);
+  transition: transform 0.85s cubic-bezier(0.76, 0, 0.24, 1);
+}
+html[data-loader="skip"] #site-loader { display: none; }
+html[data-loader="on"] { overflow: hidden; }
+#site-loader[data-phase="leaving"] { transform: translate3d(0, -100%, 0); }
+.loader-inner {
+  display: flex; flex-direction: column; align-items: center; gap: 26px;
+  width: min(72vw, 360px);
+  transition: opacity 0.45s ease, transform 0.85s cubic-bezier(0.76, 0, 0.24, 1);
+}
+#site-loader[data-phase="leaving"] .loader-inner { opacity: 0; transform: translate3d(0, 60px, 0); }
+.loader-logo { display: block; width: 100%; height: auto; animation: loader-logo 1s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
+.loader-bar { position: relative; width: 100%; height: 2px; overflow: hidden; background: rgba(255, 255, 255, 0.14); }
+.loader-bar span { position: absolute; inset: 0; background: #ffffff; transform-origin: left center; }
+.loader-bar-run { animation: loader-run 2.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both; }
+.loader-bar-end { transform: scaleX(0); transition: transform 0.35s ease-out; }
+#site-loader:is([data-phase="finishing"], [data-phase="leaving"]) .loader-bar-end { transform: scaleX(1); }
+.loader-tag {
+  font-family: "Geist Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: rgba(255, 255, 255, 0.6);
+  animation: loader-fade 0.8s ease 0.55s both;
+}
+@keyframes loader-logo {
+  from { clip-path: inset(0 100% 0 0); transform: translate3d(0, 10px, 0); }
+  to { clip-path: inset(0 0 0 0); transform: none; }
+}
+@keyframes loader-run { from { transform: scaleX(0); } to { transform: scaleX(0.82); } }
+@keyframes loader-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  #site-loader { transition: opacity 0.4s ease; }
+  #site-loader[data-phase="leaving"] { transform: none; opacity: 0; }
+  .loader-logo { animation: loader-fade 0.4s ease both; }
+}
+html[data-loader="failsafe"] #site-loader { display: none; }
