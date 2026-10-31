@@ -5,6 +5,7 @@ import HomeHero from "@/component/HomeHero";
 import WhyStrip from "@/component/WhyStrip";
 import FeaturedListings from "@/component/FeaturedListings";
 import PropertyManagementServices from "@/component/PropertyManagementServices";
+import StaffingBand from "@/component/StaffingBand";
 import ContactSection from "@/component/ContactSection";
 import { useSanityProperties } from "@/hooks/useSanityProperties";
 import { useSanityCompanyInfo } from "@/hooks/useSanityCompanyInfo";
@@ -23,6 +24,7 @@ export default function Home() {
       <WhyStrip />
       <FeaturedListings properties={showcase} companyInfo={companyInfo} loading={loading} />
       <PropertyManagementServices companyInfo={companyInfo} />
+      <StaffingBand />
       <ContactSection />
     </div>
   );

@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { SanityCompanyInfo } from "@/types/sanity";
-import { ChevronDownIcon, WhatsAppIcon } from "@/component/Icons";
+import Link from "next/link";
+import { ArrowRightIcon, ChevronDownIcon, WhatsAppIcon } from "@/component/Icons";
 import { Reveal, Stagger, StaggerItem } from "@/component/Motion";
 import { getWhatsAppUrl } from "@/lib/contact";
 
@@ -91,6 +92,16 @@ export default function PropertyManagementServices({
               </StaggerItem>
             ))}
           </Stagger>
+
+          <Reveal>
+            <Link
+              href="/staffing"
+              className="flex w-fit items-center gap-2 text-[15px] font-semibold text-white/90 underline-offset-4 hover:text-white hover:underline"
+            >
+              Need cleaners, security or a gardener for the property? See staffing &amp; home services
+              <ArrowRightIcon size={14} className="shrink-0" />
+            </Link>
+          </Reveal>
         </div>
 
         <Reveal delay={0.15} className="w-full lg:w-[520px] lg:shrink-0">

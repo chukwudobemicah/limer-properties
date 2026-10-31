@@ -15,6 +15,7 @@ export const NAV_LINKS = [
   { label: "Land", href: "/properties?type=land" },
   { label: "Shortlets", href: "/properties?type=shortlet" },
   { label: "Property management", href: "/#property-management" },
+  { label: "Staffing", href: "/staffing" },
   { label: "About", href: "/about" },
 ];
 
@@ -29,7 +30,7 @@ export default function Header() {
   const whatsappUrl = getWhatsAppUrl(undefined, companyInfo);
   const inspectionUrl = getWhatsAppUrl(INSPECTION_MESSAGE, companyInfo);
 
-  const isActive = (href: string) => href === "/about" && pathname === "/about";
+  const isActive = (href: string) => (href === "/about" || href === "/staffing") && pathname === href;
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-rule">
