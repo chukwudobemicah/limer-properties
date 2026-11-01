@@ -1,11 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Header from "@/component/Header";
-import Footer from "@/component/Footer";
-import FloatingWhatsApp from "@/component/FloatingWhatsApp";
-import { ToastProvider } from "@/component/Toast";
-import { MotionProvider } from "@/component/Motion";
-import SiteLoader, { LOADER_SCRIPT } from "@/component/SiteLoader";
+import { LOADER_SCRIPT } from "@/component/SiteLoader";
 
 export const metadata: Metadata = {
   title:
@@ -59,15 +54,7 @@ export default function RootLayout({
         </noscript>
       </head>
       <body className="antialiased">
-        <SiteLoader />
-        <MotionProvider>
-          <ToastProvider>
-            <Header />
-            <main>{children}</main>
-            <Footer />
-            <FloatingWhatsApp />
-          </ToastProvider>
-        </MotionProvider>
+        {children}
       </body>
     </html>
   );
