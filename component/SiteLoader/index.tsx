@@ -93,4 +93,5 @@ export default function SiteLoader() {
 
 /** Inline in <head>: decide before first paint whether the loader shows. */
 // The 8s failsafe hides the screen even if the site's JavaScript never runs.
-export const LOADER_SCRIPT = `(function(){var d=document.documentElement,s="on";try{if(sessionStorage.getItem("${SESSION_KEY}"))s="skip"}catch(e){}d.setAttribute("data-loader",s);setTimeout(function(){if(d.getAttribute("data-loader")==="on")d.setAttribute("data-loader","failsafe")},8000)})()`;
+// Sanity Studio never shows it (and never gets its scroll locked).
+export const LOADER_SCRIPT = `(function(){var d=document.documentElement,s="on";try{if(sessionStorage.getItem("${SESSION_KEY}"))s="skip"}catch(e){}if(location.pathname.indexOf("/studio")===0)s="skip";d.setAttribute("data-loader",s);setTimeout(function(){if(d.getAttribute("data-loader")==="on")d.setAttribute("data-loader","failsafe")},8000)})()`;
